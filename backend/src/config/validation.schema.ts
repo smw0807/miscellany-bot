@@ -6,4 +6,9 @@ export const validationSchema = Joi.object({
     .default('development'),
   PROJECT_NAME: Joi.string().required(),
   APP_PORT: Joi.number().default(3000),
+
+  // Discord
+  DISCORD_APPLICATION_ID: Joi.string().required(),
+  DISCORD_PUBLIC_KEY: Joi.string().required(),
+  DISCORD_URL: Joi.string().required(),
 });
