@@ -18,24 +18,26 @@ export class DiscordClientService {
     this.setupDiscordBot();
   }
 
+  /**
+   * 디스코드 봇 클라이언트 설정
+   */
   private setupDiscordBot() {
+    // 봇 클라이언트 생성
     this.client = new Client({
       intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.Guilds, // 서버 목록 조회
+        GatewayIntentBits.GuildMessages, // 서버 메시지 조회
+        GatewayIntentBits.MessageContent, // 메시지 내용 조회
       ],
     });
+
+    // 봇 준비 완료 이벤트
     this.client.on('ready', () => {
       this.logger.log(`Logged in as ${this.client.user.tag}!`);
       this.getGuilds();
     });
-    // this.client.on('messageCreate', (msg) => {
-    //   this.logger.debug('messageCreate', msg);
-    //   if (msg.content === 'ping') {
-    //     msg.reply('pong');
-    //   }
-    // });
+
+    // 봇 로그인
     this.client.login(this.config.DISCORD_TOKEN);
   }
 
