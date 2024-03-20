@@ -39,11 +39,13 @@ export class DiscordClientService {
 
     // 봇 준비 완료 이벤트
     this.client.on('ready', () => {
-      this.logger.log(`Logged in as ${this.client.user.tag}!`);
+      this.logger.log(`### [ Logged in as ${this.client.user.tag}! ] ###`);
       this.isReady = true;
       this.getGuilds();
       // 컨텍스트 메뉴 추가
       this.createContextMenu();
+      // 컨테스트 메뉴 이벤트 리스너 등록
+      this.onContextMenu();
     });
     this.client.on('error', (error) => {
       this.logger.error('Discord Error', error);
@@ -82,13 +84,23 @@ export class DiscordClientService {
     }
     await guild.commands.set([
       {
-        name: '사용자 정보',
-        type: ApplicationCommandType.User,
+        // 독일어로 번역
+        name: 'Translate to German',
+        type: ApplicationCommandType.Message,
       },
-    ]);
-    await guild.commands.set([
       {
-        name: '메시지 정보',
+        // 일본어로 번역
+        name: 'Translate to Japanese',
+        type: ApplicationCommandType.Message,
+      },
+      {
+        // 영어로 번역
+        name: 'Translate to English',
+        type: ApplicationCommandType.Message,
+      },
+      {
+        // 한글로 번역
+        name: 'Translate to Korean',
         type: ApplicationCommandType.Message,
       },
     ]);
@@ -96,7 +108,43 @@ export class DiscordClientService {
   // 컨텍스트메뉴 이벤트 리스너
   onContextMenu() {
     this.client.on('interactionCreate', async (interaction) => {
-      console.log(interaction);
+      if (!interaction.isMessageContextMenuCommand()) return;
+      // 디스코드 채널로 메시지 전송
+      const locale = interaction.locale;
+
+      // 선택한 커맨드
+      const targetLanguage = this.getTargetLanguage(interaction.commandName);
+      if (locale === targetLanguage) return;
+
+      // 선택한 메시지 정보
+      const message = await interaction.channel.messages.fetch(
+        interaction.targetId,
+      );
+
+      // 입력 메시지
+      const content = message.content;
+
+      // todo 번역 API 호출
+      interaction.reply(
+        `사용자의 언어는 ${locale}이고, 번역할 언어는 ${targetLanguage}입니다.
+        입력한 메시지는 [ ${content} ] 입니다.`,
+      );
     });
+  }
+
+  // 선택한 번역 언어 코드
+  private getTargetLanguage(command: string) {
+    switch (command) {
+      case 'Translate to German':
+        return 'de';
+      case 'Translate to Japanese':
+        return 'ja';
+      case 'Translate to English':
+        return 'en';
+      case 'Translate to Korean':
+        return 'ko';
+      default:
+        return 'en';
+    }
   }
 }
