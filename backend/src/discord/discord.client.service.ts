@@ -6,11 +6,12 @@ import { Client, GatewayIntentBits, Guild } from 'discord.js';
 @Injectable()
 export class DiscordClientService {
   private readonly logger = new Logger(DiscordClientService.name);
-
   // 봇 클라이언트
   private client: Client;
   // 봇 등록된 서버 목록
   private guildListMap = new Map<string, Guild>();
+  // 봇 준비 완료 여부
+  private isReady = false;
 
   constructor(
     @Inject(discordConfig.KEY) private config: ConfigType<typeof discordConfig>,
@@ -34,7 +35,11 @@ export class DiscordClientService {
     // 봇 준비 완료 이벤트
     this.client.on('ready', () => {
       this.logger.log(`Logged in as ${this.client.user.tag}!`);
+      this.isReady = true;
       this.getGuilds();
+    });
+    this.client.on('error', (error) => {
+      this.logger.error('Discord Error', error);
     });
 
     // 봇 로그인
@@ -54,6 +59,10 @@ export class DiscordClientService {
 
   get guildList() {
     return this.guildListMap;
+  }
+
+  get ready() {
+    return this.isReady;
   }
 
   getGuildInfo(guildId: string) {
