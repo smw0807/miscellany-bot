@@ -1,11 +1,16 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import discordConfig from 'src/config/conf/discord.config';
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits, Guild } from 'discord.js';
 
 @Injectable()
 export class DiscordClientService {
   private readonly logger = new Logger(DiscordClientService.name);
+
+  // 봇 클라이언트
+  client: Client;
+  // 봇 등록된 서버 목록
+  guildListMap = new Map<string, object>();
 
   constructor(
     @Inject(discordConfig.KEY) private config: ConfigType<typeof discordConfig>,
@@ -14,25 +19,30 @@ export class DiscordClientService {
   }
 
   private setupDiscordBot() {
-    const client = new Client({
+    this.client = new Client({
       intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
       ],
     });
-    client.on('ready', () => {
-      this.logger.log(`Logged in as ${client.user.tag}!`);
+    this.client.on('ready', () => {
+      this.logger.log(`Logged in as ${this.client.user.tag}!`);
+      this.getGuilds();
     });
-    client.on('message', (msg) => {
+    this.client.on('messageCreate', (msg) => {
+      this.logger.debug('messageCreate', msg);
       if (msg.content === 'ping') {
         msg.reply('pong');
       }
     });
-    client.login(this.config.DISCORD_TOKEN);
+    this.client.login(this.config.DISCORD_TOKEN);
   }
 
-  public test(): string {
-    return 'Hello, World!';
+  // 현재 봇이 추가된 서버 목록
+  private getGuilds() {
+    this.client.guilds.cache.forEach((guild: Guild) => {
+      this.guildListMap.set(guild.id, guild);
+    });
   }
 }
