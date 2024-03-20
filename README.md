@@ -20,3 +20,9 @@
 ## Back-End
 
 - NestJS [10.3.2]
+- Discord.js [14.14.1]
+
+# 참고 URL
+
+1. Discord.js
+   - https://discord.js.org/docs/packages/discord.js/14.14.1
