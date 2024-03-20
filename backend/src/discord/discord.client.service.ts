@@ -1,7 +1,12 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import discordConfig from 'src/config/conf/discord.config';
-import { Client, GatewayIntentBits, Guild } from 'discord.js';
+import {
+  ApplicationCommandType,
+  Client,
+  GatewayIntentBits,
+  Guild,
+} from 'discord.js';
 
 @Injectable()
 export class DiscordClientService {
@@ -37,6 +42,8 @@ export class DiscordClientService {
       this.logger.log(`Logged in as ${this.client.user.tag}!`);
       this.isReady = true;
       this.getGuilds();
+      // 컨텍스트 메뉴 추가
+      this.createContextMenu();
     });
     this.client.on('error', (error) => {
       this.logger.error('Discord Error', error);
@@ -57,15 +64,39 @@ export class DiscordClientService {
     return this.client;
   }
 
-  get guildList() {
-    return this.guildListMap;
-  }
-
   get ready() {
     return this.isReady;
   }
 
   getGuildInfo(guildId: string) {
     return this.guildListMap.get(guildId);
+  }
+
+  // 컨텍스트 메뉴 추가
+  private async createContextMenu() {
+    const guildId = '1098235615574769706';
+    const guild = this.getGuildInfo(guildId);
+    if (!guild) {
+      this.logger.error('Guild not found');
+      return;
+    }
+    await guild.commands.set([
+      {
+        name: '사용자 정보',
+        type: ApplicationCommandType.User,
+      },
+    ]);
+    await guild.commands.set([
+      {
+        name: '메시지 정보',
+        type: ApplicationCommandType.Message,
+      },
+    ]);
+  }
+  // 컨텍스트메뉴 이벤트 리스너
+  onContextMenu() {
+    this.client.on('interactionCreate', async (interaction) => {
+      console.log(interaction);
+    });
   }
 }
