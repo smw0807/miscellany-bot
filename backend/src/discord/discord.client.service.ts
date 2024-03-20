@@ -8,9 +8,9 @@ export class DiscordClientService {
   private readonly logger = new Logger(DiscordClientService.name);
 
   // 봇 클라이언트
-  client: Client;
+  private client: Client;
   // 봇 등록된 서버 목록
-  guildListMap = new Map<string, object>();
+  private guildListMap = new Map<string, Guild>();
 
   constructor(
     @Inject(discordConfig.KEY) private config: ConfigType<typeof discordConfig>,
@@ -30,12 +30,12 @@ export class DiscordClientService {
       this.logger.log(`Logged in as ${this.client.user.tag}!`);
       this.getGuilds();
     });
-    this.client.on('messageCreate', (msg) => {
-      this.logger.debug('messageCreate', msg);
-      if (msg.content === 'ping') {
-        msg.reply('pong');
-      }
-    });
+    // this.client.on('messageCreate', (msg) => {
+    //   this.logger.debug('messageCreate', msg);
+    //   if (msg.content === 'ping') {
+    //     msg.reply('pong');
+    //   }
+    // });
     this.client.login(this.config.DISCORD_TOKEN);
   }
 
@@ -44,5 +44,17 @@ export class DiscordClientService {
     this.client.guilds.cache.forEach((guild: Guild) => {
       this.guildListMap.set(guild.id, guild);
     });
+  }
+
+  get clientInstance() {
+    return this.client;
+  }
+
+  get guildList() {
+    return this.guildListMap;
+  }
+
+  getGuildInfo(guildId: string) {
+    return this.guildListMap.get(guildId);
   }
 }
