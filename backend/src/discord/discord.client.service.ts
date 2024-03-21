@@ -44,11 +44,14 @@ export class DiscordClientService {
       this.logger.log(`### [ Logged in as ${this.client.user.tag}! ] ###`);
       this.isReady = true;
       this.getGuilds();
+      // 메시지 이벤트 리스너 등록
+      this.onMessage();
       // 컨텍스트 메뉴 추가
       this.createContextMenu();
       // 컨테스트 메뉴 이벤트 리스너 등록
       this.onContextMenu();
     });
+    // 메시지 이벤트
     this.client.on('error', (error) => {
       this.logger.error('Discord Error', error);
     });
@@ -74,6 +77,11 @@ export class DiscordClientService {
 
   getGuildInfo(guildId: string) {
     return this.guildListMap.get(guildId);
+  }
+
+  // 메시지 이벤트 리스너
+  private onMessage() {
+    this.client.on('messageCreate', (msg) => {});
   }
 
   // 컨텍스트 메뉴 추가
