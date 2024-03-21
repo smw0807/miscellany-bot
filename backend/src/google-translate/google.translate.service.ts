@@ -25,14 +25,9 @@ export class GoogleTranslateService {
    * @param sourceLanguageCode 번역 대상 언어 코드
    * @param targetLanguageCode 번역시킬 언어 코드
    */
-  async translateText(
-    text: string,
-    sourceLanguageCode: string,
-    targetLanguageCode: string,
-  ) {
+  async translateText(text: string, targetLanguageCode: string) {
     try {
       const [response] = await this.translate.translate(text, {
-        from: sourceLanguageCode,
         to: targetLanguageCode,
       });
       return response;
