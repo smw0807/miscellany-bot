@@ -12,4 +12,7 @@ export const validationSchema = Joi.object({
   DISCORD_PUBLIC_KEY: Joi.string().required(),
   DISCORD_TOKEN: Joi.string().required(),
   DISCORD_URL: Joi.string().required(),
+
+  // GOOGLE TRANSLATE
+  GOOGLE_TRANSLATE_API_KEY: Joi.string().required(),
 });

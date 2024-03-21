@@ -3,6 +3,7 @@ import { ConfigModule as NestConfigModule } from '@nestjs/config';
 import commonConfig from './conf/common.config';
 import { validationSchema } from './validation.schema';
 import discordConfig from './conf/discord.config';
+import googleTranslateConfig from './conf/google.translate.config';
 
 const developmentEnv = '.env.development';
 const productionEnv = '.env';
@@ -11,7 +12,7 @@ const productionEnv = '.env';
     NestConfigModule.forRoot({
       envFilePath:
         process.env.NODE_ENV === 'development' ? developmentEnv : productionEnv,
-      load: [commonConfig, discordConfig],
+      load: [commonConfig, discordConfig, googleTranslateConfig],
       isGlobal: true,
       validationSchema,
     }),
