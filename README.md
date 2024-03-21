@@ -26,7 +26,9 @@
 
 1. Discord.js
    - https://discord.js.org/docs/packages/discord.js/14.14.1
-2. Google Translate
-   - https://cloud.google.com/translate/docs/setup?hl=ko
-   - v2 버전과 v3 비교 설명 (https://cloud.google.com/translate/docs/editions?hl=ko)
-     - 디스코드 채팅 내용을 번역할 예정이기 때문에 v2를 선택함
+2. Google Cloud
+   - https://console.cloud.google.com/apis/dashboard?hl=ko
+   1. Google Translate
+      - https://cloud.google.com/translate/docs/setup?hl=ko
+      - v2 버전과 v3 비교 설명 (https://cloud.google.com/translate/docs/editions?hl=ko)
+        - 디스코드 채팅 내용을 번역할 예정이기 때문에 v2를 선택함
