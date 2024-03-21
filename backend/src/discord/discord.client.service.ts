@@ -8,6 +8,8 @@ import {
   Guild,
 } from 'discord.js';
 import { GoogleTranslateService } from 'src/google-translate/google.translate.service';
+import { LanguageCode } from 'src/constants/language-codes';
+import { LanguageCommand } from 'src/constants/language-commands';
 
 @Injectable()
 export class DiscordClientService {
@@ -81,7 +83,11 @@ export class DiscordClientService {
 
   // 메시지 이벤트 리스너
   private onMessage() {
-    this.client.on('messageCreate', (msg) => {});
+    this.client.on('messageCreate', (msg) => {
+      this.logger.debug(
+        `[ ${msg.author.globalName}(${msg.member.nickname}) ] : ${msg.content}`,
+      );
+    });
   }
 
   // 컨텍스트 메뉴 추가
@@ -95,22 +101,22 @@ export class DiscordClientService {
     await guild.commands.set([
       {
         // 독일어로 번역
-        name: 'Translate to German',
+        name: LanguageCommand.TranslageToGerman,
         type: ApplicationCommandType.Message,
       },
       {
         // 일본어로 번역
-        name: 'Translate to Japanese',
+        name: LanguageCommand.TranslageToJapanese,
         type: ApplicationCommandType.Message,
       },
       {
         // 영어로 번역
-        name: 'Translate to English',
+        name: LanguageCommand.TranslageToEnglish,
         type: ApplicationCommandType.Message,
       },
       {
         // 한글로 번역
-        name: 'Translate to Korean',
+        name: LanguageCommand.TranslageToKorean,
         type: ApplicationCommandType.Message,
       },
     ]);
@@ -119,12 +125,9 @@ export class DiscordClientService {
   onContextMenu() {
     this.client.on('interactionCreate', async (interaction) => {
       if (!interaction.isMessageContextMenuCommand()) return;
-      // 디스코드 채널로 메시지 전송
-      const locale = interaction.locale;
 
       // 선택한 커맨드
       const targetLanguage = this.getTargetLanguage(interaction.commandName);
-      if (locale === targetLanguage) return;
 
       // 선택한 메시지 정보
       const message = await interaction.channel.messages.fetch(
@@ -136,7 +139,6 @@ export class DiscordClientService {
       // 텍스트 번역
       const translateText = await this.translateService.translateText(
         content,
-        locale,
         targetLanguage,
       );
       // 번역 결과 메시지 전송
@@ -146,17 +148,22 @@ export class DiscordClientService {
 
   // 선택한 번역 언어 코드
   private getTargetLanguage(command: string) {
-    switch (command) {
-      case 'Translate to German':
-        return 'de';
-      case 'Translate to Japanese':
-        return 'ja';
-      case 'Translate to English':
-        return 'en';
-      case 'Translate to Korean':
-        return 'ko';
+    const commandName = Object.values(LanguageCommand).find(
+      (v) => v === command,
+    );
+    if (!commandName) return LanguageCode.English;
+    // 언어 코드 enum value 값 반환
+    switch (commandName) {
+      case LanguageCommand.TranslageToGerman:
+        return LanguageCode.German;
+      case LanguageCommand.TranslageToJapanese:
+        return LanguageCode.Japanese;
+      case LanguageCommand.TranslageToEnglish:
+        return LanguageCode.English;
+      case LanguageCommand.TranslageToKorean:
+        return LanguageCode.Korean;
       default:
-        return 'en';
+        return LanguageCode.English;
     }
   }
 }
