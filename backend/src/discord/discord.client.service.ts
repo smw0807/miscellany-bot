@@ -97,34 +97,40 @@ export class DiscordClientService {
 
   // 컨텍스트 메뉴 추가
   private async createContextMenu() {
-    const guildId = '1098235615574769706';
-    const guild = this.getGuildInfo(guildId);
-    if (!guild) {
+    if (this.guildListMap.size === 0) {
       this.logger.error('Guild not found');
       return;
     }
-    await guild.commands.set([
-      {
-        // 독일어로 번역
-        name: LanguageCommand.TranslageToGerman,
-        type: ApplicationCommandType.Message,
-      },
-      {
-        // 일본어로 번역
-        name: LanguageCommand.TranslageToJapanese,
-        type: ApplicationCommandType.Message,
-      },
-      {
-        // 영어로 번역
-        name: LanguageCommand.TranslageToEnglish,
-        type: ApplicationCommandType.Message,
-      },
-      {
-        // 한글로 번역
-        name: LanguageCommand.TranslageToKorean,
-        type: ApplicationCommandType.Message,
-      },
-    ]);
+    this.guildListMap.forEach(async (guild) => {
+      this.logger.log(`[ Guild Name ] ${guild.name} : create context menu`);
+      try {
+        await guild.commands.set([
+          {
+            // 독일어로 번역
+            name: LanguageCommand.TranslageToGerman,
+            type: ApplicationCommandType.Message,
+          },
+          {
+            // 일본어로 번역
+            name: LanguageCommand.TranslageToJapanese,
+            type: ApplicationCommandType.Message,
+          },
+          {
+            // 영어로 번역
+            name: LanguageCommand.TranslageToEnglish,
+            type: ApplicationCommandType.Message,
+          },
+          {
+            // 한글로 번역
+            name: LanguageCommand.TranslageToKorean,
+            type: ApplicationCommandType.Message,
+          },
+        ]);
+      } catch (e) {
+        this.logger.error('Guild Command Error', e);
+      }
+    });
+
     // await guild.commands.set([
     //   {
     //     // 아랍어로 번역
