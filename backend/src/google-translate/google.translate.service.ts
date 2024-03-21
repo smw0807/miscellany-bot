@@ -1,24 +1,22 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import googleTranslateConfig from 'src/config/conf/google.translate.config';
-import { TranslationServiceClient } from '@google-cloud/translate';
+import { Translate } from '@google-cloud/translate/build/src/v2';
 
 @Injectable()
 export class GoogleTranslateService {
   private readonly logger = new Logger(GoogleTranslateService.name);
-  private translationServiceClient: TranslationServiceClient;
-  private projectId: string;
-  private clinetId: string;
+  private translate: Translate;
+
   private apiKey: string;
-  private location = 'global';
   constructor(
     @Inject(googleTranslateConfig.KEY)
     private config: ConfigType<typeof googleTranslateConfig>,
   ) {
-    this.translationServiceClient = new TranslationServiceClient();
-    this.projectId = this.config.GOOGLE_PROJECT_ID;
     this.apiKey = this.config.GOOGLE_TRANSLATE_API_KEY;
-    this.clinetId = this.config.GOOGLE_TRANSLATE_CLIENT_ID;
+    this.translate = new Translate({
+      key: this.apiKey,
+    });
   }
 
   /**
@@ -33,25 +31,15 @@ export class GoogleTranslateService {
     targetLanguageCode: string,
   ) {
     try {
-      // Construct request
-      const request = {
-        parent: `projects/${this.projectId}/locations/${this.location}`,
-        contents: [text],
-        mimeType: 'text/plain', // mime types: text/plain, text/html
-        sourceLanguageCode,
-        targetLanguageCode,
-      };
-
-      // Run request
-      const [response] =
-        await this.translationServiceClient.translateText(request);
-      console.log(response);
-      for (const translation of response.translations) {
-        console.log(`Translation: ${translation.translatedText}`);
-      }
+      const [response] = await this.translate.translate(text, {
+        from: sourceLanguageCode,
+        to: targetLanguageCode,
+      });
+      return response;
     } catch (e) {
       this.logger.error('Google Translate Error', e);
       console.error(e);
+      throw new Error('Google Translate Error');
     }
   }
 }
