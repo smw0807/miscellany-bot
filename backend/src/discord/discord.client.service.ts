@@ -10,6 +10,7 @@ import {
 import { GoogleTranslateService } from 'src/google-translate/google.translate.service';
 import { LanguageCode } from 'src/constants/language-codes';
 import { LanguageCommand } from 'src/constants/language-commands';
+import { languageCommandMap } from 'src/constants/code-mapping';
 
 @Injectable()
 export class DiscordClientService {
@@ -84,9 +85,13 @@ export class DiscordClientService {
   // 메시지 이벤트 리스너
   private onMessage() {
     this.client.on('messageCreate', (msg) => {
-      this.logger.debug(
-        `[ ${msg.author.globalName}(${msg.member.nickname}) ] : ${msg.content}`,
-      );
+      let logMessage = `[ ${msg.guild.name} ]`;
+      if (msg.author.globalName) {
+        logMessage += ` ${msg.author.globalName}(${msg.member.nickname}): ${msg.content}`;
+      } else {
+        logMessage += ` ${msg.author.username} : ${msg.content}`;
+      }
+      this.logger.debug(logMessage);
     });
   }
 
@@ -120,6 +125,23 @@ export class DiscordClientService {
         type: ApplicationCommandType.Message,
       },
     ]);
+    // await guild.commands.set([
+    //   {
+    //     // 아랍어로 번역
+    //     name: LanguageCommand.TranslageToArabic,
+    //     type: ApplicationCommandType.Message,
+    //   },
+    //   {
+    //     // 터키어로 번역
+    //     name: LanguageCommand.TranslageToTurkish,
+    //     type: ApplicationCommandType.Message,
+    //   },
+    //   {
+    //     // 폴란드어로 번역
+    //     name: LanguageCommand.TranslageToPolish,
+    //     type: ApplicationCommandType.Message,
+    //   },
+    // ]);
   }
   // 컨텍스트메뉴 이벤트 리스너
   onContextMenu() {
@@ -148,22 +170,6 @@ export class DiscordClientService {
 
   // 선택한 번역 언어 코드
   private getTargetLanguage(command: string) {
-    const commandName = Object.values(LanguageCommand).find(
-      (v) => v === command,
-    );
-    if (!commandName) return LanguageCode.English;
-    // 언어 코드 enum value 값 반환
-    switch (commandName) {
-      case LanguageCommand.TranslageToGerman:
-        return LanguageCode.German;
-      case LanguageCommand.TranslageToJapanese:
-        return LanguageCode.Japanese;
-      case LanguageCommand.TranslageToEnglish:
-        return LanguageCode.English;
-      case LanguageCommand.TranslageToKorean:
-        return LanguageCode.Korean;
-      default:
-        return LanguageCode.English;
-    }
+    return languageCommandMap[command] || LanguageCode.English;
   }
 }
