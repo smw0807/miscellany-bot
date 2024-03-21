@@ -4,4 +4,7 @@ export enum LanguageCommand {
   TranslageToJapanese = 'Translate to Japanese',
   TranslageToEnglish = 'Translate to English',
   TranslageToKorean = 'Translate to Korean',
+  TranslageToArabic = 'Translate to Arabic',
+  TranslageToTurkish = 'Translate to Turkish',
+  TranslageToPolish = 'Translate to Polish',
 }
