@@ -14,7 +14,5 @@ export const validationSchema = Joi.object({
   DISCORD_URL: Joi.string().required(),
 
   // GOOGLE TRANSLATE
-  GOOGLE_PROJECT_ID: Joi.string().required(),
   GOOGLE_TRANSLATE_API_KEY: Joi.string().required(),
-  GOOGLE_TRANSLATE_CLIENT_ID: Joi.string().required(),
 });
