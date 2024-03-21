@@ -125,16 +125,14 @@ export class DiscordClientService {
 
       // 입력 메시지
       const content = message.content;
-      await this.translateService.translateText(
+      // 텍스트 번역
+      const translateText = await this.translateService.translateText(
         content,
         locale,
         targetLanguage,
       );
-      // todo 번역 API 호출
-      interaction.reply(
-        `사용자의 언어는 ${locale}이고, 번역할 언어는 ${targetLanguage}입니다.
-        입력한 메시지는 [ ${content} ] 입니다.`,
-      );
+      // 번역 결과 메시지 전송
+      interaction.reply(translateText);
     });
   }
 
