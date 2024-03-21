@@ -16,12 +16,12 @@ export const winstonLogger = WinstonModule.createLogger({
     }),
     // 일반 로그 파일 설정 (날짜별 로테이션)
     new DailyRotateFile({
-      filename: 'logs/application-%DATE%.log',
+      filename: 'logs/info-%DATE%.log',
       datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
       maxSize: '20m',
       maxFiles: '14d',
-      level: 'info',
+      level: 'debug',
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.json(),
