@@ -25,6 +25,7 @@
 # 참고 URL
 
 1. Discord.js
+   - https://discord.com/developers/docs/intro
    - https://discord.js.org/docs/packages/discord.js/14.14.1
 2. Google Cloud
    - https://console.cloud.google.com/apis/dashboard?hl=ko
