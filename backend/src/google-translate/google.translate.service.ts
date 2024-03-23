@@ -26,7 +26,7 @@ export class GoogleTranslateService {
    * @param targetLanguageCode 번역시킬 언어 코드
    */
   async translateText(text: string, targetLanguageCode: string) {
-    this.logger.debug(`[번역] ${text} -> ${targetLanguageCode}`);
+    this.logger.log(`[번역] ${text} -> ${targetLanguageCode}`);
     try {
       const [response] = await this.translate.translate(text, {
         to: targetLanguageCode,
