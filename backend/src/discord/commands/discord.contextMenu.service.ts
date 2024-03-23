@@ -1,7 +1,7 @@
 // 디스코드 컨텍스트메뉴 서비스
 
 import { Injectable, Logger } from '@nestjs/common';
-import { ApplicationCommandType, Client } from 'discord.js';
+import { ApplicationCommandType, Client, EmbedBuilder } from 'discord.js';
 import { GoogleTranslateService } from 'src/google-translate/google.translate.service';
 import { LanguageCode } from 'src/constants/language-codes';
 import { LanguageCommand } from 'src/constants/language-commands';
@@ -84,8 +84,20 @@ export class DiscordContextMenuService {
         content,
         targetLanguage,
       );
+
+      // Embed 메시지 생성
+      const embed = new EmbedBuilder()
+        .setColor(0x009999)
+        .setTitle(
+          content.length <= 10 ? content : `${content.substring(0, 20)}...`,
+        )
+        .setDescription(translateText)
+        .setURL(message.url)
+        .setTimestamp()
+        .setFooter({ text: 'Powered by Google Translate' }); // Google Translate로 번역된 것임을 표시
+
       // 번역 결과 메시지 전송
-      interaction.reply(translateText);
+      await interaction.reply({ embeds: [embed] });
     });
   }
 
