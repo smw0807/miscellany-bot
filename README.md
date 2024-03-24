@@ -37,3 +37,5 @@
    - https://nuxt.com/docs/getting-started/introduction
 4. supabase
    - https://supabase.com/docs/guides/api
+   - Login with discord
+     - https://supabase.com/docs/guides/auth/social-login/auth-discord
