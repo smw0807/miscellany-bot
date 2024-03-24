@@ -33,3 +33,5 @@
       - https://cloud.google.com/translate/docs/setup?hl=ko
       - v2 버전과 v3 비교 설명 (https://cloud.google.com/translate/docs/editions?hl=ko)
         - 디스코드 채팅 내용을 번역할 예정이기 때문에 v2를 선택함
+3. NuxtJS
+   - https://nuxt.com/docs/getting-started/introduction
