@@ -25,13 +25,8 @@ export class DiscordContextMenuService {
       try {
         await guild.commands.set([
           {
-            // 독일어로 번역
-            name: LanguageCommand.TranslageToGerman,
-            type: ApplicationCommandType.Message,
-          },
-          {
-            // 일본어로 번역
-            name: LanguageCommand.TranslageToJapanese,
+            // 한글로 번역
+            name: LanguageCommand.TranslageToKorean,
             type: ApplicationCommandType.Message,
           },
           {
@@ -40,8 +35,18 @@ export class DiscordContextMenuService {
             type: ApplicationCommandType.Message,
           },
           {
-            // 한글로 번역
-            name: LanguageCommand.TranslageToKorean,
+            // 일본어로 번역
+            name: LanguageCommand.TranslageToJapanese,
+            type: ApplicationCommandType.Message,
+          },
+          {
+            // 터키어로 번역
+            name: LanguageCommand.TranslageToTurkish,
+            type: ApplicationCommandType.Message,
+          },
+          {
+            // 아랍어로 번역
+            name: LanguageCommand.TranslageToArabic,
             type: ApplicationCommandType.Message,
           },
         ]);
@@ -110,7 +115,7 @@ export class DiscordContextMenuService {
     const embed = new EmbedBuilder()
       .setColor(0x009999)
       .setTitle(
-        content.length <= 10 ? content : `${content.substring(0, 20)}...`,
+        content.length <= 20 ? content : `${content.substring(0, 20)}...`,
       )
       .setDescription(translateText)
       .setURL(message.url)
