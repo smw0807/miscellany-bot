@@ -54,23 +54,6 @@ export class DiscordContextMenuService {
         this.logger.error('Guild Command Error', e);
       }
     });
-    // await guild.commands.set([
-    //   {
-    //     // 아랍어로 번역
-    //     name: LanguageCommand.TranslageToArabic,
-    //     type: ApplicationCommandType.Message,
-    //   },
-    //   {
-    //     // 터키어로 번역
-    //     name: LanguageCommand.TranslageToTurkish,
-    //     type: ApplicationCommandType.Message,
-    //   },
-    //   {
-    //     // 폴란드어로 번역
-    //     name: LanguageCommand.TranslageToPolish,
-    //     type: ApplicationCommandType.Message,
-    //   },
-    // ]);
     this.logger.log('### [ Create Context Menu ] End ###');
   }
 
