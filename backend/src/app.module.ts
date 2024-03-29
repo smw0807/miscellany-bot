@@ -4,9 +4,10 @@ import { AppService } from './app.service';
 import { ConfigModule } from './config/config.module';
 import { DiscordModule } from './discord/discord.module';
 import { GoogleTranslateModule } from './google-translate/google.translate.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [ConfigModule, DiscordModule, GoogleTranslateModule],
+  imports: [ConfigModule, DiscordModule, GoogleTranslateModule, PrismaModule],
   controllers: [AppController],
   providers: [AppService],
 })
