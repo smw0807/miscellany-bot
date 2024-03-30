@@ -19,4 +19,5 @@ export const validationSchema = Joi.object({
   // SUPABASE
   SUPABASE_URL: Joi.string().required(),
   SUPABASE_API_KEY: Joi.string().required(),
+  SUPABASE_DISCORD_OAUTH2_URL: Joi.string().required(),
 });
