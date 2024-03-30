@@ -23,7 +23,7 @@ export class DiscordClientService {
       ],
     });
     // 봇 로그인
-    await this.client.login(this.config.DISCORD_TOKEN);
+    await this.client.login(this.config.discordToken);
   }
 
   get clientInstance() {

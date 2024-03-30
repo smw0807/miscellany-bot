@@ -8,7 +8,7 @@ export const validationSchema = Joi.object({
   APP_PORT: Joi.number().default(3000),
 
   // Discord
-  DISCORD_APPLICATION_ID: Joi.string().required(),
+  DISCORD_CLIENT_ID: Joi.string().required(),
   DISCORD_PUBLIC_KEY: Joi.string().required(),
   DISCORD_TOKEN: Joi.string().required(),
   DISCORD_URL: Joi.string().required(),

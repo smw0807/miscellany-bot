@@ -13,7 +13,7 @@ export class GoogleTranslateService {
     @Inject(googleTranslateConfig.KEY)
     private config: ConfigType<typeof googleTranslateConfig>,
   ) {
-    this.apiKey = this.config.GOOGLE_TRANSLATE_API_KEY;
+    this.apiKey = this.config.googleTranslateApiKey;
     this.translate = new Translate({
       key: this.apiKey,
     });
