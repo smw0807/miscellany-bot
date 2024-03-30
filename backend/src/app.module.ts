@@ -6,6 +6,7 @@ import { DiscordModule } from './discord/discord.module';
 import { GoogleTranslateModule } from './google-translate/google.translate.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { SupabaseModule } from './supabase/supabase.module';
+import { AuthController } from './auth/auth.controller';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { SupabaseModule } from './supabase/supabase.module';
     PrismaModule,
     SupabaseModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, AuthController],
   providers: [AppService],
 })
 export class AppModule {}
