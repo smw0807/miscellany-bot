@@ -15,4 +15,8 @@ export const validationSchema = Joi.object({
 
   // GOOGLE TRANSLATE
   GOOGLE_TRANSLATE_API_KEY: Joi.string().required(),
+
+  // SUPABASE
+  SUPABASE_URL: Joi.string().required(),
+  SUPABASE_API_KEY: Joi.string().required(),
 });
