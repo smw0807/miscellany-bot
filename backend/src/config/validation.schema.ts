@@ -11,7 +11,8 @@ export const validationSchema = Joi.object({
   DISCORD_CLIENT_ID: Joi.string().required(),
   DISCORD_PUBLIC_KEY: Joi.string().required(),
   DISCORD_TOKEN: Joi.string().required(),
-  DISCORD_URL: Joi.string().required(),
+  DISCORD_INSTALL_URL: Joi.string().required(),
+  DISCORD_REDIRECT_URL: Joi.string().required(),
 
   // GOOGLE TRANSLATE
   GOOGLE_TRANSLATE_API_KEY: Joi.string().required(),
@@ -19,5 +20,4 @@ export const validationSchema = Joi.object({
   // SUPABASE
   SUPABASE_URL: Joi.string().required(),
   SUPABASE_API_KEY: Joi.string().required(),
-  SUPABASE_DISCORD_OAUTH2_URL: Joi.string().required(),
 });
