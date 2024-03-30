@@ -41,3 +41,5 @@
    - https://supabase.com/docs/guides/api
    - Login with discord
      - https://supabase.com/docs/guides/auth/social-login/auth-discord
+5. Vuetify3
+   - https://vuetifyjs.com/en/
