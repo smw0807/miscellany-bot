@@ -1,6 +1,6 @@
 <script setup lang="ts">
 //pinia test
-import { useStore } from '../store';
+import { useStore } from '@/store';
 
 const store = useStore();
 </script>
