@@ -19,6 +19,11 @@ export default defineNuxtConfig({
       },
     },
   },
+  runtimeConfig: {
+    public: {
+      projectName: import.meta.env.PROJECT_NAME,
+    },
+  },
   devtools: {
     enabled: import.meta.env.NODE_ENV === 'development' ? true : false,
   },
