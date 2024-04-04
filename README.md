@@ -39,6 +39,7 @@
    - https://nuxt.com/docs/getting-started/introduction
    - Proxy 관련(Nitro RouteRules)
      - https://nitro.unjs.io/config#routerules
+     - https://jongmin4943.tistory.com/entry/Nuxt3-proxy-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0feat-Spring-API-%EC%84%9C%EB%B2%84
 4. supabase
    - https://supabase.com/docs
    - https://supabase.com/docs/guides/api
