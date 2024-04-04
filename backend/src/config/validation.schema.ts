@@ -6,6 +6,10 @@ export const validationSchema = Joi.object({
     .default('development'),
   PROJECT_NAME: Joi.string().required(),
   APP_PORT: Joi.number().default(3000),
+  // CORS
+  CORS_ORIGIN: Joi.string().required(),
+  CORS_METHODS: Joi.string().required(),
+  CORS_ALLOWED_HEADERS: Joi.string().required(),
 
   // Discord
   DISCORD_CLIENT_ID: Joi.string().required(),
