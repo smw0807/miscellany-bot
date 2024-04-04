@@ -19,8 +19,7 @@ export default defineNuxtConfig({
       },
     },
   },
-  devtools: { enabled: process.env.NODE_ENV === 'development' ? true : false },
-  devServer: {
-    port: 8080,
+  devtools: {
+    enabled: import.meta.env.NODE_ENV === 'development' ? true : false,
   },
 });
