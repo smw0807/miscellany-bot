@@ -1,10 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import {
+  AuthInvalidCredentialsError,
+  createClient,
+  SupabaseClient,
+} from '@supabase/supabase-js';
 import supabaseConfig from 'src/config/conf/supabase.config';
 
 @Injectable()
 export class SupabaseService {
+  private readonly logger = new Logger(SupabaseService.name);
   private supabase: SupabaseClient;
 
   constructor(
@@ -20,5 +25,19 @@ export class SupabaseService {
 
   getClient() {
     return this.supabase;
+  }
+
+  // 디스코드 로그인
+  async signInWithDiscord() {
+    const { data, error } = await this.supabase.auth.signInWithOAuth({
+      provider: 'discord',
+    });
+    if (error) {
+      this.logger.error('Failed to sign in with Discord', error);
+      throw new AuthInvalidCredentialsError(error.message);
+    }
+    this.logger.log('Successfully signed in with Discord');
+    this.logger.log(data);
+    return data.url;
   }
 }
