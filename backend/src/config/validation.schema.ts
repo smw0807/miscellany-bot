@@ -13,6 +13,7 @@ export const validationSchema = Joi.object({
 
   // Discord
   DISCORD_CLIENT_ID: Joi.string().required(),
+  DISCORD_CLIENT_SECRET: Joi.string().required(),
   DISCORD_PUBLIC_KEY: Joi.string().required(),
   DISCORD_TOKEN: Joi.string().required(),
   DISCORD_INSTALL_URL: Joi.string().required(),
