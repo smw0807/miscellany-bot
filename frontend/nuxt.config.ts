@@ -5,8 +5,8 @@ export default defineNuxtConfig({
     transpile: ['vuetify'],
   },
   modules: [
-    (_options, nuxt) => {
-      nuxt.hooks.hook('vite:extendConfig', (config) => {
+    (options: any, nuxt: any) => {
+      nuxt.hooks.hook('vite:extendConfig', (config: any) => {
         config.plugins?.push(vuetify({ autoImport: true }));
       });
     },
