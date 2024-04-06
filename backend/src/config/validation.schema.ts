@@ -5,6 +5,7 @@ export const validationSchema = Joi.object({
     .valid('development', 'production')
     .default('development'),
   PROJECT_NAME: Joi.string().required(),
+  SESSION_SECRET: Joi.string().required(),
   APP_PORT: Joi.number().default(3000),
   WEB_URL: Joi.string().required(),
   // CORS
