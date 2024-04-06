@@ -29,6 +29,8 @@
    - https://discord.com/developers/docs/intro
    - https://discordjs.guide/
    - https://discord.js.org/docs/packages/discord.js/14.14.1
+   - OAuth2
+     - https://discord.com/developers/docs/topics/oauth2
 2. Google Cloud
    - https://console.cloud.google.com/apis/dashboard?hl=ko
    1. Google Translate
