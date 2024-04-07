@@ -31,6 +31,8 @@
    - https://discord.js.org/docs/packages/discord.js/14.14.1
    - OAuth2
      - https://discord.com/developers/docs/topics/oauth2
+     - CSRF 공격 방지에 대한 내용
+       - https://discord.com/developers/docs/topics/oauth2#state-and-security
 2. Google Cloud
    - https://console.cloud.google.com/apis/dashboard?hl=ko
    1. Google Translate
@@ -45,8 +47,6 @@
 4. supabase
    - https://supabase.com/docs
    - https://supabase.com/docs/guides/api
-   - Login with discord
-     - https://supabase.com/docs/guides/auth/social-login/auth-discord
 5. Vuetify3
    - https://vuetifyjs.com/en/
 6. pinia
