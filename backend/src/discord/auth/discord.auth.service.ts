@@ -20,7 +20,7 @@ export class DiscordAuthService {
    * @param session
    * @returns
    */
-  redirectToDiscord(session: Record<string, any>) {
+  createLoginUrl(session: Record<string, any>) {
     const { dicordClientID } = this.discordConfig;
     /**
      * 디스코드 API에 요청할 권한
@@ -50,7 +50,7 @@ export class DiscordAuthService {
    * @param state 로그인 URL 생성할 때 만든 state 값
    * @returns
    */
-  async requestDiscordToken(
+  async requestToken(
     session: Record<string, any>,
     code: string,
     state: string,

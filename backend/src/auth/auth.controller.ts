@@ -18,12 +18,12 @@ export class AuthController {
 
   // 디스코드 로그인 URL 생성
   @Get('discord/login')
-  async redirectToDiscord(
+  async createDiscordLoginUrl(
     @Res() res: Response,
     @Session() session: Record<string, any>,
   ) {
     try {
-      const signinUrl = this.discordAuthService.redirectToDiscord(session);
+      const signinUrl = this.discordAuthService.createLoginUrl(session);
       res.send(signinUrl);
     } catch (e) {
       this.logger.error(e.message);
@@ -33,14 +33,14 @@ export class AuthController {
 
   // 디스코드 토큰 요청
   @Post('discord/token')
-  async getDiscordAccessToken(
+  async requestDisocorToken(
     @Res() res: Response,
     @Session() session: Record<string, any>,
     @Query('code') code: string,
     @Query('state') state: string,
   ) {
     try {
-      const accessToken = await this.discordAuthService.requestDiscordToken(
+      const accessToken = await this.discordAuthService.requestToken(
         session,
         code,
         state,
