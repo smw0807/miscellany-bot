@@ -7,13 +7,9 @@ import googleTranslateConfig from './conf/google.translate.config';
 import supabaseConfig from './conf/supabase.config';
 import corsConfig from './conf/cors.config';
 
-const developmentEnv = '.env.development';
-const productionEnv = '.env';
 @Module({
   imports: [
     NestConfigModule.forRoot({
-      envFilePath:
-        process.env.NODE_ENV === 'development' ? developmentEnv : productionEnv,
       load: [
         commonConfig,
         discordConfig,
