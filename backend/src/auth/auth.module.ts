@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
-import { SupabaseModule } from 'src/supabase/supabase.module';
+import { DiscordModule } from 'src/discord/discord.module';
 
 @Module({
-  imports: [SupabaseModule],
+  imports: [DiscordModule],
   controllers: [AuthController],
 })
 export class AuthModule {}
