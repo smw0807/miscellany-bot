@@ -5,10 +5,17 @@ export const validationSchema = Joi.object({
     .valid('development', 'production')
     .default('development'),
   PROJECT_NAME: Joi.string().required(),
+  SESSION_SECRET: Joi.string().required(),
   APP_PORT: Joi.number().default(3000),
+  WEB_URL: Joi.string().required(),
+  // CORS
+  CORS_ORIGIN: Joi.string().required(),
+  CORS_METHODS: Joi.string().required(),
+  CORS_ALLOWED_HEADERS: Joi.string().required(),
 
   // Discord
   DISCORD_CLIENT_ID: Joi.string().required(),
+  DISCORD_CLIENT_SECRET: Joi.string().required(),
   DISCORD_PUBLIC_KEY: Joi.string().required(),
   DISCORD_TOKEN: Joi.string().required(),
   DISCORD_INSTALL_URL: Joi.string().required(),

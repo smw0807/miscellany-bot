@@ -5,6 +5,7 @@ import { validationSchema } from './validation.schema';
 import discordConfig from './conf/discord.config';
 import googleTranslateConfig from './conf/google.translate.config';
 import supabaseConfig from './conf/supabase.config';
+import corsConfig from './conf/cors.config';
 
 const developmentEnv = '.env.development';
 const productionEnv = '.env';
@@ -18,6 +19,7 @@ const productionEnv = '.env';
         discordConfig,
         googleTranslateConfig,
         supabaseConfig,
+        corsConfig,
       ],
       isGlobal: true,
       validationSchema,

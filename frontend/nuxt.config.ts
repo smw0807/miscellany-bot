@@ -5,8 +5,8 @@ export default defineNuxtConfig({
     transpile: ['vuetify'],
   },
   modules: [
-    (_options, nuxt) => {
-      nuxt.hooks.hook('vite:extendConfig', (config) => {
+    (options: any, nuxt: any) => {
+      nuxt.hooks.hook('vite:extendConfig', (config: any) => {
         config.plugins?.push(vuetify({ autoImport: true }));
       });
     },
@@ -19,8 +19,16 @@ export default defineNuxtConfig({
       },
     },
   },
-  devtools: { enabled: true },
-  devServer: {
-    port: 8080,
+  runtimeConfig: {
+    public: {
+      projectName: import.meta.env.PROJECT_NAME,
+      accessTokenName: import.meta.env.ACCESS_TOKEN_NAME,
+      refreshTokenName: import.meta.env.REFRESH_TOKEN_NAME,
+      accessTokenExpires: import.meta.env.ACCESS_TOKEN_EXPIRES,
+      refreshTokenExpires: import.meta.env.REFRESH_TOKEN_EXPIRES,
+    },
+  },
+  devtools: {
+    enabled: import.meta.env.NODE_ENV === 'development' ? true : false,
   },
 });

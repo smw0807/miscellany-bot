@@ -1,10 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import supabaseConfig from 'src/config/conf/supabase.config';
 
 @Injectable()
 export class SupabaseService {
+  private readonly logger = new Logger(SupabaseService.name);
   private supabase: SupabaseClient;
 
   constructor(

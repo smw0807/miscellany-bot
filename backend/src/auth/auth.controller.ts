@@ -1,26 +1,53 @@
-import { Controller, Get, Inject, Logger, Res } from '@nestjs/common';
+import {
+  Controller,
+  ForbiddenException,
+  Get,
+  Logger,
+  Post,
+  Query,
+  Res,
+  Session,
+} from '@nestjs/common';
 import { Response } from 'express';
-import { ConfigType } from '@nestjs/config';
-import DiscordConfig from 'src/config/conf/discord.config';
-import SupabaseConfig from 'src/config/conf/supabase.config';
+import { DiscordAuthService } from 'src/discord/auth/discord.auth.service';
 
 @Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
-  constructor(
-    @Inject(DiscordConfig.KEY)
-    private readonly discordConfig: ConfigType<typeof DiscordConfig>,
-    @Inject(SupabaseConfig.KEY)
-    private readonly supabaseConfig: ConfigType<typeof SupabaseConfig>,
-  ) {}
+  constructor(private readonly discordAuthService: DiscordAuthService) {}
 
-  @Get('discord-login')
-  redirectToDiscord(@Res() res: Response) {
-    this.logger.log('Redirecting to Discord login');
-    const discordClientID = this.discordConfig.dicordClientID;
-    const authLoginUrl = this.discordConfig.discordRedirectUrl;
-    const discordLoginUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordClientID}&redirect_uri=${authLoginUrl}&response_type=code`;
+  // 디스코드 로그인 URL 생성
+  @Get('discord/login')
+  async createDiscordLoginUrl(
+    @Res() res: Response,
+    @Session() session: Record<string, any>,
+  ) {
+    try {
+      const signinUrl = this.discordAuthService.createLoginUrl(session);
+      res.send(signinUrl);
+    } catch (e) {
+      this.logger.error(e.message);
+      res.status(400).send(e.message);
+    }
+  }
 
-    res.redirect(discordLoginUrl);
+  // 디스코드 토큰 요청
+  @Post('discord/token')
+  async requestDisocorToken(
+    @Res() res: Response,
+    @Session() session: Record<string, any>,
+    @Query('code') code: string,
+    @Query('state') state: string,
+  ) {
+    try {
+      const accessToken = await this.discordAuthService.requestToken(
+        session,
+        code,
+        state,
+      );
+      res.send(accessToken);
+    } catch (e) {
+      res.status(403).send(new ForbiddenException('Invalid state'));
+    }
   }
 }
