@@ -3,8 +3,8 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import DiscordConfig from 'src/config/conf/discord.config';
 import { DISCORD_API_URL } from 'src/constants/discord-api-url';
-import { randomBytes } from 'crypto';
 import { map } from 'rxjs';
+import { generateRandomString } from 'src/utils/crypto-utils';
 
 @Injectable()
 export class DiscordAuthService {
@@ -33,7 +33,7 @@ export class DiscordAuthService {
      * 공식문서에서 보안을 위해 사용하라고 권장
      * https://discord.com/developers/docs/topics/oauth2#state-and-security
      */
-    const state = this.generateRandomString();
+    const state = generateRandomString();
     session.state = state;
 
     // 정상적으로 로그인이 완료되면 리다이렉트 될 URL
@@ -87,9 +87,5 @@ export class DiscordAuthService {
       this.logger.error(e.message);
       throw new Error('Failed to get token');
     }
-  }
-
-  private generateRandomString() {
-    return randomBytes(16).toString('hex');
   }
 }
