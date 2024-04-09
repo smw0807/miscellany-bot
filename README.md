@@ -17,11 +17,13 @@
 ## Front-End
 
 - NuxtJS [3.10.3]
+- Vuetify [3.5.13]
 
 ## Back-End
 
 - NestJS [10.3.2]
 - Discord.js [14.14.1]
+- @supabase/supabase-js [2.42.0]
 
 # 참고 URL
 
