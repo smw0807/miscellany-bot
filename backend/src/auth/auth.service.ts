@@ -3,7 +3,6 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import DiscordConfig from 'src/config/conf/discord.config';
 import { DISCORD_API_URL, DISCORD_GRANT_TYPE } from 'src/constants/discord-api';
-import { map } from 'rxjs';
 import { generateRandomString } from 'src/utils/crypto-utils';
 
 @Injectable()
@@ -70,18 +69,14 @@ export class AuthService {
         redirect_uri: this.discordConfig.discordRedirectUrl,
       };
 
-      const response = await this.httpService
-        .post(
-          DISCORD_API_URL.OAUTH2_TOKEN,
-          new URLSearchParams(params).toString(),
-          {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-          },
-        )
-        .pipe(map((response) => response.data))
-        .toPromise();
+      const response = await this.httpService.axiosRef({
+        method: 'POST',
+        url: DISCORD_API_URL.OAUTH2_TOKEN,
+        data: new URLSearchParams(params).toString(),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
       return response;
     } catch (e) {
       this.logger.error(e.message);
@@ -109,7 +104,7 @@ export class AuthService {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
-      console.log('response', response);
+      return response;
     } catch (e) {
       this.logger.error(e.message);
       throw new Error('Failed to refresh token');
