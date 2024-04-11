@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import DiscordConfig from 'src/config/conf/discord.config';
-import { DISCORD_API_URL } from 'src/constants/discord-api-url';
+import { DISCORD_API_URL, DISCORD_GRANT_TYPE } from 'src/constants/discord-api';
 import { map } from 'rxjs';
 import { generateRandomString } from 'src/utils/crypto-utils';
 
@@ -65,7 +65,7 @@ export class DiscordAuthService {
       const params = {
         client_id: this.discordConfig.dicordClientID,
         client_secret: this.discordConfig.discordClientSecret,
-        grant_type: 'authorization_code',
+        grant_type: DISCORD_GRANT_TYPE.AUTHORIZATION_CODE,
         code: code,
         redirect_uri: this.discordConfig.discordRedirectUrl,
       };
@@ -86,6 +86,33 @@ export class DiscordAuthService {
     } catch (e) {
       this.logger.error(e.message);
       throw new Error('Failed to get token');
+    }
+  }
+
+  /**
+   * [디스코드 토큰 갱신]
+   * @param refreshToken
+   */
+  async refreshToken(refreshToken: string) {
+    try {
+      const params = {
+        client_id: this.discordConfig.dicordClientID,
+        client_secret: this.discordConfig.discordClientSecret,
+        grant_type: DISCORD_GRANT_TYPE.REFRESH_TOKEN,
+        refresh_token: refreshToken,
+      };
+      const response = await this.httpService.axiosRef({
+        method: 'POST',
+        url: DISCORD_API_URL.OAUTH2_TOKEN,
+        data: new URLSearchParams(params).toString(),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      console.log('response', response);
+    } catch (e) {
+      this.logger.error(e.message);
+      throw new Error('Failed to refresh token');
     }
   }
 }
