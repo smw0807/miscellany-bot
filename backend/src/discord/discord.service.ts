@@ -1,12 +1,10 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DiscordClientService } from './client/discord.client.service';
 import { Client } from 'discord.js';
 import { DiscordContextMenuService } from './commands/discord.contextMenu.service';
 import { DiscordMessageService } from './messages/discord.message.service';
 import { HttpService } from '@nestjs/axios';
-import DiscordConfig from 'src/config/conf/discord.config';
-import { ConfigType } from '@nestjs/config';
-import { DISCORD_API_URL } from 'src/constants/discord-api-url';
+import { DISCORD_API_URL } from 'src/constants/discord-api';
 
 @Injectable()
 export class DiscordService {
@@ -17,8 +15,6 @@ export class DiscordService {
     private readonly contextMenuService: DiscordContextMenuService,
     private readonly messageService: DiscordMessageService,
     private readonly httpService: HttpService,
-    @Inject(DiscordConfig.KEY)
-    private readonly discordConfig: ConfigType<typeof DiscordConfig>,
   ) {
     // 디스코드 봇 클라이언트 서비스 실행
     this.clientService.setupDiscordBot();
