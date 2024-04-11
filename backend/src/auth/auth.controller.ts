@@ -1,6 +1,5 @@
 import {
   Controller,
-  ForbiddenException,
   Get,
   Logger,
   Post,
@@ -47,7 +46,20 @@ export class AuthController {
       );
       res.send(accessToken);
     } catch (e) {
-      res.status(403).send(new ForbiddenException('Invalid state'));
+      res.status(403).send('Invalid state');
+    }
+  }
+
+  @Post('discord/refresh-token')
+  async refreshDiscordToken(
+    @Res() res: Response,
+    @Query('refresh_token') refreshToken: string,
+  ) {
+    try {
+      const token = await this.discordAuthService.refreshToken(refreshToken);
+      res.send(token);
+    } catch (e) {
+      res.status(403).send('Invalid refresh token');
     }
   }
 }
