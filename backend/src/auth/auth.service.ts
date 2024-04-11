@@ -7,8 +7,8 @@ import { map } from 'rxjs';
 import { generateRandomString } from 'src/utils/crypto-utils';
 
 @Injectable()
-export class DiscordAuthService {
-  private readonly logger = new Logger(DiscordAuthService.name);
+export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
     @Inject(DiscordConfig.KEY)
     private readonly discordConfig: ConfigType<typeof DiscordConfig>,

@@ -8,12 +8,12 @@ import {
   Session,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { DiscordAuthService } from 'src/discord/auth/discord.auth.service';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
-  constructor(private readonly discordAuthService: DiscordAuthService) {}
+  constructor(private readonly discordAuthService: AuthService) {}
 
   // 디스코드 로그인 URL 생성
   @Get('discord/login')

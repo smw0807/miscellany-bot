@@ -6,7 +6,7 @@ import { DiscordContextMenuService } from './commands/discord.contextMenu.servic
 import { DiscordMessageService } from './messages/discord.message.service';
 import { HttpModule } from '@nestjs/axios';
 import { DiscordController } from './discord.controller';
-import { DiscordAuthService } from './auth/discord.auth.service';
+import { DiscordAuthService } from '../auth/auth.service';
 
 @Module({
   providers: [
