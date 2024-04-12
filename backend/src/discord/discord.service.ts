@@ -5,6 +5,7 @@ import { DiscordContextMenuService } from './commands/discord.contextMenu.servic
 import { DiscordMessageService } from './messages/discord.message.service';
 import { HttpService } from '@nestjs/axios';
 import { DISCORD_API_URL } from 'src/constants/discord-api';
+import { map } from 'rxjs';
 
 @Injectable()
 export class DiscordService {
@@ -37,20 +38,35 @@ export class DiscordService {
   }
 
   /**
-   * 사용자 길드 목록 가져오기(디스코드 채널)
+   * 관리중인 길드 목록 가져오기(디스코드 채널)
    * @param accessToken
    * @returns
    */
-  async getUserGuilds(accessToken: string) {
-    const response = await this.httpService.axiosRef.get(
-      DISCORD_API_URL.GUILDS,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
+  async getOwnerGuilds(accessToken: string) {
+    try {
+      const response = await this.httpService
+        .get(DISCORD_API_URL.GUILDS, {
+          headers: {
+            Authorization: accessToken,
+            'Content-Type': 'application/json',
+          },
+        })
+        .pipe(map((response) => response.data))
+        .toPromise();
 
-    return response.data;
+      // 내가 관리중인 것만
+      const guilds = response
+        .filter((guild) => guild.owner === true)
+        .map((guild) => ({
+          ...guild,
+          icon: guild.icon
+            ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
+            : null,
+        }));
+      return guilds;
+    } catch (e) {
+      this.logger.error('getUserGuilds Error: ', e.message);
+      throw new Error(e.message);
+    }
   }
 }
