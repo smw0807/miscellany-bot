@@ -26,7 +26,7 @@ export class AuthService {
      * 디스코드 API에 요청할 권한
      * https://discord.com/developers/docs/topics/oauth2#shared-resources-oauth2-scopes
      */
-    const scope = encodeURIComponent('email guilds');
+    const scope = encodeURIComponent('identify email guilds');
 
     /**
      * CSRF 공격을 방지하기 위해 사용// 1회성 랜덤 문자열임
