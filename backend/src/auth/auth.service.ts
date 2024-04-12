@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
+import { map } from 'rxjs';
 import DiscordConfig from 'src/config/conf/discord.config';
 import { DISCORD_API_URL, DISCORD_GRANT_TYPE } from 'src/constants/discord-api';
 import { generateRandomString } from 'src/utils/crypto-utils';
@@ -68,18 +69,20 @@ export class AuthService {
         code: code,
         redirect_uri: this.discordConfig.discordRedirectUrl,
       };
-
-      const response = await this.httpService.axiosRef({
-        method: 'POST',
-        url: DISCORD_API_URL.OAUTH2_TOKEN,
-        data: new URLSearchParams(params).toString(),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      });
+      const response = await this.httpService
+        .post(
+          DISCORD_API_URL.OAUTH2_TOKEN,
+          new URLSearchParams(params).toString(),
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          },
+        )
+        .pipe(map((response) => response.data))
+        .toPromise();
       return response;
     } catch (e) {
-      this.logger.error(e.message);
       throw new Error('Failed to get token');
     }
   }
@@ -96,14 +99,18 @@ export class AuthService {
         grant_type: DISCORD_GRANT_TYPE.REFRESH_TOKEN,
         refresh_token: refreshToken,
       };
-      const response = await this.httpService.axiosRef({
-        method: 'POST',
-        url: DISCORD_API_URL.OAUTH2_TOKEN,
-        data: new URLSearchParams(params).toString(),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      });
+      const response = await this.httpService
+        .post(
+          DISCORD_API_URL.OAUTH2_TOKEN,
+          new URLSearchParams(params).toString(),
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          },
+        )
+        .pipe(map((response) => response.data))
+        .toPromise();
       return response;
     } catch (e) {
       this.logger.error(e.message);

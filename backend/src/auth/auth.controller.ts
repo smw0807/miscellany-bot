@@ -46,6 +46,7 @@ export class AuthController {
       );
       res.send(accessToken);
     } catch (e) {
+      this.logger.error('requestDisocorToken Error', e.message);
       res.status(403).send('Invalid state');
     }
   }
@@ -59,6 +60,7 @@ export class AuthController {
       const token = await this.discordAuthService.refreshToken(refreshToken);
       res.send(token);
     } catch (e) {
+      this.logger.error('refreshDiscordToken Error', e.message);
       res.status(403).send('Invalid refresh token');
     }
   }
