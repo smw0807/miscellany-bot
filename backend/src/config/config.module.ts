@@ -10,6 +10,7 @@ import corsConfig from './conf/cors.config';
 @Module({
   imports: [
     NestConfigModule.forRoot({
+      envFilePath: process.env.NODE_ENV === 'development' ? '.env.dev' : '.env',
       load: [
         commonConfig,
         discordConfig,
