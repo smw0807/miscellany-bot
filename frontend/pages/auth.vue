@@ -7,6 +7,9 @@
  *
  * 이렇게 처리한 이유는 url상에 code, state를 노출시키지 않기 위해 이 페이지를 거쳐가게 함
  */
+import { ref } from 'vue';
+import type { Ref } from 'vue';
+
 definePageMeta({
   layout: 'login',
 });
@@ -15,6 +18,11 @@ const route = useRoute();
 const router = useRouter();
 const auth = useAuth();
 
+// 토큰정보가 있으면 이전 페이지로 이동
+if (auth.hasToken()) {
+  router.push('/');
+}
+
 // 디스코드로부터 받은 code
 const code = route.query.code;
 const state = route.query.state;
@@ -22,6 +30,15 @@ if (!code && !state) {
   console.warn('code, state 없음');
   router.push('/login');
 }
+
+// 요청 처리 상태
+const isFinished: Ref<boolean> = ref(false);
+// 에러 여부
+const isError: Ref<boolean> = ref(false);
+
+const iconName: Ref<string> = ref('mdi-check-circle');
+const iconColor: Ref<string> = ref('success');
+
 // 토큰 정보 요청
 const requestDiscordToken = async () => {
   try {
@@ -39,20 +56,69 @@ const requestDiscordToken = async () => {
     router.push('/');
   } catch (e) {
     console.error(e);
-    router.push('/login');
+    iconName.value = 'mdi-close-circle';
+    iconColor.value = 'error';
   }
+  isFinished.value = true;
 };
-requestDiscordToken();
+setTimeout(() => {
+  requestDiscordToken();
+}, 3000);
+
+const login = () => {
+  router.replace('/login');
+};
 </script>
 <template>
-  <v-container>
-    <v-row justify="center">
-      <v-col class="text-center" cols="6">
-        <v-card variant="tonal">
-          <v-card-title>디스코드 인증 확인 중</v-card-title>
-          <v-card-text> 잠시만 기다려주세요.... </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-sheet
+    class="pa-4 text-center mx-auto"
+    elevation="12"
+    max-width="600"
+    rounded="lg"
+    width="100%"
+  >
+    <v-progress-circular
+      v-if="!isFinished"
+      :size="100"
+      color="primary"
+      class="mb-5"
+      indeterminate
+    ></v-progress-circular>
+    <v-icon
+      v-else
+      class="mb-5"
+      :color="iconColor"
+      :icon="iconName"
+      size="112"
+    ></v-icon>
+
+    <div v-if="isError">
+      <h2 class="text-h5 mb-3">로그인에 실패했습니다.</h2>
+      <p class="mb-4 text-medium-emphasis text-body-2">
+        다시 로그인을 시도해주세요.
+        <br />
+        아래 버튼을 클릭하면 다시 로그인 페이지로 이동합니다.
+      </p>
+    </div>
+    <div v-else>
+      <h2 class="text-h5 mb-3">로그인 인증 중입니다.</h2>
+      <p class="mb-4 text-medium-emphasis text-body-2">
+        인증이 완료되면 메인 페이지로 이동합니다.
+        <br />
+        잠시만 기다려주세요!
+      </p>
+    </div>
+
+    <div class="text-end" v-if="isError">
+      <v-divider class="mb-4"></v-divider>
+      <v-btn
+        class="text-none"
+        color="indigo-darken-1"
+        variant="flat"
+        @click="login"
+      >
+        다시 로그인하기
+      </v-btn>
+    </div>
+  </v-sheet>
 </template>
