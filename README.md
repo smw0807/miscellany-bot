@@ -51,5 +51,9 @@
    - https://supabase.com/docs/guides/api
 5. Vuetify3
    - https://vuetifyjs.com/en/
+   - color
+     - https://vuetifyjs.com/en/styles/colors/#material-colors
+   - sheet
+     - https://vuetifyjs.com/en/components/sheets/#usage
 6. pinia
    - https://pinia.vuejs.org/
