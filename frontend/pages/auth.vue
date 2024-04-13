@@ -53,7 +53,7 @@ const requestDiscordToken = async () => {
       },
     });
     auth.saveToken(result);
-    router.push('/');
+    setTimeout(() => router.push('/'), 3000);
   } catch (e) {
     console.error(e);
     iconName.value = 'mdi-close-circle';
@@ -61,9 +61,7 @@ const requestDiscordToken = async () => {
   }
   isFinished.value = true;
 };
-setTimeout(() => {
-  requestDiscordToken();
-}, 3000);
+requestDiscordToken();
 
 const login = () => {
   router.replace('/login');
