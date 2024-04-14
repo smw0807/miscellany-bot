@@ -56,6 +56,7 @@ const requestDiscordToken = async () => {
     setTimeout(() => router.push('/'), 3000);
   } catch (e) {
     console.error(e);
+    isError.value = true;
     iconName.value = 'mdi-close-circle';
     iconColor.value = 'error';
   }
