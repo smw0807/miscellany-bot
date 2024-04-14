@@ -35,6 +35,8 @@ if (!code && !state) {
 
 // 요청 처리 상태
 const isFinished: Ref<boolean> = ref(false);
+// 요청 성공 여부
+const isSuccess: Ref<boolean> = ref(false);
 // 에러 여부
 const isError: Ref<boolean> = ref(false);
 
@@ -46,7 +48,8 @@ const requestDiscordToken = async () => {
   try {
     const result = await authStore.discordToken(code, state);
     auth.saveToken(result);
-    setTimeout(() => router.push('/'), 13000);
+    isSuccess.value = true;
+    setTimeout(() => router.push('/'), 3000);
   } catch (e) {
     isError.value = true;
     iconName.value = 'mdi-close-circle';
@@ -85,6 +88,7 @@ const login = () => {
     ></v-icon>
 
     <div v-if="isError">
+      <!-- 인증 실패 시 -->
       <h2 class="text-h5 mb-3">로그인에 실패했습니다.</h2>
       <p class="mb-4 text-medium-emphasis text-body-2">
         다시 로그인을 시도해주세요.
@@ -92,7 +96,17 @@ const login = () => {
         아래 버튼을 클릭하면 다시 로그인 페이지로 이동합니다.
       </p>
     </div>
+    <div v-else-if="isSuccess">
+      <!-- 정상적으로 성공 시 -->
+      <h2 class="text-h5 mb-3">로그인 인증 완료.</h2>
+      <p class="mb-4 text-medium-emphasis text-body-2">
+        잠시후 메인화면으로 이동합니다.
+        <br />
+        잠시만 기다려주세요!
+      </p>
+    </div>
     <div v-else>
+      <!-- 인증 대기 중 -->
       <h2 class="text-h5 mb-3">로그인 인증 중입니다.</h2>
       <p class="mb-4 text-medium-emphasis text-body-2">
         인증이 완료되면 메인 페이지로 이동합니다.
