@@ -5,6 +5,7 @@
  */
 import { ref } from 'vue';
 import type { Ref } from 'vue';
+import { useAuthStore } from '~/store/auth';
 
 definePageMeta({
   layout: 'login',
@@ -20,9 +21,9 @@ const config = useRuntimeConfig();
 
 const projectName: Ref<string> = ref(config.public.projectName);
 
+const authStore = useAuthStore();
 const login = async () => {
-  const result = await $fetch('/api/auth/discord/login');
-  window.location.href = result as string;
+  window.location.href = await authStore.discordLogin();
 };
 </script>
 <template>

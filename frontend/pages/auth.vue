@@ -9,6 +9,7 @@
  */
 import { ref } from 'vue';
 import type { Ref } from 'vue';
+import { useAuthStore } from '~/store/auth';
 
 definePageMeta({
   layout: 'login',
@@ -17,6 +18,7 @@ definePageMeta({
 const route = useRoute();
 const router = useRouter();
 const auth = useAuth();
+const authStore = useAuthStore();
 
 // 토큰정보가 있으면 이전 페이지로 이동
 if (auth.hasToken()) {
@@ -24,8 +26,8 @@ if (auth.hasToken()) {
 }
 
 // 디스코드로부터 받은 code
-const code = route.query.code;
-const state = route.query.state;
+const code = route.query.code as string;
+const state = route.query.state as string;
 if (!code && !state) {
   console.warn('code, state 없음');
   router.push('/login');
@@ -42,20 +44,10 @@ const iconColor: Ref<string> = ref('success');
 // 토큰 정보 요청
 const requestDiscordToken = async () => {
   try {
-    const result = await $fetch<DiscordTokenType>('/api/auth/discord/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      params: {
-        code,
-        state,
-      },
-    });
+    const result = await authStore.discordToken(code, state);
     auth.saveToken(result);
-    setTimeout(() => router.push('/'), 3000);
+    setTimeout(() => router.push('/'), 13000);
   } catch (e) {
-    console.error(e);
     isError.value = true;
     iconName.value = 'mdi-close-circle';
     iconColor.value = 'error';
@@ -64,6 +56,7 @@ const requestDiscordToken = async () => {
 };
 requestDiscordToken();
 
+// 로그인 페이지로 이동
 const login = () => {
   router.replace('/login');
 };
@@ -108,6 +101,7 @@ const login = () => {
       </p>
     </div>
 
+    <!-- 인증 실패 시 다시 로그인 하도록 버튼 활성화 -->
     <div class="text-end" v-if="isError">
       <v-divider class="mb-4"></v-divider>
       <v-btn
