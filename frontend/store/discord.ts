@@ -7,6 +7,7 @@ export type DiscordGuildsType = {
   owner: boolean;
   permissions: string;
   features: string[];
+  hasBot?: boolean;
 };
 
 export const useDiscordStore = defineStore('discord', () => {
