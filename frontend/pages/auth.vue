@@ -49,17 +49,12 @@ const requestDiscordToken = async () => {
   try {
     const result = await authStore.discordToken(code, state);
     auth.saveToken(result);
-    titleText.value = '로그인 인증 완료.';
-    bodyText.value =
-      '잠시후 메인화면으로 이동합니다.<br />잠시만 기다려주세요!';
-    setTimeout(() => router.push('/'), 10000);
+    changeText('success');
+    setTimeout(() => router.push('/'), 3000);
   } catch (e) {
     isError.value = true;
-    iconName.value = 'mdi-close-circle';
-    iconColor.value = 'error';
-    titleText.value = '로그인에 실패했습니다.';
-    bodyText.value =
-      '다시 로그인을 시도해주세요.<br />아래 버튼을 클릭하면 다시 로그인 페이지로 이동합니다.';
+    changeIcon();
+    changeText('error');
   }
   isProcessing.value = false;
 };
@@ -68,6 +63,25 @@ requestDiscordToken();
 // 로그인 페이지로 이동
 const login = () => {
   router.replace('/login');
+};
+
+// 화면 문구 변경
+const changeText = (type: 'success' | 'error') => {
+  if (type === 'success') {
+    titleText.value = '로그인 인증 완료.';
+    bodyText.value =
+      '잠시후 메인화면으로 이동합니다.<br />잠시만 기다려주세요!';
+  } else if (type === 'error') {
+    titleText.value = '로그인에 실패했습니다.';
+    bodyText.value =
+      '다시 로그인을 시도해주세요.<br />아래 버튼을 클릭하면 다시 로그인 페이지로 이동합니다.';
+  }
+};
+
+// 화면 아이콘 변경
+const changeIcon = () => {
+  iconName.value = 'mdi-close-circle';
+  iconColor.value = 'error';
 };
 </script>
 <template>
