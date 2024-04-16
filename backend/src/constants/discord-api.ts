@@ -21,3 +21,7 @@ export enum DISCORD_GRANT_TYPE {
   ACCESS_TOKEN = 'access_token',
   REFRESH_TOKEN = 'refresh_token',
 }
+/**
+ * GUILDS
+ * https://discord.com/developers/docs/activities/building-an-activity#step-7-use-the-api-to-fetch-the-guild
+ */

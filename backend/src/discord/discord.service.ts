@@ -7,7 +7,7 @@ import { HttpService } from '@nestjs/axios';
 import { DISCORD_API_URL } from 'src/constants/discord-api';
 import { map } from 'rxjs';
 
-type DiscordGuildType = {
+type DiscordGuildsType = {
   id: string;
   name: string;
   icon: string;
@@ -73,7 +73,7 @@ export class DiscordService {
         .toPromise();
 
       // 내가 관리중인 것만
-      const guilds: DiscordGuildType[] = response
+      const guilds: DiscordGuildsType[] = response
         .filter((guild) => guild.owner === true)
         .map((guild) => ({
           ...guild,
