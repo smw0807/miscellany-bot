@@ -82,7 +82,6 @@ export class DiscordService {
             : null,
           hasBot: this.isBotAdded(guild.id),
         }));
-      console.log(guilds);
       return guilds;
     } catch (e) {
       this.logger.error('getUserGuilds Error: ', e.message);
