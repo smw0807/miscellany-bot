@@ -17,7 +17,8 @@
 ## Front-End
 
 - NuxtJS [3.10.3]
-- Vuetify [3.5.13]
+- Vuetify3 [3.5.13]
+- pinia [2.1.7]
 
 ## Back-End
 
@@ -28,32 +29,33 @@
 # 참고 URL
 
 1. Discord.js
-   - https://discord.com/developers/docs/intro
    - https://discordjs.guide/
    - https://discord.js.org/docs/packages/discord.js/14.14.1
+2. 디스코드 공식문서
+   - https://discord.com/developers/docs/intro
    - OAuth2
      - https://discord.com/developers/docs/topics/oauth2
      - CSRF 공격 방지에 대한 내용
        - https://discord.com/developers/docs/topics/oauth2#state-and-security
-2. Google Cloud
+3. Google Cloud
    - https://console.cloud.google.com/apis/dashboard?hl=ko
    1. Google Translate
       - https://cloud.google.com/translate/docs/setup?hl=ko
       - v2 버전과 v3 비교 설명 (https://cloud.google.com/translate/docs/editions?hl=ko)
         - 디스코드 채팅 내용을 번역할 예정이기 때문에 v2를 선택함
-3. NuxtJS
+4. NuxtJS
    - https://nuxt.com/docs/getting-started/introduction
    - Proxy 관련(Nitro RouteRules)
      - https://nitro.unjs.io/config#routerules
      - https://jongmin4943.tistory.com/entry/Nuxt3-proxy-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0feat-Spring-API-%EC%84%9C%EB%B2%84
-4. supabase
+5. supabase
    - https://supabase.com/docs
    - https://supabase.com/docs/guides/api
-5. Vuetify3
+6. Vuetify3
    - https://vuetifyjs.com/en/
    - color
      - https://vuetifyjs.com/en/styles/colors/#material-colors
    - sheet
      - https://vuetifyjs.com/en/components/sheets/#usage
-6. pinia
+7. pinia
    - https://pinia.vuejs.org/
