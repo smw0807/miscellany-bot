@@ -7,6 +7,15 @@ import { HttpService } from '@nestjs/axios';
 import { DISCORD_API_URL } from 'src/constants/discord-api';
 import { map } from 'rxjs';
 
+type DiscordGuildType = {
+  id: string;
+  name: string;
+  icon: string;
+  owner: boolean;
+  permissions: string;
+  features: string[];
+  hasBot?: boolean;
+};
 @Injectable()
 export class DiscordService {
   private readonly logger = new Logger(DiscordService.name);
@@ -38,6 +47,15 @@ export class DiscordService {
   }
 
   /**
+   * 봇이 길드에 추가되었는지 확인
+   * @param guildId 길드 아이디
+   * @returns
+   */
+  isBotAdded(guildId: string): boolean {
+    return this.client.guilds.cache.has(guildId);
+  }
+
+  /**
    * 관리중인 길드 목록 가져오기(디스코드 채널)
    * @param accessToken
    * @returns
@@ -55,14 +73,16 @@ export class DiscordService {
         .toPromise();
 
       // 내가 관리중인 것만
-      const guilds = response
+      const guilds: DiscordGuildType[] = response
         .filter((guild) => guild.owner === true)
         .map((guild) => ({
           ...guild,
           icon: guild.icon
             ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`
             : null,
+          hasBot: this.isBotAdded(guild.id),
         }));
+      console.log(guilds);
       return guilds;
     } catch (e) {
       this.logger.error('getUserGuilds Error: ', e.message);
