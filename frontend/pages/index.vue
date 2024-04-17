@@ -12,8 +12,9 @@ const cGuilds = computed<DiscordGuildsType[]>(() => discordStore.guilds);
 
 // 관리 페이지로 이동
 const moveAdminPage = (guild: DiscordGuildsType) => {
-  console.log('관리 페이지로 이동');
-  console.log(guild);
+  // 서버 정보를 localStorage에 저장, 스토어는 새로고침 시 사라지기 때문에 로컬스토리지를 쓰는게 좋을 것 같음.
+  localStorage.setItem(config.public.discordStorageName, JSON.stringify(guild));
+  // todo 관리 페이지로 이동
 };
 </script>
 <template>
