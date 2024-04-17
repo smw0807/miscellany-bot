@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import { useDiscordStore, type DiscordGuildsType } from '~/store/discord';
 
+const config = useRuntimeConfig();
+// 디스코드 봇 설치 URL
+const botInstallUrl = config.public.discordInstallUrl;
+
 const discordStore = useDiscordStore();
 
 // 관리중인 서버 목록
 const cGuilds = computed<DiscordGuildsType[]>(() => discordStore.guilds);
+
+// 관리 페이지로 이동
+const moveAdminPage = (guild: DiscordGuildsType) => {
+  console.log('관리 페이지로 이동');
+  console.log(guild);
+};
 </script>
 <template>
   <v-container>
@@ -16,14 +26,34 @@ const cGuilds = computed<DiscordGuildsType[]>(() => discordStore.guilds);
           :title="guild.name"
         >
           <template v-slot:prepend>
-            <v-avatar v-if="guild.icon">
+            <v-avatar v-if="guild.icon" size="60">
               <v-img :alt="guild.icon" :src="guild.icon"></v-img>
             </v-avatar>
-            <v-avatar v-else color="blue-darken-2"></v-avatar>
+            <v-avatar v-else size="60" color="blue-darken-2"></v-avatar>
           </template>
-          <v-card-text
-            >TODO:봇 추가 버튼 또는 관리자 페이지 이동 버튼</v-card-text
-          >
+          <v-card-text class="text-right">
+            <v-btn
+              v-if="!guild.hasBot"
+              class="me-2 text-none"
+              color="blue-darken-4"
+              prepend-icon="mdi-plus-thick"
+              variant="flat"
+              :href="botInstallUrl"
+              target="_blank"
+            >
+              봇 추가
+            </v-btn>
+            <v-btn
+              v-else
+              class="me-2 text-none"
+              color="red-accent-2"
+              prepend-icon="mdi-lock-open"
+              variant="flat"
+              @click="moveAdminPage(guild)"
+            >
+              관리
+            </v-btn>
+          </v-card-text>
         </v-card>
       </v-col>
     </v-row>
