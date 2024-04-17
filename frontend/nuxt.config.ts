@@ -27,6 +27,7 @@ export default defineNuxtConfig({
       accessTokenExpires: import.meta.env.ACCESS_TOKEN_EXPIRES,
       refreshTokenExpires: import.meta.env.REFRESH_TOKEN_EXPIRES,
       discordInstallUrl: import.meta.env.DISCORD_INSTALL_URL,
+      discordStorageName: import.meta.env.DISCORD_GUILD_STORAGE_NAME,
     },
   },
   devtools: {
