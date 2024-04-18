@@ -48,7 +48,7 @@ const currentPageName = computed(() => router.currentRoute.value.name);
       </template>
     </v-app-bar>
 
-    <v-main class="d-flex align-center justify-center">
+    <v-main class="d-flex align-center">
       <slot />
     </v-main>
   </v-layout>
