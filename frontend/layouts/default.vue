@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useDiscordStore, type DiscordGuildsType } from '~/store/discord';
+import { useDiscordStore } from '~/store/discord';
 
 const config = useRuntimeConfig();
 const projectName: Ref<string> = ref(config.public.projectName);
@@ -13,7 +13,6 @@ if (hasToken()) {
   const getGuilds = async () => {
     await discordStore.requestGuilds();
   };
-
   onMounted(async () => {
     if (discordStore.guilds.length === 0) {
       await getGuilds();
@@ -21,7 +20,6 @@ if (hasToken()) {
   });
 } else {
   // 토큰이 없을 경우 로그인 페이지로 이동
-
   console.warn('로그인이 필요합니다.');
   router.push('/login');
 }
