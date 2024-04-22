@@ -4,6 +4,7 @@ import { type DiscordGuildsType } from '~/store/discord';
 import Header from '~/components/header.vue';
 
 const config = useRuntimeConfig();
+const router = useRouter();
 
 // 서버 정보
 const guild: Ref<DiscordGuildsType> = ref({} as DiscordGuildsType);
@@ -34,6 +35,7 @@ onMounted(() => {
         <v-list-item
           prepend-icon="mdi-home-city"
           title="서버에 메시지 보내기"
+          @click="router.push('/manage/sendMessage')"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-account"
@@ -47,7 +49,9 @@ onMounted(() => {
     </v-navigation-drawer>
 
     <v-main class="d-flex align-center">
-      <slot />
+      <v-container>
+        <slot />
+      </v-container>
     </v-main>
   </v-layout>
 </template>
