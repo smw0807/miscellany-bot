@@ -17,7 +17,7 @@ const currentPageName = computed(() => router.currentRoute.value.name);
     <!-- 관리 화면일 때만 활성화 -->
     <template v-slot:append>
       <v-btn
-        v-if="currentPageName === 'manage'"
+        v-if="currentPageName?.toString().indexOf('manage') !== -1"
         prepend-icon="mdi-home"
         @click="router.push('/')"
       >
