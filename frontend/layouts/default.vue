@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { useDiscordStore } from '~/store/discord';
-
-const config = useRuntimeConfig();
-const projectName: Ref<string> = ref(config.public.projectName);
+import Header from '~/components/header.vue';
 
 const router = useRouter();
 
@@ -23,31 +21,10 @@ if (hasToken()) {
   console.warn('로그인이 필요합니다.');
   router.push('/login');
 }
-
-// 현재 페이지 이름
-const currentPageName = computed(() => router.currentRoute.value.name);
 </script>
 <template>
   <v-layout class="rounded rounded-md">
-    <v-app-bar>
-      <v-avatar class="mx-3">
-        <v-img src="/logo.png" alt="logo" />
-      </v-avatar>
-      <span class="text-h5">{{ projectName }}</span>
-      <v-spacer />
-
-      <!-- 관리 화면일 때만 활성화 -->
-      <template v-slot:append>
-        <v-btn
-          v-if="currentPageName === 'manage'"
-          prepend-icon="mdi-home"
-          @click="router.push('/')"
-        >
-          홈으로
-        </v-btn>
-      </template>
-    </v-app-bar>
-
+    <Header />
     <v-main class="d-flex align-center">
       <slot />
     </v-main>
