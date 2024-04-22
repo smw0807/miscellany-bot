@@ -1,7 +1,7 @@
 import type { DiscordGuildsType } from '~/store/discord';
 
 /**
- * 로컬 스토리지에 길드 정보를 저장하고 불러오는 컴포지션
+ * 로컬 스토리지에 길드 정보를 저장하고 불러오는 컴포져블 함수
  * @returns
  */
 export default function () {
