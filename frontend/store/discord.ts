@@ -45,10 +45,40 @@ export const useDiscordStore = defineStore('discord', () => {
       }
     }
   };
-  const actions = {
-    requestGuilds,
+  // 채널로 메시지 보내기
+  const sendMessage = async (
+    channelId: string,
+    message: string,
+    isEveryone: boolean = false
+  ): Promise<boolean> => {
+    try {
+      const config = useRuntimeConfig();
+      const token = useCookie(config.public.accessTokenName);
+
+      await $fetch('/api/discord/send-message', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+        query: {
+          channelId,
+          message,
+          isEveryone,
+        },
+      });
+      return true;
+    } catch (e: any) {
+      console.error(e);
+      return false;
+    }
   };
 
+  const actions = {
+    requestGuilds,
+    sendMessage,
+  };
+
+  // ============= Return =============
   return {
     ...state,
     ...getters,

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useDiscordStore } from '~/store/discord';
 import type { DiscordGuildsType } from '~/store/discord';
 
 definePageMeta({
@@ -6,21 +7,28 @@ definePageMeta({
 });
 const config = useRuntimeConfig();
 const uGuild = useGuild();
+const discordStore = useDiscordStore();
 
 // 서버 정보
 const guild: Ref<DiscordGuildsType> = ref({} as DiscordGuildsType);
 
 const message: Ref<string> = ref('');
+const isEveryone: Ref<boolean> = ref(false);
 const isLoading: Ref<boolean> = ref(false);
 const disabledTextField: Ref<boolean> = ref(false);
 
 const sendMessage = async () => {
   startSendMessage();
   // todo 서버에 메시지 보내기 API 호출
-  setTimeout(() => {
-    endSendMessage();
-  }, 5000);
-  console.log(message.value);
+  const result = await discordStore.sendMessage(
+    guild.value.id,
+    message.value,
+    isEveryone.value
+  );
+  if (!result) {
+    alert('메시지 전송에 실패했습니다.');
+  }
+  endSendMessage();
 };
 
 const startSendMessage = () => {
@@ -41,7 +49,12 @@ onMounted(() => {
   <v-card>
     <v-card-title> [{{ guild.name }}] 서버에 메시지 보내기 </v-card-title>
     <v-card-text>
-      <v-checkbox label="@everyone 적용" hide-details></v-checkbox>
+      <v-checkbox
+        v-model="isEveryone"
+        label="@everyone 적용"
+        hide-details
+        :disabled="disabledTextField"
+      ></v-checkbox>
       <v-text-field
         v-model="message"
         :disabled="disabledTextField"
@@ -56,6 +69,7 @@ onMounted(() => {
 
       <v-btn
         @click="sendMessage"
+        prepend-icon="mdi-send"
         color="primary"
         dark
         block
