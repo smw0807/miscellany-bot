@@ -15,8 +15,11 @@ export class DiscordController {
       const guilds = await this.discordService.getOwnerGuilds(accessToken);
       res.send(guilds);
     } catch (e) {
-      this.logger.error(e.message);
-      res.status(400).send(e.message);
+      if (e.response) {
+        res.status(e.response.status).send(e.response.error);
+      } else {
+        res.status(500).send(e.message);
+      }
     }
   }
 }

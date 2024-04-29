@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { DiscordClientService } from './client/discord.client.service';
 import { Client } from 'discord.js';
 import { DiscordContextMenuService } from './commands/discord.contextMenu.service';
@@ -84,8 +84,21 @@ export class DiscordService {
         }));
       return guilds;
     } catch (e) {
-      this.logger.error('getUserGuilds Error: ', e.message);
-      throw new Error(e.message);
+      const error = e.response.data;
+      this.logger.error(error);
+      if (error.code === 0) {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNAUTHORIZED,
+            error: '토큰 만료',
+          },
+          HttpStatus.UNAUTHORIZED,
+          {
+            cause: error,
+          },
+        );
+      }
+      throw new Error(e);
     }
   }
 }
