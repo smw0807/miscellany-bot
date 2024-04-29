@@ -34,8 +34,18 @@ export default function () {
     refreshToken.value = data.refresh_token;
   };
 
+  // 토큰 삭제
+  const clearToken = (): void => {
+    const config = useRuntimeConfig();
+    const accessToken = useCookie(config.public.accessTokenName);
+    const refreshToken = useCookie(config.public.refreshTokenName);
+    accessToken.value = '';
+    refreshToken.value = '';
+  };
+
   return {
     hasToken,
     saveToken,
+    clearToken,
   };
 }
