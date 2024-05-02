@@ -6,13 +6,15 @@ import { DiscordContextMenuService } from './commands/discord.contextMenu.servic
 import { DiscordMessageService } from './messages/discord.message.service';
 import { HttpModule } from '@nestjs/axios';
 import { DiscordController } from './discord.controller';
+import { DiscordGuildsService } from './\bguilds/discord.guilds.service';
 
 @Module({
   providers: [
     DiscordClientService,
+    DiscordService,
     DiscordContextMenuService,
     DiscordMessageService,
-    DiscordService,
+    DiscordGuildsService,
   ],
   imports: [GoogleTranslateModule, HttpModule],
   controllers: [DiscordController],
