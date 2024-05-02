@@ -1,18 +1,22 @@
 import { Controller, Get, Logger, Req, Res } from '@nestjs/common';
-import { DiscordService } from './discord.service';
 import { Request, Response } from 'express';
+import { DiscordMessageService } from './messages/discord.message.service';
+import { DiscordGuildsService } from './\bguilds/discord.guilds.service';
 
 @Controller('discord')
 export class DiscordController {
   private readonly logger = new Logger(DiscordController.name);
-  constructor(private readonly discordService: DiscordService) {}
+  constructor(
+    private readonly guildsService: DiscordGuildsService,
+    private readonly messageService: DiscordMessageService,
+  ) {}
 
   // 디스코드 채널 리스트
   @Get('guilds')
   async getOwnerGuilds(@Req() req: Request, @Res() res: Response) {
     try {
       const accessToken = req.headers.authorization;
-      const guilds = await this.discordService.getOwnerGuilds(accessToken);
+      const guilds = await this.guildsService.getOwnerGuilds(accessToken);
       res.send(guilds);
     } catch (e) {
       if (e.response) {
