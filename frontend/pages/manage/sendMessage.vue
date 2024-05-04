@@ -22,6 +22,7 @@ const sendMessage = async () => {
   // todo 서버에 메시지 보내기 API 호출
   const result = await discordStore.sendMessage(
     guild.value.id,
+    '123',
     message.value,
     isEveryone.value
   );

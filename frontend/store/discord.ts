@@ -47,6 +47,7 @@ export const useDiscordStore = defineStore('discord', () => {
   };
   // 채널로 메시지 보내기
   const sendMessage = async (
+    guildId: string,
     channelId: string,
     message: string,
     isEveryone: boolean = false
@@ -61,6 +62,7 @@ export const useDiscordStore = defineStore('discord', () => {
           Authorization: `Bearer ${token.value}`,
         },
         query: {
+          guildId,
           channelId,
           message,
           isEveryone,
