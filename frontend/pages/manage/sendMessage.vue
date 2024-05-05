@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useDiscordStore } from '~/store/discord';
+import { useDiscordManageStore } from '~/store/discordManage';
 import type { DiscordGuildsType } from '~/store/discord';
 
 definePageMeta({
@@ -7,7 +7,7 @@ definePageMeta({
 });
 const config = useRuntimeConfig();
 const uGuild = useGuild();
-const discordStore = useDiscordStore();
+const discordStore = useDiscordManageStore();
 
 // 서버 정보
 const guild: Ref<DiscordGuildsType> = ref({} as DiscordGuildsType);
