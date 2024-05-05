@@ -46,6 +46,7 @@ export const useDiscordStore = defineStore('discord', () => {
     }
   };
   // 채널로 메시지 보내기
+  // todo channel.send를 못찾는다고 떠서 해결되어야 완성 가능
   const sendMessage = async (
     guildId: string,
     channelId: string,
