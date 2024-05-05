@@ -34,7 +34,7 @@ onMounted(() => {
         <v-divider />
         <v-list-item
           prepend-icon="mdi-home-city"
-          title="서버에 메시지 보내기"
+          title="채널에 메시지 보내기"
           @click="router.push('/manage/sendMessage')"
         ></v-list-item>
         <v-list-item
