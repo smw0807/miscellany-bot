@@ -26,4 +26,7 @@ export enum DISCORD_GRANT_TYPE {
 /**
  * GUILDS
  * https://discord.com/developers/docs/activities/building-an-activity#step-7-use-the-api-to-fetch-the-guild
+ *
+ * GUILD_CHANNELS
+ * https://discord.com/developers/docs/resources/guild#get-guild-channels
  */
