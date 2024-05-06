@@ -45,17 +45,40 @@ const endSendMessage = () => {
 onMounted(() => {
   guild.value = uGuild.loadGuild(config.public.discordStorageName);
 });
+const items = reactive([
+  { id: 0, name: 'Item 1' },
+  { id: 1, name: 'Item 2' },
+  { id: 2, name: 'Item 3' },
+  { id: 3, name: 'Item 4' },
+]);
+const selectChannel = ref(null);
 </script>
 <template>
   <v-card>
     <v-card-title> [{{ guild.name }}] 서버에 메시지 보내기 </v-card-title>
     <v-card-text>
-      <v-checkbox
-        v-model="isEveryone"
-        label="@everyone 적용"
-        hide-details
-        :disabled="disabledTextField"
-      ></v-checkbox>
+      <v-row justify="center" align="center">
+        <v-col cols="5" ms="12">
+          <v-checkbox
+            v-model="isEveryone"
+            label="@everyone 적용"
+            hide-details
+            :disabled="disabledTextField"
+          ></v-checkbox>
+        </v-col>
+        <v-col cols="7" ms="12">
+          <v-select
+            v-model="selectChannel"
+            :items="items"
+            item-value="id"
+            item-text="name"
+            return-object
+            density="compact"
+            label="메시지 보낼 채널을 선택해주세요."
+            hide-details
+          ></v-select>
+        </v-col>
+      </v-row>
       <v-text-field
         v-model="message"
         :disabled="disabledTextField"
