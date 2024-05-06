@@ -12,6 +12,8 @@ export const DISCORD_API_URL = {
   GUILDS: `${API_URL}/users/@me/guilds`,
   // 유저 정보(본인-email)
   USER: `${API_URL}/users/@me`,
+  // 서버 채널 리스트
+  GUILD_CHANNELS: `${API_URL}/guilds/:guildId/channels`,
 };
 
 // 디스코드 API grant_type
