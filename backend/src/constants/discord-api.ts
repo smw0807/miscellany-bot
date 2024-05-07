@@ -1,5 +1,5 @@
 //디스코드 API에 필요한 타입 정의 파일
-
+//todo : 추후 env엣서 가져오도록 수정
 const API_URL = 'https://discord.com/api/v10';
 
 //디스코드 API URL 리스트
