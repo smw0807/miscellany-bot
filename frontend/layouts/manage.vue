@@ -2,16 +2,18 @@
 import { ref, type Ref } from 'vue';
 import { type DiscordGuildsType } from '~/store/discord';
 import Header from '~/components/header.vue';
+import { useDiscordManageStore } from '~/store/discordManage';
 
 const config = useRuntimeConfig();
 const router = useRouter();
+const discordManageStore = useDiscordManageStore();
 
 // 서버 정보
 const guild: Ref<DiscordGuildsType> = ref({} as DiscordGuildsType);
 
 const isShowNavigationDrawer: Ref<boolean> = ref(false);
 
-onMounted(() => {
+onMounted(async () => {
   const localStorageGuildData = localStorage.getItem(
     config.public.discordStorageName
   );
@@ -19,6 +21,10 @@ onMounted(() => {
     guild.value = JSON.parse(localStorageGuildData);
   }
   isShowNavigationDrawer.value = true;
+  // 채널 리스트 요청
+  if (discordManageStore.channelList.length === 0) {
+    await discordManageStore.requestChannels(guild.value.id);
+  }
 });
 </script>
 <template>
