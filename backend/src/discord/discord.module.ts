@@ -7,6 +7,7 @@ import { DiscordMessageService } from './messages/discord.message.service';
 import { HttpModule } from '@nestjs/axios';
 import { DiscordController } from './discord.controller';
 import { DiscordGuildsService } from './\bguilds/discord.guilds.service';
+import { DiscordChannelService } from './\bguilds/discord.channel.service';
 
 @Module({
   providers: [
@@ -15,6 +16,7 @@ import { DiscordGuildsService } from './\bguilds/discord.guilds.service';
     DiscordContextMenuService,
     DiscordMessageService,
     DiscordGuildsService,
+    DiscordChannelService,
   ],
   imports: [GoogleTranslateModule, HttpModule],
   controllers: [DiscordController],

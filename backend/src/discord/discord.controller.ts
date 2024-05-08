@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { DiscordMessageService } from './messages/discord.message.service';
 import { DiscordGuildsService } from './\bguilds/discord.guilds.service';
 import { SendMessageType } from './types/messages';
+import { DiscordChannelService } from './\bguilds/discord.channel.service';
 
 @Controller('discord')
 export class DiscordController {
@@ -10,6 +11,7 @@ export class DiscordController {
   constructor(
     private readonly guildsService: DiscordGuildsService,
     private readonly messageService: DiscordMessageService,
+    private readonly channelService: DiscordChannelService,
   ) {}
 
   // 디스코드 채널 리스트
@@ -19,6 +21,21 @@ export class DiscordController {
       const accessToken = req.headers.authorization;
       const guilds = await this.guildsService.getOwnerGuilds(accessToken);
       res.send(guilds);
+    } catch (e) {
+      if (e.response) {
+        res.status(e.response.status).send(e.response.error);
+      } else {
+        res.status(500).send(e.message);
+      }
+    }
+  }
+
+  @Get('channels')
+  async getGuildChannels(@Req() req: Request, @Res() res: Response) {
+    try {
+      const { guildId } = req.query;
+      const channels = this.channelService.getGuildChannels(guildId as string);
+      res.send(channels);
     } catch (e) {
       if (e.response) {
         res.status(e.response.status).send(e.response.error);
