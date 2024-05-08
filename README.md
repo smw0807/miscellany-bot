@@ -35,6 +35,8 @@
    - https://discord.com/developers/docs/intro
    - OAuth2
      - https://discord.com/developers/docs/topics/oauth2
+     - OAuth2 허용 범위
+     - https://discord.com/developers/docs/topics/oauth2#shared-resources-oauth2-scopes
      - CSRF 공격 방지에 대한 내용
        - https://discord.com/developers/docs/topics/oauth2#state-and-security
 3. Google Cloud
