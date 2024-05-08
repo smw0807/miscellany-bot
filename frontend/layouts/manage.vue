@@ -33,10 +33,9 @@ onMounted(async () => {
 
     <v-navigation-drawer v-if="isShowNavigationDrawer" permanent>
       <v-list density="compact" nav min-width="220">
-        <v-list-item
-          :prepend-avatar="guild.icon ? guild.icon : ''"
-          :title="guild.name"
-        ></v-list-item>
+        <v-list-item :prepend-avatar="guild.icon ? guild.icon : ''">
+          <div class="text-h6">{{ guild.name }}</div>
+        </v-list-item>
         <v-divider />
         <v-list-item
           prepend-icon="mdi-home-city"
