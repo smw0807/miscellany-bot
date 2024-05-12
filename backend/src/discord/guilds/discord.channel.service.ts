@@ -2,7 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { DiscordClientService } from '../client/discord.client.service';
 import { ConfigType } from '@nestjs/config';
 import discordConfig from 'src/config/conf/discord.config';
-import { DISCORD_CHANNEL_TYPES } from 'src/constants/discord-api';
+import { ChannelType } from 'discord.js';
 
 @Injectable()
 export class DiscordChannelService extends DiscordClientService {
@@ -27,11 +27,15 @@ export class DiscordChannelService extends DiscordClientService {
       if (!guild) {
         throw new Error('서버 정보를 찾을 수 없습니다.');
       }
-      const channels = guild.channels.cache.map((channel) => ({
-        id: channel.id,
-        name: channel.name,
-        type: DISCORD_CHANNEL_TYPES[channel.type],
-      }));
+
+      const channels = guild.channels.cache
+        .filter((channel) => channel.type !== ChannelType.GuildCategory)
+        .map((channel) => ({
+          id: channel.id,
+          name: channel.name,
+          type: ChannelType[channel.type],
+        }));
+
       return channels;
     } catch (e) {
       const error = e.response.data;
