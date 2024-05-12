@@ -14,5 +14,8 @@ export default function () {
     loadGuild(storageName: string): DiscordGuildsType {
       return JSON.parse(localStorage.getItem(storageName) || '{}');
     },
+    clearGuild(storageName: string) {
+      localStorage.removeItem(storageName);
+    },
   };
 }
