@@ -36,13 +36,7 @@ export const useDiscordStore = defineStore('discord', () => {
       });
       guilds.value = result;
     } catch (e: any) {
-      // 401 에러일 경우 로그인 페이지로
-      if (e.response.status === 401) {
-        const token = useAuth();
-        token.clearToken();
-        const router = useRouter();
-        router.replace('/login');
-      }
+      console.error(e);
     }
   };
 
