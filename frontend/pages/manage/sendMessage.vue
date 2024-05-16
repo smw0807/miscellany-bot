@@ -48,11 +48,8 @@ const sendMessage = async () => {
     message: message.value,
     isEveryone: isEveryone.value,
   };
-  const result = await discordStore.sendMessage(params);
-  if (!result) {
-    alert('메시지 전송에 실패했습니다.');
-  }
-  form.value.reset();
+  await discordStore.sendMessage(params);
+
   endSendMessage();
 };
 
