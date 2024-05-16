@@ -1,6 +1,6 @@
 // 디스코드 메시지 서비스
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Client } from 'discord.js';
+import { Client, TextChannel } from 'discord.js';
 import { DiscordClientService } from '../client/discord.client.service';
 import discordConfig from 'src/config/conf/discord.config';
 import { ConfigType } from '@nestjs/config';
@@ -32,22 +32,22 @@ export class DiscordMessageService extends DiscordClientService {
   async sendMessage(data: SendMessageType) {
     try {
       console.log('sendMessage : ', data);
-      // const { guildId, channelId, message } = data;
-      // const guild = this.client.guilds.cache.get(guildId);
-      // console.log(guild);
-      const channel = this.client.channels.cache.get('10982356155747697112');
+      const { channelId, isEveryone, message } = data;
+
+      const channel = this.client.channels.cache.get(channelId);
       if (!channel) {
         throw new Error('채널을 찾을 수 없습니다.');
       }
-      // todo send를 못찾는다고 떠서 해결 방법 찾아야함
-      // await channel.send(message, {
-      //   allowedMentions: { parse: ['users', 'roles', 'everyone'] },
-      // });
+      if (!(channel instanceof TextChannel)) {
+        throw new Error('메시지를 보낼 수 있는 채널이 아닙니다.');
+      }
 
-      return false;
+      await channel.send(isEveryone ? `@everyone\n${message}` : message);
+
+      return '메시지를 성공적으로 보냈습니다.';
     } catch (e) {
-      console.error(e);
+      this.logger.error('메시지를 보내는데 실패했습니다.', e);
+      throw new Error('메시지를 보내는데 실패했습니다.');
     }
   }
 }
-// 1098235615574769711
