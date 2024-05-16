@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vuetify'],
   },
+  plugins: ['~/plugins/fetch-interceptor.ts'],
   modules: [
     (options: any, nuxt: any) => {
       nuxt.hooks.hook('vite:extendConfig', (config: any) => {
