@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Logger, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  Logger,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { DiscordMessageService } from './messages/discord.message.service';
 import { DiscordGuildsService } from './\bguilds/discord.guilds.service';
@@ -61,7 +70,12 @@ export class DiscordController {
       const result = await this.messageService.sendMessage(data);
       res.send(result);
     } catch (e) {
-      res.status(500).send(e.message);
+      if (e instanceof HttpException) {
+        const status = e.getStatus();
+        res.status(status).send(e.message);
+      } else {
+        res.status(500).send(e.message);
+      }
     }
   }
 }

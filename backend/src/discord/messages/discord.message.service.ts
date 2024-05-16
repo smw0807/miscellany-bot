@@ -1,5 +1,11 @@
 // 디스코드 메시지 서비스
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { Client, TextChannel } from 'discord.js';
 import { DiscordClientService } from '../client/discord.client.service';
 import discordConfig from 'src/config/conf/discord.config';
@@ -36,18 +42,22 @@ export class DiscordMessageService extends DiscordClientService {
 
       const channel = this.client.channels.cache.get(channelId);
       if (!channel) {
-        throw new Error('채널을 찾을 수 없습니다.');
+        throw new HttpException(
+          '채널을 찾을 수 없습니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
       if (!(channel instanceof TextChannel)) {
-        throw new Error('메시지를 보낼 수 있는 채널이 아닙니다.');
+        throw new HttpException(
+          '메시지를 보낼 수 있는 채널이 아닙니다.',
+          HttpStatus.BAD_REQUEST,
+        );
       }
-
       await channel.send(isEveryone ? `@everyone\n${message}` : message);
-
       return '메시지를 성공적으로 보냈습니다.';
     } catch (e) {
       this.logger.error('메시지를 보내는데 실패했습니다.', e);
-      throw new Error('메시지를 보내는데 실패했습니다.');
+      throw e;
     }
   }
 }
