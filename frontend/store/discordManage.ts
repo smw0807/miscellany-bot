@@ -26,7 +26,6 @@ export const useDiscordManageStore = defineStore('discordManage', () => {
           guildId,
         },
       });
-      console.log('requestChannels111', res);
       channelList.value = res;
     } catch (e: any) {
       console.error(e);
@@ -34,18 +33,16 @@ export const useDiscordManageStore = defineStore('discordManage', () => {
   };
 
   // 채널로 메시지 보내기
-  // todo channel.send를 못찾는다고 떠서 해결되어야 완성 가능
-  const sendMessage = async (params: SendMessageType): Promise<boolean> => {
+  const sendMessage = async (params: SendMessageType): Promise<string> => {
     try {
-      const res = await $fetch('/api/discord/send-message', {
+      const res = await $fetch<string>('/api/discord/send-message', {
         method: 'POST',
         body: JSON.stringify(params),
       });
-      console.log('res : ', res);
-      return true;
+      return res;
     } catch (e: any) {
       console.error(e);
-      return false;
+      return '메시지 전송에 실패했습니다.';
     }
   };
   const actions = {
