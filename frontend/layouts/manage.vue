@@ -11,8 +11,6 @@ const discordManageStore = useDiscordManageStore();
 // 서버 정보
 const guild: Ref<DiscordGuildsType> = ref({} as DiscordGuildsType);
 
-const isShowNavigationDrawer: Ref<boolean> = ref(false);
-
 onMounted(async () => {
   const localStorageGuildData = localStorage.getItem(
     config.public.discordStorageName
@@ -20,7 +18,6 @@ onMounted(async () => {
   if (localStorageGuildData) {
     guild.value = JSON.parse(localStorageGuildData);
   }
-  isShowNavigationDrawer.value = true;
   // 채널 리스트 요청
   if (discordManageStore.channelList.length === 0) {
     await discordManageStore.requestChannels(guild.value.id);
@@ -31,7 +28,7 @@ onMounted(async () => {
   <v-layout class="rounded rounded-md">
     <Header />
 
-    <v-navigation-drawer v-if="isShowNavigationDrawer" permanent>
+    <v-navigation-drawer permanent>
       <v-list density="compact" nav min-width="220">
         <v-list-item :prepend-avatar="guild.icon ? guild.icon : ''">
           <div class="text-h6">{{ guild.name }}</div>
