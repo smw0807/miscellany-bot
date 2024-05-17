@@ -5,9 +5,15 @@ definePageMeta({
 const route = useRoute();
 </script>
 <template>
-  <div>
-    <h1>에러 페이지</h1>
-    <p>에러 코드: {{ route.params.code }}</p>
-    <v-btn @click="$router.push('/')">홈으로</v-btn>
-  </div>
+  <v-container class="text-center">
+    <v-row>
+      <v-col>
+        <h1>Error {{ route.params.code }}</h1>
+        <p>잠시후에 다시 시도해주세요.</p>
+        <v-btn @click="$router.push('/')">
+          <v-icon>mdi-home</v-icon>홈으로
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
