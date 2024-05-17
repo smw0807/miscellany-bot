@@ -74,7 +74,11 @@ export class DiscordController {
         const status = e.getStatus();
         res.status(status).send(e.message);
       } else {
-        res.status(500).send(e.message);
+        if (e.status) {
+          res.status(e.status).send(e.message);
+        } else {
+          res.status(502).send(e.message);
+        }
       }
     }
   }
