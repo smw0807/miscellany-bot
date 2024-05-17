@@ -38,17 +38,16 @@ const selectChannelRules = [(v: ChannelType) => !!v || '채널을 선택해주�
 const sendMessage = async () => {
   startSendMessage();
   const { valid } = await form.value.validate();
-  if (!valid) {
-    endSendMessage();
-    return;
+  if (valid) {
+    const params: SendMessageType = {
+      guildId: guild.value.id,
+      channelId: selectChannel.value.id,
+      message: message.value,
+      isEveryone: isEveryone.value,
+    };
+    await discordStore.sendMessage(params);
+    message.value = '';
   }
-  const params: SendMessageType = {
-    guildId: guild.value.id,
-    channelId: selectChannel.value.id,
-    message: message.value,
-    isEveryone: isEveryone.value,
-  };
-  await discordStore.sendMessage(params);
 
   endSendMessage();
 };
@@ -60,7 +59,6 @@ const startSendMessage = () => {
 const endSendMessage = () => {
   isLoading.value = false;
   disabledTextField.value = false;
-  message.value = '';
 };
 
 onMounted(() => {
@@ -96,17 +94,17 @@ onMounted(() => {
             ></v-select>
           </v-col>
         </v-row>
-        <v-text-field
+        <v-textarea
           v-model="message"
-          :disabled="disabledTextField"
-          label="메시지"
-          outlined
-          clearable
-          dense
-          rows="5"
-          placeholder="메시지를 입력하세요."
           :rules="messageRules"
-        ></v-text-field>
+          clear-icon="mdi-close-circle"
+          label="채널에 보낼 메시지를 입력해주세요."
+          placeholder="컨트롤+엔터를 누르면 바로 메시지를 보낼 수 있습니다."
+          clearable
+          counter
+          no-resize
+          @keydown.ctrl.enter="sendMessage"
+        ></v-textarea>
 
         <v-btn
           @click="sendMessage"
