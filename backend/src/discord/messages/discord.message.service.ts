@@ -11,12 +11,14 @@ import { DiscordClientService } from '../client/discord.client.service';
 import discordConfig from 'src/config/conf/discord.config';
 import { ConfigType } from '@nestjs/config';
 import { SendMessageType } from '../types/messages';
+import { SendMessagesHistoryService } from 'src/supabase/send-messages-history/msg.history.service';
 
 @Injectable()
 export class DiscordMessageService extends DiscordClientService {
   private readonly logger = new Logger(DiscordMessageService.name);
   constructor(
     @Inject(discordConfig.KEY) config: ConfigType<typeof discordConfig>,
+    private readonly supabase: SendMessagesHistoryService,
   ) {
     super(config);
   }
@@ -37,8 +39,7 @@ export class DiscordMessageService extends DiscordClientService {
   // 메시지 보내기
   async sendMessage(data: SendMessageType) {
     try {
-      console.log('sendMessage : ', data);
-      const { channelId, isEveryone, message } = data;
+      const { guildId, channelId, isEveryone, message } = data;
 
       const channel = this.client.channels.cache.get(channelId);
       if (!channel) {
@@ -54,6 +55,16 @@ export class DiscordMessageService extends DiscordClientService {
         );
       }
       await channel.send(isEveryone ? `@everyone\n${message}` : message);
+
+      // todo 메시지 전송 내역 저장 todo Type
+      const params = {
+        guildId: guildId,
+        guildName: channel.guild.name,
+        channelId: channelId,
+        channelName: channel.name,
+        message: message,
+      };
+      await this.supabase.saveSendMessageHistory(params);
       return '메시지를 성공적으로 보냈습니다.';
     } catch (e) {
       this.logger.error('메시지를 보내는데 실패했습니다.', e);
