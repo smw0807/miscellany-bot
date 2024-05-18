@@ -29,14 +29,14 @@ model User {
 model ChannelMessage {
   id        String   @id @default(cuid())
   guildId   String
-  guildName String
+  guildName String?
   channelId String
-  channelName String
+  channelName String?
   userId    String?
   message   String
   isEveryone Boolean
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
 
   @@map("send_messages_history")
 }
