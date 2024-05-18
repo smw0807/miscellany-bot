@@ -25,6 +25,9 @@ export enum DISCORD_GRANT_TYPE {
 }
 
 /**
+ * OAuth2 허용 범위
+ * https://discord.com/developers/docs/topics/oauth2#shared-resources-oauth2-scopes
+ *
  * GUILDS
  * https://discord.com/developers/docs/activities/building-an-activity#step-7-use-the-api-to-fetch-the-guild
  *
