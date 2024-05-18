@@ -10,9 +10,9 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { DiscordMessageService } from './messages/discord.message.service';
-import { DiscordGuildsService } from './\bguilds/discord.guilds.service';
+import { DiscordGuildsService } from './guilds/discord.guilds.service';
 import { SendMessageType } from './types/messages';
-import { DiscordChannelService } from './\bguilds/discord.channel.service';
+import { DiscordChannelService } from './guilds/discord.channel.service';
 
 @Controller('discord')
 export class DiscordController {
