@@ -32,7 +32,7 @@ model ChannelMessage {
   guildName String
   channelId String
   channelName String
-  userId    String
+  userId    String?
   message   String
   isEveryone Boolean
   createdAt DateTime @default(now())
