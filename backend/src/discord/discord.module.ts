@@ -6,8 +6,9 @@ import { DiscordContextMenuService } from './commands/discord.contextMenu.servic
 import { DiscordMessageService } from './messages/discord.message.service';
 import { HttpModule } from '@nestjs/axios';
 import { DiscordController } from './discord.controller';
-import { DiscordGuildsService } from './\bguilds/discord.guilds.service';
-import { DiscordChannelService } from './\bguilds/discord.channel.service';
+import { DiscordGuildsService } from './guilds/discord.guilds.service';
+import { DiscordChannelService } from './guilds/discord.channel.service';
+import { SupabaseModule } from 'src/supabase/supabase.module';
 
 @Module({
   providers: [
@@ -18,7 +19,7 @@ import { DiscordChannelService } from './\bguilds/discord.channel.service';
     DiscordGuildsService,
     DiscordChannelService,
   ],
-  imports: [GoogleTranslateModule, HttpModule],
+  imports: [GoogleTranslateModule, HttpModule, SupabaseModule],
   controllers: [DiscordController],
 })
 export class DiscordModule {}
