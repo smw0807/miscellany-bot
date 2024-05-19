@@ -31,7 +31,7 @@ onMounted(() => {
 <template>
   <v-container>
     <v-row align="center" dense>
-      <v-col cols="6" md="3" v-for="(guild, idx) in cGuilds">
+      <v-col col="6" v-for="(guild, idx) in cGuilds">
         <v-card
           class="mx-auto"
           :subtitle="guild.hasBot ? '봇 추가됨' : '봇 추가 필요'"
