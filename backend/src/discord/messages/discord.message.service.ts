@@ -12,6 +12,7 @@ import discordConfig from 'src/config/conf/discord.config';
 import { ConfigType } from '@nestjs/config';
 import { SendMessageType } from '../types/messages';
 import { SendMessagesHistoryService } from 'src/supabase/send-messages-history/msg.history.service';
+import { ChannelMessage } from '@prisma/client';
 
 @Injectable()
 export class DiscordMessageService extends DiscordClientService {
@@ -56,12 +57,12 @@ export class DiscordMessageService extends DiscordClientService {
       }
       await channel.send(isEveryone ? `@everyone\n${message}` : message);
 
-      // todo 메시지 전송 내역 저장 todo Type
       const params = {
         guildId: guildId,
         guildName: channel.guild.name,
         channelId: channelId,
         channelName: channel.name,
+        isEveryone: isEveryone,
         message: message,
       };
       await this.supabase.saveSendMessageHistory(params);
