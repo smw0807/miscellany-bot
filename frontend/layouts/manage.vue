@@ -26,6 +26,11 @@ onMounted(async () => {
     await discordManageStore.requestChannels(guild.value.id);
   }
 });
+
+onUnmounted(() => {
+  // 채널 리스트 초기화
+  discordManageStore.channelList = [];
+});
 </script>
 <template>
   <v-layout class="rounded rounded-md">
