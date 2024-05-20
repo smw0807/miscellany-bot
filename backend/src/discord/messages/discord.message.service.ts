@@ -12,7 +12,6 @@ import discordConfig from 'src/config/conf/discord.config';
 import { ConfigType } from '@nestjs/config';
 import { SendMessageType } from '../types/messages';
 import { SendMessagesHistoryService } from 'src/supabase/send-messages-history/msg.history.service';
-import { ChannelMessage } from '@prisma/client';
 
 @Injectable()
 export class DiscordMessageService extends DiscordClientService {
