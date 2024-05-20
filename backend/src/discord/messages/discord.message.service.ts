@@ -10,7 +10,7 @@ import { Client, TextChannel } from 'discord.js';
 import { DiscordClientService } from '../client/discord.client.service';
 import discordConfig from 'src/config/conf/discord.config';
 import { ConfigType } from '@nestjs/config';
-import { SendMessageType } from '../types/messages';
+import { SendMessagesHistoryType, SendMessageType } from '../types/messages';
 import { SendMessagesHistoryService } from 'src/supabase/send-messages-history/msg.history.service';
 
 @Injectable()
@@ -56,7 +56,7 @@ export class DiscordMessageService extends DiscordClientService {
       }
       await channel.send(isEveryone ? `@everyone\n${message}` : message);
 
-      const params = {
+      const params: SendMessagesHistoryType = {
         guildId: guildId,
         guildName: channel.guild.name,
         channelId: channelId,
