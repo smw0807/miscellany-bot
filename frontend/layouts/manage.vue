@@ -15,9 +15,12 @@ onMounted(async () => {
   const localStorageGuildData = localStorage.getItem(
     config.public.discordStorageName
   );
-  if (localStorageGuildData) {
-    guild.value = JSON.parse(localStorageGuildData);
+
+  if (!localStorageGuildData) {
+    router.push('/');
+    return;
   }
+  guild.value = JSON.parse(localStorageGuildData);
   // 채널 리스트 요청
   if (discordManageStore.channelList.length === 0) {
     await discordManageStore.requestChannels(guild.value.id);
