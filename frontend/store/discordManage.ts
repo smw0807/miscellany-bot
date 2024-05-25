@@ -11,6 +11,7 @@ export type SendMessageType = {
 };
 
 export const useDiscordManageStore = defineStore('discordManage', () => {
+  const { useAlert } = useDialog();
   // ============= State =============
   //서버에 있는 채널 목록
   const channelList = ref<ChannelType[]>([]);
@@ -33,16 +34,24 @@ export const useDiscordManageStore = defineStore('discordManage', () => {
   };
 
   // 채널로 메시지 보내기
-  const sendMessage = async (params: SendMessageType): Promise<string> => {
+  const sendMessage = async (params: SendMessageType): Promise<void> => {
     try {
       const res = await $fetch<string>('/api/discord/send-message', {
         method: 'POST',
         body: JSON.stringify(params),
       });
-      return res;
+      await useAlert({
+        type: 'success',
+        title: '메시지 전송 성공',
+        message: res,
+      });
     } catch (e: any) {
       console.error(e);
-      return '메시지 전송에 실패했습니다.';
+      await useAlert({
+        type: 'error',
+        title: '메시지 전송 실패',
+        message: e.message,
+      });
     }
   };
   const actions = {
