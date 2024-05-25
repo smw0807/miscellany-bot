@@ -3,6 +3,7 @@ import { ref, type Ref } from 'vue';
 import { type DiscordGuildsType } from '~/store/discord';
 import Header from '~/components/header.vue';
 import Alert from '~/components/dialog/Alert.vue';
+import Confirm from '~/components/dialog/Confirm.vue';
 import { useDiscordManageStore } from '~/store/discordManage';
 
 const config = useRuntimeConfig();
@@ -62,6 +63,7 @@ onUnmounted(() => {
     <v-main class="d-flex align-center">
       <v-container>
         <Alert />
+        <Confirm />
         <slot />
       </v-container>
     </v-main>
