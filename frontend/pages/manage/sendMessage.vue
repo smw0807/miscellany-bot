@@ -45,8 +45,8 @@ const sendMessage = async () => {
       message: message.value,
       isEveryone: isEveryone.value,
     };
-    await discordStore.sendMessage(params);
-    message.value = '';
+    const result = await discordStore.sendMessage(params);
+    if (result) message.value = '';
   }
 
   endSendMessage();

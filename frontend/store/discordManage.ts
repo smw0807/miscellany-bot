@@ -36,16 +36,16 @@ export const useDiscordManageStore = defineStore('discordManage', () => {
   };
 
   // 채널로 메시지 보내기
-  const sendMessage = async (params: SendMessageType): Promise<void> => {
+  const sendMessage = async (params: SendMessageType): Promise<boolean> => {
     try {
-      const result = await useConfirm({
+      const confirm = await useConfirm({
         type: ResultTypeEnum.INFO,
         title: '메시지 전송',
         message: '메시지를 전송하시겠습니까?',
         okText: '전송',
         cancelText: '취소',
       });
-      if (!result) return;
+      if (!confirm) return false;
 
       const res = await $fetch<string>('/api/discord/send-message', {
         method: 'POST',
@@ -56,6 +56,7 @@ export const useDiscordManageStore = defineStore('discordManage', () => {
         title: '메시지 전송 성공',
         message: res,
       });
+      return true;
     } catch (e: any) {
       console.error(e);
       await useAlert({
@@ -63,6 +64,7 @@ export const useDiscordManageStore = defineStore('discordManage', () => {
         title: '메시지 전송 실패',
         message: e.message,
       });
+      return false;
     }
   };
   const actions = {
