@@ -17,9 +17,6 @@ export default defineNuxtPlugin((nuxtApp) => {
         token.clearToken();
         nuxtApp.$router.replace('/login');
       }
-      if ([400, 404].includes(status)) {
-        alert(response._data);
-      }
     },
     onRequestError({ error }) {
       console.error(error);
