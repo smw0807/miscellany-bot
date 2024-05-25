@@ -1,4 +1,5 @@
 import { ResultTypeEnum } from '~/types/enums';
+import type { NestHttpException } from '~/types/errors';
 
 export type ChannelType = {
   id: string;
@@ -58,11 +59,11 @@ export const useDiscordManageStore = defineStore('discordManage', () => {
       });
       return true;
     } catch (e: any) {
-      console.error(e);
+      const error: NestHttpException = e;
       await useAlert({
         type: ResultTypeEnum.ERROR,
         title: '메시지 전송 실패',
-        message: e.message,
+        message: error.response?._data || error.message,
       });
       return false;
     }
