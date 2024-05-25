@@ -1,22 +1,12 @@
 <script setup lang="ts">
 import { useDialogStore } from '~/store/dialog';
+import DialogIcon from './Icon/DialogIcon.vue';
 const store = useDialogStore();
 const isShow = computed(() => !!store.alertDialog);
 const confirm = () => {
   store.closeAlert();
 };
 const alertData = computed(() => store.alertDialog);
-const icon = computed(() => {
-  if (alertData?.value?.type === 'success') {
-    return 'mdi-check-circle';
-  } else if (alertData?.value?.type === 'error') {
-    return 'mdi-alert-circle';
-  } else if (alertData?.value?.type === 'info') {
-    return 'mdi-information-variant-circle';
-  } else if (alertData?.value?.type === 'warning') {
-    return 'mdi-alert';
-  }
-});
 </script>
 <template>
   <v-sheet>
@@ -28,12 +18,7 @@ const icon = computed(() => {
         rounded="lg"
         width="100%"
       >
-        <v-icon
-          class="mb-5"
-          :color="alertData?.type"
-          :icon="icon"
-          size="100"
-        ></v-icon>
+        <dialog-icon :type="alertData?.type!" size="100"></dialog-icon>
 
         <h2 class="text-h5 mb-6">{{ alertData?.title ?? '' }}</h2>
 
