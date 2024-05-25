@@ -1,12 +1,13 @@
+import { ResultTypeEnum } from '~/types/enums';
 export type AlertDialogType = {
-  type: 'success' | 'error' | 'warning' | 'info';
+  type: ResultTypeEnum;
   title: string;
   message: string;
   btnText?: string;
   // onConfirm: () => void;
 };
 export type ConfirmDialogType = {
-  type: 'success' | 'error' | 'warning' | 'info';
+  type: ResultTypeEnum;
   title: string;
   message: string;
   okText?: string;
@@ -14,8 +15,8 @@ export type ConfirmDialogType = {
   // onConfirm: () => void;
 };
 export const useDialogStore = defineStore('dialog', () => {
-  let alertResolver: ((value?: unknown) => void) | null = null;
-  let confirmResolver: ((value: boolean) => void) | null = null;
+  let alertResolve: ((value?: unknown) => void) | null = null;
+  let confirmResolve: ((value: boolean) => void) | null = null;
 
   // ============= State =============
   const alertDialog = ref<AlertDialogType | null>(null);
@@ -26,28 +27,28 @@ export const useDialogStore = defineStore('dialog', () => {
   const showAlert = (data: AlertDialogType) => {
     alertDialog.value = data;
     return new Promise((resolver) => {
-      alertResolver = resolver;
+      alertResolve = resolver;
     });
   };
   const closeAlert = () => {
     alertDialog.value = null;
-    if (alertResolver) {
-      alertResolver();
-      alertResolver = null;
+    if (alertResolve) {
+      alertResolve();
+      alertResolve = null;
     }
   };
 
   const showConfirm = (data: ConfirmDialogType) => {
     confirmDialog.value = data;
     return new Promise<boolean>((resolver) => {
-      confirmResolver = resolver;
+      confirmResolve = resolver;
     });
   };
   const closeConfirm = (confirmed: boolean) => {
     confirmDialog.value = null;
-    if (confirmResolver) {
-      confirmResolver(confirmed);
-      confirmResolver = null;
+    if (confirmResolve) {
+      confirmResolve(confirmed);
+      confirmResolve = null;
     }
   };
   const actions = { showAlert, closeAlert, showConfirm, closeConfirm };
