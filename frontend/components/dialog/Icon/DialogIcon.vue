@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ResultEnum } from '~/types/enums';
-const props = defineProps<{ type: ResultEnum; size?: string }>();
+import { ResultTypeEnum } from '~/types/enums';
+const props = defineProps<{ type: ResultTypeEnum; size?: string }>();
 const icon = computed(() => {
   if (props?.type === 'success') {
     return 'mdi-check-circle';
