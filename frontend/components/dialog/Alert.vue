@@ -18,13 +18,13 @@ const alertData = computed(() => store.alertDialog);
         rounded="lg"
         width="100%"
       >
-        <dialog-icon :type="alertData?.type!" size="100"></dialog-icon>
+        <dialog-icon :type="alertData?.type!" size="60"></dialog-icon>
 
-        <h2 class="text-h5 mb-6">{{ alertData?.title ?? '' }}</h2>
+        <h2 class="text-h5 mb-2">{{ alertData?.title ?? '' }}</h2>
 
         <pre
           v-html="alertData?.message ?? ''"
-          class="mb-4 text-medium-emphasis text-body-2"
+          class="mb-4 text-medium-emphasis text-body-1"
         ></pre>
 
         <v-divider class="mb-4"></v-divider>

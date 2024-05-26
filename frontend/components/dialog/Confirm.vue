@@ -18,13 +18,13 @@ const confirmData = computed(() => store.confirmDialog);
         rounded="lg"
         width="100%"
       >
-        <dialog-icon :type="confirmData?.type!" size="100"></dialog-icon>
+        <dialog-icon :type="confirmData?.type!" size="60"></dialog-icon>
 
-        <h2 class="text-h5 mb-6">{{ confirmData?.title ?? '' }}</h2>
+        <h2 class="text-h5 mb-2">{{ confirmData?.title ?? '' }}</h2>
 
         <pre
           v-html="confirmData?.message ?? ''"
-          class="mb-4 text-medium-emphasis text-body-2"
+          class="mb-4 text-medium-emphasis text-body-1"
         ></pre>
 
         <v-divider class="mb-4"></v-divider>
