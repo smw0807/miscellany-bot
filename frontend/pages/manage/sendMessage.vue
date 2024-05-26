@@ -66,6 +66,9 @@ const endSendMessage = () => {
 
 onMounted(() => {
   guild.value = uGuild.loadGuild(config.public.discordStorageName);
+
+  discordMessageStore.guildId = guild.value.id;
+  discordMessageStore.findSendMessageHistory();
 });
 </script>
 <template>

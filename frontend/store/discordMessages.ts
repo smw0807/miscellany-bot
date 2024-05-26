@@ -8,10 +8,32 @@ export type SendMessageType = {
   isEveryone: boolean;
 };
 
+export type SendMessagesHistoryType = {
+  id: string;
+  channelId: string;
+  channelName: string;
+  guildId: string;
+  guildName: string;
+  isEveryone: boolean;
+  message: string;
+  createdAt: string;
+  updatedAt: string;
+  userId?: string;
+};
+
 export const useDiscordMessagesStore = defineStore('discordMessages', () => {
   const { useAlert, useConfirm } = useDialog();
   // ============= State =============
-  const state = {};
+  const guildId = ref<string>(''); // 길드 아이디
+  const pageIndex = ref<number>(0); // 페이지 인덱스
+  const pageSize = ref<number>(10); // 페이지 사이즈
+  const sendMessagesHistory = ref<SendMessagesHistoryType[]>([]); // 메시지 전송 내역
+  const state = {
+    guildId,
+    pageIndex,
+    pageSize,
+    sendMessagesHistory,
+  };
 
   // ============= Actions =============
   // 채널로 메시지 보내기
@@ -46,8 +68,34 @@ export const useDiscordMessagesStore = defineStore('discordMessages', () => {
       return false;
     }
   };
+
+  // 채널 메시지 전송 내역 조회
+  const findSendMessageHistory = async (): Promise<void> => {
+    try {
+      const res = await $fetch<SendMessagesHistoryType[]>(
+        '/api/discord/send-message-history',
+        {
+          method: 'GET',
+          query: {
+            guildId: guildId.value,
+            pageSize: pageSize.value,
+            pageIndex: pageIndex.value,
+          },
+        }
+      );
+      console.log(res);
+    } catch (e: any) {
+      const error: NestHttpException = e;
+      await useAlert({
+        type: ResultTypeEnum.ERROR,
+        title: '메시지 전송 내역 조회 실패',
+        message: error.response?._data || error.message,
+      });
+    }
+  };
   const actions = {
     sendMessage,
+    findSendMessageHistory,
   };
 
   // ============= Return =============
