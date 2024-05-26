@@ -55,7 +55,6 @@ export class DiscordController {
   }
 
   // 디스코드 채널로 메시지 보내기
-  // todo channel.send를 못찾는다고 떠서 해결 방법 찾아야함
   @Post('send-message')
   async sendMessage(@Body() body: any, @Res() res: Response) {
     try {
