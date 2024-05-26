@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useDiscordManageStore } from '~/store/discordManage';
-import type { ChannelType, SendMessageType } from '~/store/discordManage';
+import { useDiscordMessagesStore } from '~/store/discordMessages';
+import type { ChannelType } from '~/store/discordManage';
+import type { SendMessageType } from '~/store/discordMessages';
 import type { DiscordGuildsType } from '~/store/discord';
 
 definePageMeta({
@@ -8,12 +10,13 @@ definePageMeta({
 });
 const config = useRuntimeConfig();
 const uGuild = useGuild();
-const discordStore = useDiscordManageStore();
+const discordManageStore = useDiscordManageStore();
+const discordMessageStore = useDiscordMessagesStore();
 
 // 서버 정보
 const guild: Ref<DiscordGuildsType> = ref({} as DiscordGuildsType);
 // 채널 리스트
-const cChannels = computed<ChannelType[]>(() => discordStore.channelList);
+const cChannels = computed<ChannelType[]>(() => discordManageStore.channelList);
 
 const form = ref();
 // 메시지 입력
@@ -45,7 +48,7 @@ const sendMessage = async () => {
       message: message.value,
       isEveryone: isEveryone.value,
     };
-    const result = await discordStore.sendMessage(params);
+    const result = await discordMessageStore.sendMessage(params);
     if (result) message.value = '';
   }
 
@@ -133,5 +136,9 @@ onMounted(() => {
         </v-row>
       </v-alert>
     </v-card-text>
+  </v-card>
+  <v-card class="mt-3">
+    <v-card-title>메시지 전송 내역</v-card-title>
+    <v-card-text> </v-card-text>
   </v-card>
 </template>
