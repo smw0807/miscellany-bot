@@ -37,7 +37,6 @@ export class SendMessagesHistoryService {
           createdAt: 'desc',
         },
       });
-      this.logger.debug(result, '메시지 전송 내역 조회 성공');
       return result;
     } catch (e) {
       this.logger.error('메시지 전송 내역 조회에 실패했습니다.', e);
