@@ -23,7 +23,7 @@ export class SendMessagesHistoryService {
   //메시지 전송 내역 조회
   async findSendMessageHistory(
     guildId: string,
-    pageSzie: number,
+    pageSize: number,
     pageIndex: number,
   ) {
     try {
@@ -31,8 +31,8 @@ export class SendMessagesHistoryService {
         where: {
           guildId: guildId,
         },
-        take: pageSzie,
-        skip: pageIndex * pageSzie,
+        take: pageSize,
+        skip: pageIndex * pageSize,
         orderBy: {
           createdAt: 'desc',
         },

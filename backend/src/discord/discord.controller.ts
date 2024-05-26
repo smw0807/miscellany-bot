@@ -13,6 +13,7 @@ import { DiscordMessageService } from './messages/discord.message.service';
 import { DiscordGuildsService } from './guilds/discord.guilds.service';
 import { SendMessageType } from './types/messages';
 import { DiscordChannelService } from './guilds/discord.channel.service';
+import { SendMessagesHistoryService } from 'src/supabase/send-messages-history/msg.history.service';
 
 @Controller('discord')
 export class DiscordController {
@@ -21,6 +22,7 @@ export class DiscordController {
     private readonly guildsService: DiscordGuildsService,
     private readonly messageService: DiscordMessageService,
     private readonly channelService: DiscordChannelService,
+    private readonly massageHistoryService: SendMessagesHistoryService,
   ) {}
 
   // 디스코드 채널 리스트
@@ -67,6 +69,31 @@ export class DiscordController {
         isEveryone: Boolean(isEveryone),
       };
       const result = await this.messageService.sendMessage(data);
+      res.send(result);
+    } catch (e) {
+      if (e instanceof HttpException) {
+        const status = e.getStatus();
+        res.status(status).send(e.message);
+      } else {
+        if (e.status) {
+          res.status(e.status).send(e.message);
+        } else {
+          res.status(502).send(e.message);
+        }
+      }
+    }
+  }
+
+  // 채널에 메시지 전송 내역 조회
+  @Get('send-message-history')
+  async findSendMessageHistory(@Req() req: Request, @Res() res: Response) {
+    try {
+      const { guildId, pageSize, pageIndex } = req.query;
+      const result = await this.massageHistoryService.findSendMessageHistory(
+        guildId as string,
+        Number(pageSize),
+        Number(pageIndex),
+      );
       res.send(result);
     } catch (e) {
       if (e instanceof HttpException) {
