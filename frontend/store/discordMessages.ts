@@ -8,6 +8,7 @@ export type SendMessageType = {
   isEveryone: boolean;
 };
 
+// 메시지 전송 내역 타입
 export type SendMessagesHistoryType = {
   id: string;
   channelId: string;
@@ -18,20 +19,28 @@ export type SendMessagesHistoryType = {
   message: string;
   createdAt: string;
   updatedAt: string;
-  userId?: string;
+  userId?: string | null;
+};
+
+// 메시지 전송 내역 조회 응답 타입
+export type SendMessagesHistoryResponseType = {
+  data: SendMessagesHistoryType[];
+  total: number;
 };
 
 export const useDiscordMessagesStore = defineStore('discordMessages', () => {
   const { useAlert, useConfirm } = useDialog();
   // ============= State =============
   const guildId = ref<string>(''); // 길드 아이디
-  const pageIndex = ref<number>(0); // 페이지 인덱스
+  const pageIndex = ref<number>(1); // 페이지 인덱스
   const pageSize = ref<number>(10); // 페이지 사이즈
+  const total = ref<number>(0); // 전체 데이터 수
   const sendMessagesHistory = ref<SendMessagesHistoryType[]>([]); // 메시지 전송 내역
   const state = {
     guildId,
     pageIndex,
     pageSize,
+    total,
     sendMessagesHistory,
   };
 
@@ -57,6 +66,7 @@ export const useDiscordMessagesStore = defineStore('discordMessages', () => {
         title: '메시지 전송 성공',
         message: res,
       });
+      await findSendMessageHistory();
       return true;
     } catch (e: any) {
       const error: NestHttpException = e;
@@ -72,17 +82,21 @@ export const useDiscordMessagesStore = defineStore('discordMessages', () => {
   // 채널 메시지 전송 내역 조회
   const findSendMessageHistory = async (): Promise<void> => {
     try {
-      const res = await $fetch<SendMessagesHistoryType[]>(
+      const res = await $fetch<SendMessagesHistoryResponseType>(
         '/api/discord/send-message-history',
         {
           method: 'GET',
           query: {
             guildId: guildId.value,
             pageSize: pageSize.value,
-            pageIndex: pageIndex.value,
+            pageIndex: pageIndex.value - 1,
           },
         }
       );
+      if (res.total !== 0) {
+        total.value = res.total;
+        sendMessagesHistory.value = res.data;
+      }
       console.log(res);
     } catch (e: any) {
       const error: NestHttpException = e;

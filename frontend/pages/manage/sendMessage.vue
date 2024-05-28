@@ -64,6 +64,24 @@ const endSendMessage = () => {
   disabledTextField.value = false;
 };
 
+// 메시지 전송 내역
+// 테이블 헤더
+const headers = [
+  { title: '보낸 시간', value: 'createdAt', width: '30%' },
+  { title: '채널', value: 'channelName', width: '20%' },
+  { title: '메시지', value: 'message', width: '50%' },
+];
+// 총 개수
+const totalItems = computed(() => discordMessageStore.total);
+// 테이블 아이템
+const items = computed(() => discordMessageStore.sendMessagesHistory);
+// 페이지
+const page = computed(() => discordMessageStore.pageIndex);
+// 페이지 업데이트
+const pageUpdate = (value: number) => {
+  discordMessageStore.pageIndex = value;
+  discordMessageStore.findSendMessageHistory();
+};
 onMounted(() => {
   guild.value = uGuild.loadGuild(config.public.discordStorageName);
 
@@ -142,6 +160,23 @@ onMounted(() => {
   </v-card>
   <v-card class="mt-3">
     <v-card-title>메시지 전송 내역</v-card-title>
-    <v-card-text> </v-card-text>
+    <v-card-text>
+      <v-data-table
+        :headers="headers"
+        :items="items"
+        :items-length="totalItems"
+        items-per-page="10"
+        density="comfortable"
+        hide-default-footer
+      ></v-data-table>
+      <v-pagination
+        v-model="page"
+        :length="Math.ceil(totalItems / 10)"
+        rounded
+        color="primary"
+        @update:model-value="pageUpdate"
+        class="my-4"
+      ></v-pagination>
+    </v-card-text>
   </v-card>
 </template>
