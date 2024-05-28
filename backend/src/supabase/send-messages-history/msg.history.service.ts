@@ -27,6 +27,13 @@ export class SendMessagesHistoryService {
     pageIndex: number,
   ) {
     try {
+      const total = await this.prisma.channelMessage.count({
+        where: {
+          guildId: guildId,
+        },
+      });
+      if (total === 0) return { data: [], total: 0 };
+
       const result = await this.prisma.channelMessage.findMany({
         where: {
           guildId: guildId,
@@ -37,7 +44,10 @@ export class SendMessagesHistoryService {
           createdAt: 'desc',
         },
       });
-      return result;
+      return {
+        data: result,
+        total: total,
+      };
     } catch (e) {
       this.logger.error('메시지 전송 내역 조회에 실패했습니다.', e);
       if (e instanceof HttpException) {
