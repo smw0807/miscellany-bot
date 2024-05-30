@@ -50,12 +50,13 @@ onUnmounted(() => {
           @click="router.push('/manage/sendMessage')"
         ></v-list-item>
         <v-list-item
-          prepend-icon="mdi-account"
-          title="예약 메시지 관리"
-        ></v-list-item>
-        <v-list-item
           prepend-icon="mdi-account-group-outline"
           title="메시지 트리거 관리"
+          @click="router.push('/manage/triggerMessage')"
+        ></v-list-item>
+        <v-list-item
+          prepend-icon="mdi-account"
+          title="예약 메시지 관리"
         ></v-list-item>
       </v-list>
     </v-navigation-drawer>
