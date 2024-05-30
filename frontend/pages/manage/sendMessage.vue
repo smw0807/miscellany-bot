@@ -123,7 +123,6 @@ onMounted(() => {
           :rules="messageRules"
           clear-icon="mdi-close-circle"
           label="채널에 보낼 메시지를 입력해주세요."
-          placeholder="컨트롤+엔터를 누르면 바로 메시지를 보낼 수 있습니다."
           clearable
           counter
           no-resize
