@@ -1,5 +1,6 @@
 // 디스코드 메시지 관련 스토어
 import { ResultTypeEnum } from '~/types/enums';
+import dayjs from 'dayjs';
 import type { NestHttpException } from '~/types/errors';
 export type SendMessageType = {
   guildId: string;
@@ -95,9 +96,11 @@ export const useDiscordMessagesStore = defineStore('discordMessages', () => {
       );
       if (res.total !== 0) {
         total.value = res.total;
-        sendMessagesHistory.value = res.data;
+        sendMessagesHistory.value = res.data.map((item) => ({
+          ...item,
+          createdAt: dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+        }));
       }
-      console.log(res);
     } catch (e: any) {
       const error: NestHttpException = e;
       await useAlert({
