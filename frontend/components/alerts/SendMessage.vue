@@ -3,8 +3,6 @@
     <v-row align="center">
       <v-col>
         <span>
-          <strong>메시지 전송 안내</strong>
-          <br />
           - 메시지는 5000자 이하로 입력해주세요.
           <br />
           - @everyone 적용 시 모든 유저에게 알림이 전송됩니다.
