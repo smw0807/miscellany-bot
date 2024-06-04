@@ -48,6 +48,17 @@ const emitSave = async () => {
     form.value.reset();
   }
 };
+// 초기화
+watch(
+  () => props.open,
+  (value) => {
+    if (value) {
+      isEveryone.value = true;
+      triggerWord.value = '';
+      message.value = '';
+    }
+  }
+);
 </script>
 <template>
   <v-sheet>
