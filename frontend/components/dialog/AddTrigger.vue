@@ -8,7 +8,10 @@ const props = defineProps<{
 
 const { useConfirm } = useDialog();
 
-const emit = defineEmits(['onSave', 'onClose']);
+const emit = defineEmits({
+  'input-data': (data: TriggerMessageType) => true,
+  onClose: () => true,
+});
 
 const form = ref();
 // @everyone 여부
@@ -36,14 +39,13 @@ const emitSave = async () => {
     message: '트리거를 추가하시겠습니까?',
   });
   if (confirm) {
-    const dataForm: TriggerMessageType = {
+    const dataForm: Ref<TriggerMessageType> = ref({
       isEveryone: isEveryone.value,
       triggerWord: triggerWord.value,
       message: message.value,
-    };
-    emit('onSave', dataForm);
+    });
+    emit('input-data', dataForm.value);
     form.value.reset();
-    emit('onClose');
   }
 };
 </script>
