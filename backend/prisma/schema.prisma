@@ -40,3 +40,18 @@ model ChannelMessage {
 
   @@map("send_messages_history")
 }
+
+// 트리거 메시지
+model TriggerMessage {
+  id        String   @id @default(cuid())
+  guildId   String
+  guildName String?
+  userId    String?
+  tirrigerWord String
+  message   String
+  isEveryone Boolean
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@map("trigger_messages")
+}
