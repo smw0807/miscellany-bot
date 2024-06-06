@@ -2,6 +2,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Logger,
   Patch,
   Post,
@@ -33,9 +34,11 @@ export class SupabaseController {
     try {
       const params = req.body;
       const result = await this.triggerService.addTriggerMessage(params);
-      res.status(result).send('ok');
+      if (result === HttpStatus.OK) {
+        return res.status(HttpStatus.OK).send('트리거 메시지 등록 성공');
+      }
+      return res.status(result.getStatus()).send(result.getResponse());
     } catch (e) {
-      console.error(e);
       this.logger.error('트리거 메시지 등록에 실패했습니다.', e);
       if (e.response) {
         res.status(e.response.status).send(e.response.error);

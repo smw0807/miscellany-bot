@@ -28,7 +28,8 @@ const saveTrigger = async (data: TriggerMessageType) => {
     guildId: guild.id,
     ...data,
   };
-  await triggerStore.addTriggerMessage(params);
+  const result = await triggerStore.addTriggerMessage(params);
+  if (result) closeDialog();
 };
 </script>
 <template>

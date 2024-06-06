@@ -45,7 +45,6 @@ const emitSave = async () => {
       message: message.value,
     });
     emit('input-data', dataForm.value);
-    form.value.reset();
   }
 };
 // 초기화

@@ -13,7 +13,24 @@ export class TriggerMessagesService {
   // 트리거 메시지 등록
   async addTriggerMessage(data: TriggerMessageType) {
     try {
-      console.log(data);
+      if (this.checkDuplicateTriggerWord(data.triggerWord)) {
+        return new HttpException(
+          '이미 등록된 트리거 단어입니다.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (data.message.length === 0) {
+        return new HttpException(
+          '메시지를 입력해주세요.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (data.triggerWord.length === 0) {
+        return new HttpException(
+          '트리거 단어를 입력해주세요.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const result = await this.prisma.triggerMessage.create({ data });
       this.logger.debug(result, '트리거 메시지 등록 성공');
       return HttpStatus.OK;
@@ -36,4 +53,13 @@ export class TriggerMessagesService {
 
   // 트리거 메시지 삭제
   async deleteTriggerMessage() {}
+
+  // 트리거 단어 중복 체크
+  async checkDuplicateTriggerWord(triggerWord: string): Promise<boolean> {
+    const result = await this.prisma.triggerMessage.count({
+      where: { triggerWord },
+    });
+    console.log('result', result, result === 0);
+    return result === 0;
+  }
 }
