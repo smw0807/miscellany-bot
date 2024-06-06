@@ -6,6 +6,9 @@ definePageMeta({
   layout: 'manage',
 });
 
+const config = useRuntimeConfig();
+const { loadGuild } = useGuild();
+
 const triggerStore = useDiscordMessagesTriggerStore();
 
 const openAddTriggerDialog = ref(false);
@@ -20,12 +23,17 @@ const closeDialog = () => {
 };
 // 트리거 저장
 const saveTrigger = async (data: TriggerMessageType) => {
-  await triggerStore.addTriggerMessage(data);
+  const guild = loadGuild(config.public.discordStorageName);
+  const params = {
+    guildId: guild.id,
+    ...data,
+  };
+  await triggerStore.addTriggerMessage(params);
 };
 </script>
 <template>
   <v-card>
-    <v-card-title> 메시지 트리거 관리 </v-card-title>
+    <v-card-title> 트리거 메시지 관리 </v-card-title>
     <v-card-text>
       <alerts-trigger-message />
       <div class="text-right mt-3">
