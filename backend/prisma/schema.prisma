@@ -45,8 +45,6 @@ model ChannelMessage {
 model TriggerMessage {
   id        String   @id @default(cuid())
   guildId   String
-  guildName String?
-  userId    String?
   triggerWord String
   message   String
   isEveryone Boolean
