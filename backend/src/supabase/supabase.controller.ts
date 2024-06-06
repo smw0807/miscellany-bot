@@ -33,12 +33,16 @@ export class SupabaseController {
     try {
       const params = req.body;
       const result = await this.triggerService.addTriggerMessage(params);
-      this.logger.debug(result, '트리거 메시지 등록 성공');
+      res.status(result).send('ok');
     } catch (e) {
       console.error(e);
       this.logger.error('트리거 메시지 등록에 실패했습니다.', e);
+      if (e.response) {
+        res.status(e.response.status).send(e.response.error);
+      } else {
+        res.status(500).send(e.message);
+      }
     }
-    res.send('test');
   }
 
   // 트리거 메시지 수정

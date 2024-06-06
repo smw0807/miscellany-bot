@@ -19,9 +19,9 @@ export const useDiscordMessagesTriggerStore = defineStore(
       params: TriggerMessageType
     ): Promise<void> => {
       try {
-        const res = await $fetch('/api/discord/trigger-message', {
+        const res = await $fetch('/api/supabase/trigger-message', {
           method: 'POST',
-          params,
+          body: JSON.stringify(params),
         });
         console.log('res : ', res);
       } catch (e) {
