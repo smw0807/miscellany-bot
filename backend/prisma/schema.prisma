@@ -47,7 +47,7 @@ model TriggerMessage {
   guildId   String
   guildName String?
   userId    String?
-  tirrigerWord String
+  triggerWord String
   message   String
   isEveryone Boolean
   createdAt DateTime? @default(now())
