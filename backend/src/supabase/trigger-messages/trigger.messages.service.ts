@@ -8,7 +8,40 @@ export class TriggerMessagesService {
   constructor(private readonly prisma: PrismaService) {}
 
   // 트리거 메시지 목록 조회
-  async getTriggerMessages() {}
+  async getTriggerMessages(
+    guildId: string,
+    pageSize: number,
+    pageIndex: number,
+  ) {
+    try {
+      const total = await this.prisma.triggerMessage.count({
+        where: { guildId },
+      });
+      if (total === 0) return { data: [], total: 0 };
+
+      const result = await this.prisma.triggerMessage.findMany({
+        where: { guildId },
+        take: pageSize,
+        skip: pageIndex * pageSize,
+        orderBy: { createdAt: 'desc' },
+      });
+      return {
+        data: result,
+        total: total,
+      };
+    } catch (e) {
+      console.error(e);
+      this.logger.error('트리거 메시지 목록 조회에 실패했습니다.', e);
+      if (e instanceof HttpException) {
+        throw new HttpException(
+          '트리거 메시지 목록 조회에 실패했습니다.',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      } else {
+        throw e;
+      }
+    }
+  }
 
   // 트리거 메시지 등록
   async addTriggerMessage(data: TriggerMessageType) {

@@ -19,12 +19,21 @@ export class SupabaseController {
 
   // 트리거 메시지 목록 조회
   @Get('trigger-messages')
-  async getTriggerMessages() {
+  async getTriggerMessages(@Req() req: Request, @Res() res: Response) {
     try {
-      //todo 트리거 메시지 목록 조회
+      const { guildId, pageSize, pageIndex } = req.query;
+      const result = await this.triggerService.getTriggerMessages(
+        guildId.toString(),
+        Number(pageSize),
+        Number(pageIndex),
+      );
+      res.send(result);
     } catch (e) {
       console.error(e);
       this.logger.error('트리거 메시지 목록 조회에 실패했습니다.', e);
+      res
+        .status(HttpStatus.BAD_GATEWAY)
+        .send('트리거 메시지 목록 조회에 실패했습니다.');
     }
   }
 

@@ -90,7 +90,7 @@ export class DiscordController {
     try {
       const { guildId, pageSize, pageIndex } = req.query;
       const result = await this.massageHistoryService.findSendMessageHistory(
-        guildId as string,
+        guildId.toString(),
         Number(pageSize),
         Number(pageIndex),
       );
