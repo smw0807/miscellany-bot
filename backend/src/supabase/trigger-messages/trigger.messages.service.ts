@@ -13,7 +13,11 @@ export class TriggerMessagesService {
   // 트리거 메시지 등록
   async addTriggerMessage(data: TriggerMessageType) {
     try {
-      if (this.checkDuplicateTriggerWord(data.triggerWord)) {
+      const isDuplicate = await this.checkDuplicateTriggerWord(
+        data.guildId,
+        data.triggerWord,
+      );
+      if (isDuplicate) {
         return new HttpException(
           '이미 등록된 트리거 단어입니다.',
           HttpStatus.BAD_REQUEST,
@@ -48,18 +52,20 @@ export class TriggerMessagesService {
     }
   }
 
-  // 트리거 메시지 수정
+  // 트리거 메시지 수정 1098235615574769706
   async updateTriggerMessage() {}
 
   // 트리거 메시지 삭제
   async deleteTriggerMessage() {}
 
   // 트리거 단어 중복 체크
-  async checkDuplicateTriggerWord(triggerWord: string): Promise<boolean> {
+  async checkDuplicateTriggerWord(
+    guildId: string,
+    triggerWord: string,
+  ): Promise<boolean> {
     const result = await this.prisma.triggerMessage.count({
-      where: { triggerWord },
+      where: { guildId, triggerWord },
     });
-    console.log('result', result, result === 0);
-    return result === 0;
+    return result !== 0;
   }
 }
