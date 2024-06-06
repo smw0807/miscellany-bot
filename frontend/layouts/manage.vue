@@ -51,7 +51,7 @@ onUnmounted(() => {
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-account-group-outline"
-          title="메시지 트리거 관리"
+          title="트리거 메시지 관리"
           @click="router.push('/manage/triggerMessage')"
         ></v-list-item>
         <v-list-item
