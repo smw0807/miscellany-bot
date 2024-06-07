@@ -1,22 +1,75 @@
+import dayjs from 'dayjs';
 import { ResultTypeEnum } from '~/types/enums';
 import type { NestHttpException } from '~/types/errors';
-
+// 트리거 메시지 타입
 export type TriggerMessageType = {
   guildId?: string;
   triggerWord: string;
   message: string;
   isEveryone: boolean;
 };
+// 트리거 메시지 목록 타입
+export type TriggerMessagesListType = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+} & TriggerMessageType;
+// 트리거 메시지 목록 조회 응답 타입
+export type TriggerMessagesListResponseType = {
+  data: TriggerMessagesListType[];
+  total: number;
+};
 export const useDiscordMessagesTriggerStore = defineStore(
   'discordMessagesTrigger',
   () => {
     const { useAlert, useConfirm } = useDialog();
     // ============= State =============
-
-    const state = {};
+    const guildId = ref<string>(''); // 길드 아이디
+    const pageIndex = ref<number>(1); // 페이지 인덱스
+    const pageSize = ref<number>(10); // 페이지 사이즈
+    const total = ref<number>(0); // 전체 데이터 수
+    const triggerMessages = ref<TriggerMessageType[]>([]); // 트리거 메시지
+    const state = {
+      guildId,
+      pageIndex,
+      pageSize,
+      total,
+      triggerMessages,
+    };
 
     // ============= Actions =============
     // 트리거 메시지 목록 조회
+    const getTriggerMessages = async (): Promise<void> => {
+      try {
+        const res = await $fetch<TriggerMessagesListResponseType>(
+          '/api/supabase/trigger-messages',
+          {
+            method: 'GET',
+            params: {
+              guildId: guildId.value,
+              pageSize: pageSize.value,
+              pageIndex: pageIndex.value - 1,
+            },
+          }
+        );
+        if (res.total > 0) {
+          total.value = res.total;
+          triggerMessages.value = res.data.map((item) => ({
+            ...item,
+            createdAt: dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+            updatedAt: dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+          }));
+        }
+        console.log('triggerMessages', triggerMessages.value);
+      } catch (e: any) {
+        const error: NestHttpException = e;
+        await useAlert({
+          type: ResultTypeEnum.ERROR,
+          title: '트리거 메시지 목록 조회 실패',
+          message: error.response?._data || error.message,
+        });
+      }
+    };
     // 트리거 메시지 등록
     const addTriggerMessage = async (
       params: TriggerMessageType
@@ -31,6 +84,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
           title: '트리거 메시지 등록',
           message: res,
         });
+        await getTriggerMessages();
         return true;
       } catch (e: any) {
         const error: NestHttpException = e;
@@ -45,7 +99,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
     // 트리거 메시지 수정
 
     // 트리거 메시지 삭제
-    const actions = { addTriggerMessage };
+    const actions = { getTriggerMessages, addTriggerMessage };
 
     // ============= Return =============
     return {
