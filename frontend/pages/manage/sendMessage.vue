@@ -144,7 +144,11 @@ onMounted(() => {
     </v-card-text>
   </v-card>
   <v-card class="mt-3">
-    <v-card-title>메시지 전송 내역</v-card-title>
+    <v-card-title class="d-flex">
+      메시지 전송 내역
+      <v-spacer />
+      <div class="text-subtitle-1 text-">총 {{ totalItems }} 개</div>
+    </v-card-title>
     <v-card-text>
       <v-data-table
         :headers="headers"
