@@ -60,7 +60,6 @@ export const useDiscordMessagesTriggerStore = defineStore(
             updatedAt: dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
           }));
         }
-        console.log('triggerMessages', triggerMessages.value);
       } catch (e: any) {
         const error: NestHttpException = e;
         await useAlert({
