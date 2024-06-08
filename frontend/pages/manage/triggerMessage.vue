@@ -79,7 +79,12 @@ onMounted(() => {
       <alerts-trigger-message />
       <div class="text-right mt-3">
         <v-btn color="warning" @click="openDialog"> 트리거 추가 </v-btn>
-        <v-btn color="red" class="ml-1" @click="deleteTrigger">
+        <v-btn
+          :disabled="selectedTrigger.length === 0"
+          color="red"
+          class="ml-1"
+          @click="deleteTrigger"
+        >
           트리거 삭제
         </v-btn>
       </div>
