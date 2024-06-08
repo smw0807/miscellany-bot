@@ -76,8 +76,10 @@ export class SupabaseController {
     try {
       const params = req.body;
       const result = await this.triggerService.deleteTriggerMessage(params);
-      console.log(result);
-      res.send('test');
+      if (result === HttpStatus.OK) {
+        return res.status(HttpStatus.OK).send('트리거 메시지 등록 성공');
+      }
+      return res.status(result.getStatus()).send(result.getResponse());
     } catch (e) {
       console.error(e);
       this.logger.error('트리거 메시지 삭제에 실패했습니다.', e);
