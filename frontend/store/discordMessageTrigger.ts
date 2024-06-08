@@ -98,7 +98,41 @@ export const useDiscordMessagesTriggerStore = defineStore(
     // 트리거 메시지 수정
 
     // 트리거 메시지 삭제
-    const actions = { getTriggerMessages, addTriggerMessage };
+    const deleteTriggerMessage = async (id: string[]): Promise<void> => {
+      try {
+        const confirm = await useConfirm({
+          type: ResultTypeEnum.WARNING,
+          title: '트리거 메시지 삭제',
+          message:
+            id.length === 1
+              ? '선택된 트리거를 정말 삭제하시겠습니까?'
+              : '선택한 트리거들을 정말 삭제하시겠습니까?',
+        });
+        if (!confirm) return;
+        const res = await $fetch('/api/supabase/trigger-message', {
+          method: 'DELETE',
+          body: JSON.stringify({ id }),
+        });
+        console.log('res', res);
+        await useAlert({
+          type: ResultTypeEnum.SUCCESS,
+          title: '트리거 메시지 삭제',
+          message: res as string,
+        });
+      } catch (e: any) {
+        const error: NestHttpException = e;
+        await useAlert({
+          type: ResultTypeEnum.ERROR,
+          title: '트리거 메시지 삭제 실패',
+          message: error.response?._data || error.message,
+        });
+      }
+    };
+    const actions = {
+      getTriggerMessages,
+      addTriggerMessage,
+      deleteTriggerMessage,
+    };
 
     // ============= Return =============
     return {

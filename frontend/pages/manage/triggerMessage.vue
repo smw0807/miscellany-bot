@@ -36,6 +36,11 @@ const saveTrigger = async (data: TriggerMessageType) => {
   if (result) closeDialog();
 };
 
+// 트리거 삭제 이벤트
+const deleteTrigger = async () => {
+  await triggerStore.deleteTriggerMessage(selectedTrigger.value);
+};
+
 // 트리거 메시지 리스트 관련
 // 테이블 헤더
 const headers = [
@@ -46,15 +51,19 @@ const headers = [
 ];
 // 데이터
 const items = computed(() => triggerStore.triggerMessages);
-// 총 개수
+// 총 ㄷ[ㅇ;타 개수
 const totalItems = computed(() => triggerStore.total);
-// 페이지
-const page = computed(() => triggerStore.pageIndex);
-// 페이지 업데이트
+// 현재 페이지 번호
+const page = ref(triggerStore.pageIndex);
+// 페이지 넘버 클릭 시 이벤트
 const pageUpdate = (value: number) => {
   triggerStore.pageIndex = value;
   triggerStore.getTriggerMessages();
+  // 페이지 변경 시 체크박스 초기화
+  selectedTrigger.value = [];
 };
+// 테이블 체크박스 선택 값
+const selectedTrigger = ref<string[]>([]);
 
 onMounted(() => {
   guild.value = loadGuild(config.public.discordStorageName);
@@ -70,6 +79,9 @@ onMounted(() => {
       <alerts-trigger-message />
       <div class="text-right mt-3">
         <v-btn color="warning" @click="openDialog"> 트리거 추가 </v-btn>
+        <v-btn color="red" class="ml-1" @click="deleteTrigger">
+          트리거 삭제
+        </v-btn>
       </div>
     </v-card-text>
     <v-card-title class="d-flex">
@@ -79,6 +91,7 @@ onMounted(() => {
     </v-card-title>
     <v-card-text>
       <v-data-table
+        v-model="selectedTrigger"
         :headers="headers"
         :items="items"
         :items-length="totalItems"
