@@ -111,7 +111,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
         if (!confirm) return;
         const res = await $fetch('/api/supabase/trigger-message', {
           method: 'DELETE',
-          body: JSON.stringify({ id }),
+          body: JSON.stringify(id),
         });
         console.log('res', res);
         await useAlert({
@@ -119,6 +119,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
           title: '트리거 메시지 삭제',
           message: res as string,
         });
+        await getTriggerMessages();
       } catch (e: any) {
         const error: NestHttpException = e;
         await useAlert({

@@ -31,9 +31,11 @@ export class SupabaseController {
     } catch (e) {
       console.error(e);
       this.logger.error('트리거 메시지 목록 조회에 실패했습니다.', e);
-      res
-        .status(HttpStatus.BAD_GATEWAY)
-        .send('트리거 메시지 목록 조회에 실패했습니다.');
+      if (e.response) {
+        res.status(e.response.status).send(e.response.error);
+      } else {
+        res.status(HttpStatus.NOT_IMPLEMENTED).send(e.message);
+      }
     }
   }
 
@@ -52,7 +54,7 @@ export class SupabaseController {
       if (e.response) {
         res.status(e.response.status).send(e.response.error);
       } else {
-        res.status(500).send(e.message);
+        res.status(HttpStatus.NOT_IMPLEMENTED).send(e.message);
       }
     }
   }
@@ -70,12 +72,20 @@ export class SupabaseController {
 
   // 트리거 메시지 삭제
   @Delete('trigger-message')
-  async deleteTriggerMessage() {
+  async deleteTriggerMessage(@Req() req: Request, @Res() res: Response) {
     try {
-      //todo 트리거 메시지 삭제
+      const params = req.body;
+      const result = await this.triggerService.deleteTriggerMessage(params);
+      console.log(result);
+      res.send('test');
     } catch (e) {
       console.error(e);
       this.logger.error('트리거 메시지 삭제에 실패했습니다.', e);
+      if (e.response) {
+        res.status(e.response.status).send(e.response.error);
+      } else {
+        res.status(HttpStatus.NOT_IMPLEMENTED).send(e.message);
+      }
     }
   }
 }

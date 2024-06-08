@@ -72,7 +72,6 @@ export class TriggerMessagesService {
       this.logger.debug(result, '트리거 메시지 등록 성공');
       return HttpStatus.OK;
     } catch (e) {
-      console.error(e);
       this.logger.error('트리거 메시지 등록에 실패했습니다.', e);
       if (e instanceof HttpException) {
         throw new HttpException(
@@ -85,11 +84,46 @@ export class TriggerMessagesService {
     }
   }
 
-  // 트리거 메시지 수정 1098235615574769706
+  // 트리거 메시지 수정
   async updateTriggerMessage() {}
 
   // 트리거 메시지 삭제
-  async deleteTriggerMessage() {}
+  async deleteTriggerMessage(id: string[]) {
+    try {
+      if (id.length === 0) {
+        return new HttpException(
+          '선택된 트리거가 없습니다.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const result = await this.prisma.triggerMessage.deleteMany({
+        where: { id: { in: id } },
+      });
+      if (result.count === 0) {
+        return new HttpException(
+          '삭제할 트리거가 없습니다.',
+          HttpStatus.BAD_REQUEST,
+        );
+      } else if (result.count !== id.length) {
+        return new HttpException(
+          '몇몇 트리거 삭제에 실패했습니다.<br/>확인바랍니다.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      this.logger.debug(result, '트리거 메시지 삭제 성공');
+      return HttpStatus.OK;
+    } catch (e) {
+      this.logger.error('트리거 메시지 삭제에 실패했습니다.', e);
+      if (e instanceof HttpException) {
+        throw new HttpException(
+          '트리거 메시지 삭제에 실패했습니다.',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      } else {
+        throw e;
+      }
+    }
+  }
 
   // 트리거 단어 중복 체크
   async checkDuplicateTriggerWord(
