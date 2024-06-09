@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import AddTrigger from '~/components/dialog/AddTrigger.vue';
+import EditTrigger from '~/components/dialog/EditTrigger.vue';
 import type { DiscordGuildsType } from '~/store/discord';
-import type { TriggerMessageType } from '~/store/discordMessageTrigger';
+import type {
+  TriggerMessagesDataType,
+  TriggerMessageType,
+} from '~/store/discordMessageTrigger';
 import { useDiscordMessagesTriggerStore } from '~/store/discordMessageTrigger';
+import { EditTypeEnum } from '~/types/enums';
 definePageMeta({
   layout: 'manage',
 });
@@ -15,24 +19,34 @@ const guild: Ref<DiscordGuildsType> = ref({} as DiscordGuildsType);
 
 const triggerStore = useDiscordMessagesTriggerStore();
 
-const openAddTriggerDialog = ref(false);
-
-// 트리거 추가 다이얼로그 열기
+// 트리거 다이얼로그 오픈
+const openEditTriggerDialog = ref(false);
+// 트리거 다이얼로그 모드
+const editMode = ref<EditTypeEnum>(EditTypeEnum.ADD);
+// 트리거 다이얼로그 열기
 const openDialog = () => {
-  openAddTriggerDialog.value = true;
+  editMode.value = EditTypeEnum.ADD;
+  openEditTriggerDialog.value = true;
 };
-// 트리거 추가 다이얼로그 닫기
+// 트리거 다이얼로그 닫기
 const closeDialog = () => {
-  openAddTriggerDialog.value = false;
+  openEditTriggerDialog.value = false;
 };
 // 트리거 저장
-const saveTrigger = async (data: TriggerMessageType) => {
+const saveTrigger = async (mode: EditTypeEnum, data: TriggerMessageType) => {
   const guild = loadGuild(config.public.discordStorageName);
   const params = {
     guildId: guild.id,
     ...data,
   };
-  const result = await triggerStore.addTriggerMessage(params);
+  let result = false;
+  if (mode === EditTypeEnum.ADD) {
+    result = await triggerStore.addTriggerMessage(params);
+  } else if (mode === EditTypeEnum.EDIT) {
+    result = await triggerStore.updateTriggerMessage(params);
+  } else {
+    console.warn('DELETE MODE NOT SUPPORTED');
+  }
   if (result) closeDialog();
 };
 
@@ -51,7 +65,7 @@ const headers = [
 ];
 // 데이터
 const items = computed(() => triggerStore.triggerMessages);
-// 총 ㄷ[ㅇ;타 개수
+// 총 데이터 개수
 const totalItems = computed(() => triggerStore.total);
 // 현재 페이지 번호
 const page = ref(triggerStore.pageIndex);
@@ -64,6 +78,17 @@ const pageUpdate = (value: number) => {
 };
 // 테이블 체크박스 선택 값
 const selectedTrigger = ref<string[]>([]);
+// 로우 데이터
+const rowItem = ref<TriggerMessagesDataType>();
+// 테이블 로우 클릭 이벤트
+const rowClickEvent = (
+  _e: Event,
+  { item }: { item: TriggerMessagesDataType }
+) => {
+  rowItem.value = item;
+  editMode.value = EditTypeEnum.EDIT;
+  openEditTriggerDialog.value = true;
+};
 
 onMounted(() => {
   guild.value = loadGuild(config.public.discordStorageName);
@@ -100,11 +125,20 @@ onMounted(() => {
         :headers="headers"
         :items="items"
         :items-length="totalItems"
+        @click:row="rowClickEvent"
         show-select
         items-per-page="10"
         density="comfortable"
         hide-default-footer
-      ></v-data-table>
+      >
+        <template #item.message="{ item }">
+          {{
+            item.message.length > 10
+              ? item.message.slice(0, 10) + '...'
+              : item.message
+          }}
+        </template>
+      </v-data-table>
       <v-pagination
         v-model="page"
         :length="Math.ceil(totalItems / 10)"
@@ -115,8 +149,11 @@ onMounted(() => {
       ></v-pagination>
     </v-card-text>
   </v-card>
-  <AddTrigger
-    :open="openAddTriggerDialog"
+
+  <EditTrigger
+    :open="openEditTriggerDialog"
+    :mode="editMode"
+    :editData="rowItem"
     @input-data="saveTrigger"
     @onClose="closeDialog"
   />
