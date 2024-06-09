@@ -8,15 +8,15 @@ export type TriggerMessageType = {
   message: string;
   isEveryone: boolean;
 };
-// 트리거 메시지 목록 타입
-export type TriggerMessagesListType = {
+// 트리거 메시지 데이터 타입
+export type TriggerMessagesDataType = {
   id: string;
   createdAt: string;
   updatedAt: string;
 } & TriggerMessageType;
 // 트리거 메시지 목록 조회 응답 타입
 export type TriggerMessagesListResponseType = {
-  data: TriggerMessagesListType[];
+  data: TriggerMessagesDataType[];
   total: number;
 };
 export const useDiscordMessagesTriggerStore = defineStore(
@@ -28,7 +28,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
     const pageIndex = ref<number>(1); // 페이지 인덱스
     const pageSize = ref<number>(10); // 페이지 사이즈
     const total = ref<number>(0); // 전체 데이터 수
-    const triggerMessages = ref<TriggerMessageType[]>([]); // 트리거 메시지
+    const triggerMessages = ref<TriggerMessagesDataType[]>([]); // 트리거 메시지
     const state = {
       guildId,
       pageIndex,
