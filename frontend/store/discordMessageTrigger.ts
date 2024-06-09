@@ -96,6 +96,21 @@ export const useDiscordMessagesTriggerStore = defineStore(
       }
     };
     // 트리거 메시지 수정
+    const updateTriggerMessage = async (
+      params: TriggerMessageType
+    ): Promise<boolean> => {
+      try {
+        return true;
+      } catch (e: any) {
+        const error: NestHttpException = e;
+        await useAlert({
+          type: ResultTypeEnum.ERROR,
+          title: '트리거 메시지 수정 실패',
+          message: error.response?._data || error.message,
+        });
+        return false;
+      }
+    };
 
     // 트리거 메시지 삭제
     const deleteTriggerMessage = async (id: string[]): Promise<void> => {
@@ -131,6 +146,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
     const actions = {
       getTriggerMessages,
       addTriggerMessage,
+      updateTriggerMessage,
       deleteTriggerMessage,
     };
 
