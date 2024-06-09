@@ -23,6 +23,7 @@ const alertData = computed(() => store.alertDialog);
         <h2 class="text-h5 mb-2">{{ alertData?.title ?? '' }}</h2>
 
         <pre
+          v-if="alertData?.message"
           v-html="alertData?.message ?? ''"
           class="mb-4 text-medium-emphasis text-body-1"
         ></pre>

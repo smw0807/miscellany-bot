@@ -2,14 +2,14 @@ import { ResultTypeEnum } from '~/types/enums';
 export type AlertDialogType = {
   type: ResultTypeEnum;
   title: string;
-  message: string;
+  message?: string;
   btnText?: string;
   // onConfirm: () => void;
 };
 export type ConfirmDialogType = {
   type: ResultTypeEnum;
   title: string;
-  message: string;
+  message?: string;
   okText?: string;
   cancelText?: string;
   // onConfirm: () => void;

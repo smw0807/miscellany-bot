@@ -23,6 +23,7 @@ const confirmData = computed(() => store.confirmDialog);
         <h2 class="text-h5 mb-2">{{ confirmData?.title ?? '' }}</h2>
 
         <pre
+          v-if="confirmData?.message"
           v-html="confirmData?.message ?? ''"
           class="mb-4 text-medium-emphasis text-body-1"
         ></pre>
