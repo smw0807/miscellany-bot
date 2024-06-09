@@ -113,7 +113,6 @@ export const useDiscordMessagesTriggerStore = defineStore(
           method: 'DELETE',
           body: JSON.stringify(id),
         });
-        console.log('res', res);
         await useAlert({
           type: ResultTypeEnum.SUCCESS,
           title: '트리거 메시지 삭제',

@@ -29,7 +29,6 @@ export class SupabaseController {
       );
       res.send(result);
     } catch (e) {
-      console.error(e);
       this.logger.error('트리거 메시지 목록 조회에 실패했습니다.', e);
       if (e.response) {
         res.status(e.response.status).send(e.response.error);
@@ -77,11 +76,10 @@ export class SupabaseController {
       const params = req.body;
       const result = await this.triggerService.deleteTriggerMessage(params);
       if (result === HttpStatus.OK) {
-        return res.status(HttpStatus.OK).send('트리거 메시지 등록 성공');
+        return res.status(HttpStatus.OK).send('트리거 메시지 삭제 성공');
       }
       return res.status(result.getStatus()).send(result.getResponse());
     } catch (e) {
-      console.error(e);
       this.logger.error('트리거 메시지 삭제에 실패했습니다.', e);
       if (e.response) {
         res.status(e.response.status).send(e.response.error);
