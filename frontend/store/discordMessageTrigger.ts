@@ -97,9 +97,23 @@ export const useDiscordMessagesTriggerStore = defineStore(
     };
     // 트리거 메시지 수정
     const updateTriggerMessage = async (
+      id: string,
       params: TriggerMessageType
     ): Promise<boolean> => {
       try {
+        const res = await $fetch<string>(
+          `/api/supabase/trigger-message/${id}`,
+          {
+            method: 'PATCH',
+            body: JSON.stringify(params),
+          }
+        );
+        await useAlert({
+          type: ResultTypeEnum.SUCCESS,
+          title: '트리거 메시지 수정',
+          message: res,
+        });
+        await getTriggerMessages();
         return true;
       } catch (e: any) {
         const error: NestHttpException = e;
