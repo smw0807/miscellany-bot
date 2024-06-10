@@ -23,9 +23,6 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const result = await $fetch<DiscordTokenType>('/api/auth/discord/token', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         params: {
           code,
           state,

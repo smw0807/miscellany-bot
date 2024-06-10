@@ -4,6 +4,10 @@ export default defineNuxtPlugin((nuxtApp) => {
   globalThis.$fetch = ofetch.create({
     onRequest({ _request, options }) {
       options.retry = 0;
+      options.headers = {
+        ...options.headers,
+        'Content-Type': 'application/json',
+      };
     },
     onResponse({ response }) {
       // console.log('onResponse', response);
