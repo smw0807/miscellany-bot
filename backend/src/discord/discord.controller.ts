@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpException,
+  HttpStatus,
   Logger,
   Post,
   Req,
@@ -36,7 +37,7 @@ export class DiscordController {
       if (e.response) {
         res.status(e.response.status).send(e.response.error);
       } else {
-        res.status(500).send(e.message);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
       }
     }
   }
@@ -51,7 +52,7 @@ export class DiscordController {
       if (e.response) {
         res.status(e.response.status).send(e.response.error);
       } else {
-        res.status(500).send(e.message);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
       }
     }
   }
@@ -78,7 +79,7 @@ export class DiscordController {
         if (e.status) {
           res.status(e.status).send(e.message);
         } else {
-          res.status(502).send(e.message);
+          res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
         }
       }
     }
@@ -103,7 +104,7 @@ export class DiscordController {
         if (e.status) {
           res.status(e.status).send(e.message);
         } else {
-          res.status(502).send(e.message);
+          res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
         }
       }
     }

@@ -33,7 +33,7 @@ export class SupabaseController {
       if (e.response) {
         res.status(e.response.status).send(e.response.error);
       } else {
-        res.status(HttpStatus.NOT_IMPLEMENTED).send(e.message);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
       }
     }
   }
@@ -53,19 +53,24 @@ export class SupabaseController {
       if (e.response) {
         res.status(e.response.status).send(e.response.error);
       } else {
-        res.status(HttpStatus.NOT_IMPLEMENTED).send(e.message);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
       }
     }
   }
 
   // 트리거 메시지 수정
   @Patch('trigger-message')
-  async updateTriggerMessage() {
+  async updateTriggerMessage(@Req() req: Request, @Res() res: Response) {
     try {
       //todo 트리거 메시지 수정
     } catch (e) {
       console.error(e);
       this.logger.error('트리거 메시지 수정에 실패했습니다.', e);
+      if (e.response) {
+        res.status(e.response.status).send(e.response.error);
+      } else {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
+      }
     }
   }
 
@@ -84,7 +89,7 @@ export class SupabaseController {
       if (e.response) {
         res.status(e.response.status).send(e.response.error);
       } else {
-        res.status(HttpStatus.NOT_IMPLEMENTED).send(e.message);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
       }
     }
   }
