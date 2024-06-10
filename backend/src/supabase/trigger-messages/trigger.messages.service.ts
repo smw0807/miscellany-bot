@@ -85,7 +85,22 @@ export class TriggerMessagesService {
   }
 
   // 트리거 메시지 수정
-  async updateTriggerMessage() {}
+  async updateTriggerMessage(id: string, data: TriggerMessageType) {
+    try {
+      const result = await this.prisma.triggerMessage.update({
+        where: { id },
+        data,
+      });
+      this.logger.debug(result, '트리거 메시지 수정 성공');
+      return HttpStatus.OK;
+    } catch (e) {
+      this.logger.error('트리거 메시지 수정에 실패했습니다.', e);
+      throw new HttpException(
+        '트리거 메시지 수정에 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 
   // 트리거 메시지 삭제
   async deleteTriggerMessage(id: string[]) {

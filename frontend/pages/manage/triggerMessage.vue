@@ -43,7 +43,10 @@ const saveTrigger = async (mode: EditTypeEnum, data: TriggerMessageType) => {
   if (mode === EditTypeEnum.ADD) {
     result = await triggerStore.addTriggerMessage(params);
   } else if (mode === EditTypeEnum.EDIT) {
-    result = await triggerStore.updateTriggerMessage(params);
+    result = await triggerStore.updateTriggerMessage(
+      rowItem.value?.id!,
+      params
+    );
   } else {
     console.warn('DELETE MODE NOT SUPPORTED');
   }

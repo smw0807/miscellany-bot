@@ -2,6 +2,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   HttpStatus,
   Logger,
   Patch,
@@ -59,15 +60,20 @@ export class SupabaseController {
   }
 
   // 트리거 메시지 수정
-  @Patch('trigger-message')
+  @Patch('trigger-message/:id')
   async updateTriggerMessage(@Req() req: Request, @Res() res: Response) {
     try {
-      //todo 트리거 메시지 수정
+      const id = req.params.id;
+      const params = req.body;
+      const result = await this.triggerService.updateTriggerMessage(id, params);
+      if (result === HttpStatus.OK) {
+        return res.status(HttpStatus.OK).send('트리거 메시지 수정 성공');
+      }
+      res.status(HttpStatus.NOT_MODIFIED).send('트리거 메시지 수정 실패');
     } catch (e) {
-      console.error(e);
       this.logger.error('트리거 메시지 수정에 실패했습니다.', e);
-      if (e.response) {
-        res.status(e.response.status).send(e.response.error);
+      if (e instanceof HttpException) {
+        res.status(e.getStatus()).send(e.getResponse());
       } else {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
       }
