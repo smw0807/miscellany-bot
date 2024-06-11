@@ -145,6 +145,7 @@ onMounted(() => {
         items-per-page="10"
         density="comfortable"
         hide-default-footer
+        no-data-text="등록된 트리거 메시지가 없습니다."
       >
         <template #item.message="{ item }">
           {{
