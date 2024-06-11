@@ -53,14 +53,13 @@ export const useDiscordMessagesTriggerStore = defineStore(
             },
           }
         );
-        if (res.total > 0) {
-          total.value = res.total;
-          triggerMessages.value = res.data.map((item) => ({
-            ...item,
-            createdAt: dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
-            updatedAt: dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
-          }));
-        }
+
+        total.value = res.total;
+        triggerMessages.value = res.data.map((item) => ({
+          ...item,
+          createdAt: dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+          updatedAt: dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+        }));
       } catch (e: any) {
         const error: NestHttpException = e;
         await useAlert({
