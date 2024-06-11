@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
   HttpStatus,
   Logger,
   Post,
@@ -33,22 +34,23 @@ export class DiscordController {
       const guilds = await this.guildsService.getOwnerGuilds(accessToken);
       res.send(guilds);
     } catch (e) {
-      res.status(e.response.status).send(e.response.error);
+      this.logger.error('디스코드 채널 리스트 조회에 실패했습니다.', e);
+      res.status(e.getStatus()).send(e.getResponse());
     }
   }
 
   @Get('channels')
-  async getGuildChannels(@Req() req: Request, @Res() res: Response) {
+  getGuildChannels(@Req() req: Request, @Res() res: Response) {
     try {
       const { guildId } = req.query;
       const channels = this.channelService.getGuildChannels(guildId as string);
+      if (channels instanceof HttpException) {
+        throw channels;
+      }
       res.send(channels);
     } catch (e) {
-      if (e.response) {
-        res.status(e.response.status).send(e.response.error);
-      } else {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
-      }
+      this.logger.error('디스코드 채널 리스트 조회에 실패했습니다.', e);
+      res.status(e.getStatus()).send(e.getResponse());
     }
   }
 
@@ -56,7 +58,6 @@ export class DiscordController {
   @Post('send-message')
   async sendMessage(@Body() body: any, @Res() res: Response) {
     try {
-      // const accessToken = req.headers.authorization;
       const { guildId, channelId, message, isEveryone } = body;
       const data: SendMessageType = {
         guildId: guildId as string,
@@ -65,11 +66,15 @@ export class DiscordController {
         isEveryone: Boolean(isEveryone),
       };
       const result = await this.messageService.sendMessage(data);
-      if (result) {
-        res.status(HttpStatus.CREATED).send('메시지를 성공적으로 보냈습니다.');
+      if (result === HttpStatus.OK) {
+        return res
+          .status(HttpStatus.CREATED)
+          .send('메시지를 성공적으로 보냈습니다.');
       }
+      res.status(result.getStatus()).send(result.getResponse());
     } catch (e) {
-      res.status(e.getStatus()).send(e.message);
+      this.logger.error('메시지 전송에 실패했습니다.', e);
+      res.status(e.getStatus()).send(e.getResponse());
     }
   }
 
@@ -85,7 +90,8 @@ export class DiscordController {
       );
       res.send(result);
     } catch (e) {
-      res.status(e.getStatus()).send(e.message);
+      this.logger.error('메시지 전송 내역 조회에 실패했습니다.', e);
+      res.status(e.getStatus()).send(e.getResponse());
     }
   }
 }

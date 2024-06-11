@@ -1,4 +1,10 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { DiscordClientService } from '../client/discord.client.service';
 import { ConfigType } from '@nestjs/config';
 import discordConfig from 'src/config/conf/discord.config';
@@ -25,7 +31,10 @@ export class DiscordChannelService extends DiscordClientService {
     try {
       const guild = this.client.guilds.cache.get(guildId);
       if (!guild) {
-        throw new Error('서버 정보를 찾을 수 없습니다.');
+        return new HttpException(
+          '서버 정보를 찾을 수 없습니다.',
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       const channels = guild.channels.cache
@@ -38,9 +47,11 @@ export class DiscordChannelService extends DiscordClientService {
 
       return channels;
     } catch (e) {
-      const error = e.response.data;
-      this.logger.error(error);
-      throw new Error(e);
+      this.logger.error('getGuildChannels', e);
+      throw new HttpException(
+        '서버 채널 정보를 가져오는데 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

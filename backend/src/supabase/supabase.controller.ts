@@ -2,7 +2,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
   HttpStatus,
   Logger,
   Patch,
@@ -31,11 +30,7 @@ export class SupabaseController {
       res.send(result);
     } catch (e) {
       this.logger.error('트리거 메시지 목록 조회에 실패했습니다.', e);
-      if (e.response) {
-        res.status(e.response.status).send(e.response.error);
-      } else {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
-      }
+      res.status(e.getStatus()).send(e.getResponse());
     }
   }
 
@@ -51,11 +46,7 @@ export class SupabaseController {
       return res.status(result.getStatus()).send(result.getResponse());
     } catch (e) {
       this.logger.error('트리거 메시지 등록에 실패했습니다.', e);
-      if (e.response) {
-        res.status(e.response.status).send(e.response.error);
-      } else {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
-      }
+      res.status(e.getStatus()).send(e.getResponse());
     }
   }
 
@@ -72,11 +63,7 @@ export class SupabaseController {
       res.status(HttpStatus.NOT_MODIFIED).send('트리거 메시지 수정 실패');
     } catch (e) {
       this.logger.error('트리거 메시지 수정에 실패했습니다.', e);
-      if (e instanceof HttpException) {
-        res.status(e.getStatus()).send(e.getResponse());
-      } else {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
-      }
+      res.status(e.getStatus()).send(e.getResponse());
     }
   }
 
@@ -92,11 +79,7 @@ export class SupabaseController {
       return res.status(result.getStatus()).send(result.getResponse());
     } catch (e) {
       this.logger.error('트리거 메시지 삭제에 실패했습니다.', e);
-      if (e.response) {
-        res.status(e.response.status).send(e.response.error);
-      } else {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
-      }
+      res.status(e.getStatus()).send(e.getResponse());
     }
   }
 }

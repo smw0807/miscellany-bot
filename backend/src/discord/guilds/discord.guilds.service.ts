@@ -53,8 +53,8 @@ export class DiscordGuildsService extends DiscordClientService {
         }));
       return guilds;
     } catch (e) {
+      this.logger.error('getOwnerGuilds', e);
       const error = e.response.data;
-      this.logger.error(error);
       if (error.code === 0) {
         throw new HttpException(
           {

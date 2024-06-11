@@ -37,19 +37,19 @@ export class DiscordMessageService extends DiscordClientService {
   }
 
   // 메시지 보내기
-  async sendMessage(data: SendMessageType): Promise<boolean> {
+  async sendMessage(data: SendMessageType) {
     try {
       const { guildId, channelId, isEveryone, message } = data;
 
       const channel = this.client.channels.cache.get(channelId);
       if (!channel) {
-        throw new HttpException(
+        return new HttpException(
           '채널을 찾을 수 없습니다.',
           HttpStatus.NOT_FOUND,
         );
       }
       if (!(channel instanceof TextChannel)) {
-        throw new HttpException(
+        return new HttpException(
           '메시지를 보낼 수 있는 채널이 아닙니다.',
           HttpStatus.BAD_REQUEST,
         );
@@ -65,12 +65,9 @@ export class DiscordMessageService extends DiscordClientService {
         message: message,
       };
       await this.supabase.saveSendMessageHistory(params);
-      return true;
+      return HttpStatus.OK;
     } catch (e) {
-      this.logger.error('sendMessage : ', e);
-      if (e instanceof HttpException) {
-        throw e;
-      }
+      this.logger.error('sendMessage', e);
       throw new HttpException(
         '메시지를 보내는데 실패했습니다.',
         HttpStatus.INTERNAL_SERVER_ERROR,

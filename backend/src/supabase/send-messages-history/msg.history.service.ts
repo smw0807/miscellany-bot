@@ -16,7 +16,11 @@ export class SendMessagesHistoryService {
       this.logger.debug(result, '메시지 전송 내역 저장 성공');
     } catch (e) {
       console.error(e);
-      this.logger.error('메시지 전송 내역 저장에 실패했습니다.', e);
+      this.logger.error('saveSendMessageHistory', e);
+      throw new HttpException(
+        '메시지 전송 내역 저장에 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -49,7 +53,7 @@ export class SendMessagesHistoryService {
         total: total,
       };
     } catch (e) {
-      this.logger.error('메시지 전송 내역 조회에 실패했습니다.', e);
+      this.logger.error('findSendMessageHistory', e);
       throw new HttpException(
         '메시지 전송 내역 조회에 실패했습니다.',
         HttpStatus.INTERNAL_SERVER_ERROR,

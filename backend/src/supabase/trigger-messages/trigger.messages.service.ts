@@ -30,16 +30,11 @@ export class TriggerMessagesService {
         total: total,
       };
     } catch (e) {
-      console.error(e);
-      this.logger.error('트리거 메시지 목록 조회에 실패했습니다.', e);
-      if (e instanceof HttpException) {
-        throw new HttpException(
-          '트리거 메시지 목록 조회에 실패했습니다.',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      } else {
-        throw e;
-      }
+      this.logger.error('getTriggerMessages', e);
+      throw new HttpException(
+        '트리거 메시지 목록 조회에 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -72,15 +67,11 @@ export class TriggerMessagesService {
       this.logger.debug(result, '트리거 메시지 등록 성공');
       return HttpStatus.OK;
     } catch (e) {
-      this.logger.error('트리거 메시지 등록에 실패했습니다.', e);
-      if (e instanceof HttpException) {
-        throw new HttpException(
-          '트리거 메시지 등록에 실패했습니다.',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      } else {
-        throw e;
-      }
+      this.logger.error('addTriggerMessage', e);
+      throw new HttpException(
+        '트리거 메시지 등록에 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -94,7 +85,7 @@ export class TriggerMessagesService {
       this.logger.debug(result, '트리거 메시지 수정 성공');
       return HttpStatus.OK;
     } catch (e) {
-      this.logger.error('트리거 메시지 수정에 실패했습니다.', e);
+      this.logger.error('updateTriggerMessage', e);
       throw new HttpException(
         '트리거 메시지 수정에 실패했습니다.',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -128,15 +119,11 @@ export class TriggerMessagesService {
       this.logger.debug(result, '트리거 메시지 삭제 성공');
       return HttpStatus.OK;
     } catch (e) {
-      this.logger.error('트리거 메시지 삭제에 실패했습니다.', e);
-      if (e instanceof HttpException) {
-        throw new HttpException(
-          '트리거 메시지 삭제에 실패했습니다.',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      } else {
-        throw e;
-      }
+      this.logger.error('deleteTriggerMessage', e);
+      throw new HttpException(
+        '트리거 메시지 삭제에 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 

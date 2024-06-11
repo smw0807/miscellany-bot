@@ -1,3 +1,6 @@
+import { ResultTypeEnum } from '~/types/enums';
+import type { NestHttpException } from '~/types/errors';
+
 export type ChannelType = {
   id: string;
   name: string;
@@ -23,7 +26,13 @@ export const useDiscordManageStore = defineStore('discordManage', () => {
       });
       channelList.value = res;
     } catch (e: any) {
-      console.error(e);
+      const error: NestHttpException = e;
+      console.log(error.response?._data);
+      await useAlert({
+        type: ResultTypeEnum.ERROR,
+        title: '서버 정보 조회 실패',
+        message: error.response?._data,
+      });
     }
   };
 
