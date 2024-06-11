@@ -105,7 +105,9 @@ watch(
         rounded="lg"
         width="100%"
       >
-        <h2 class="text-h5 mb-2">트리거 추가</h2>
+        <h2 class="text-h5 mb-2">
+          트리거 {{ props.mode === 'add' ? '추가' : '수정' }}
+        </h2>
         <alerts-add-trigger-message />
         <v-form ref="form">
           <!-- @everyon 여부 -->
