@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TriggerMessageType } from '~/store/discordMessageTrigger';
+import type { TriggerMessageType } from '~/store/discordTrigger';
 import { ResultTypeEnum } from '~/types/enums';
 import { EditTypeEnum } from '~/types/enums';
 

@@ -4,8 +4,8 @@ import type { DiscordGuildsType } from '~/store/discord';
 import type {
   TriggerMessagesDataType,
   TriggerMessageType,
-} from '~/store/discordMessageTrigger';
-import { useDiscordMessagesTriggerStore } from '~/store/discordMessageTrigger';
+} from '~/store/discordTrigger';
+import { useDiscordMessagesTriggerStore } from '~/store/discordTrigger';
 import { EditTypeEnum, ResultTypeEnum } from '~/types/enums';
 definePageMeta({
   layout: 'manage',
