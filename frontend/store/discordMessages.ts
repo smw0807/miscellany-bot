@@ -71,10 +71,11 @@ export const useDiscordMessagesStore = defineStore('discordMessages', () => {
       return true;
     } catch (e: any) {
       const error: NestHttpException = e;
+      console.log(error.response?._data);
       await useAlert({
         type: ResultTypeEnum.ERROR,
         title: '메시지 전송 실패',
-        message: error.response?._data || error.message,
+        message: error.response?._data,
       });
       return false;
     }

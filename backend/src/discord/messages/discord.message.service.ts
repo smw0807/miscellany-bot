@@ -37,7 +37,7 @@ export class DiscordMessageService extends DiscordClientService {
   }
 
   // 메시지 보내기
-  async sendMessage(data: SendMessageType) {
+  async sendMessage(data: SendMessageType): Promise<boolean> {
     try {
       const { guildId, channelId, isEveryone, message } = data;
 
@@ -65,10 +65,16 @@ export class DiscordMessageService extends DiscordClientService {
         message: message,
       };
       await this.supabase.saveSendMessageHistory(params);
-      return '메시지를 성공적으로 보냈습니다.';
+      return true;
     } catch (e) {
-      this.logger.error('메시지를 보내는데 실패했습니다.', e);
-      throw e;
+      this.logger.error('sendMessage : ', e);
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        '메시지를 보내는데 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

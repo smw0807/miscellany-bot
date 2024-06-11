@@ -54,7 +54,6 @@ export class DiscordGuildsService extends DiscordClientService {
       return guilds;
     } catch (e) {
       const error = e.response.data;
-      console.error(error);
       this.logger.error(error);
       if (error.code === 0) {
         throw new HttpException(
@@ -68,7 +67,10 @@ export class DiscordGuildsService extends DiscordClientService {
           },
         );
       }
-      throw new Error(e);
+      throw new HttpException(
+        '길드 목록을 가져오는데 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
   /**

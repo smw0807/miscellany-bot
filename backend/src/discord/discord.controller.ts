@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
   HttpStatus,
   Logger,
   Post,
@@ -34,11 +33,7 @@ export class DiscordController {
       const guilds = await this.guildsService.getOwnerGuilds(accessToken);
       res.send(guilds);
     } catch (e) {
-      if (e.response) {
-        res.status(e.response.status).send(e.response.error);
-      } else {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
-      }
+      res.status(e.response.status).send(e.response.error);
     }
   }
 
@@ -70,18 +65,11 @@ export class DiscordController {
         isEveryone: Boolean(isEveryone),
       };
       const result = await this.messageService.sendMessage(data);
-      res.send(result);
-    } catch (e) {
-      if (e instanceof HttpException) {
-        const status = e.getStatus();
-        res.status(status).send(e.message);
-      } else {
-        if (e.status) {
-          res.status(e.status).send(e.message);
-        } else {
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
-        }
+      if (result) {
+        res.status(HttpStatus.CREATED).send('메시지를 성공적으로 보냈습니다.');
       }
+    } catch (e) {
+      res.status(e.getStatus()).send(e.message);
     }
   }
 
@@ -97,16 +85,7 @@ export class DiscordController {
       );
       res.send(result);
     } catch (e) {
-      if (e instanceof HttpException) {
-        const status = e.getStatus();
-        res.status(status).send(e.message);
-      } else {
-        if (e.status) {
-          res.status(e.status).send(e.message);
-        } else {
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(e.message);
-        }
-      }
+      res.status(e.getStatus()).send(e.message);
     }
   }
 }

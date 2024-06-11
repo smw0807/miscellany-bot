@@ -1,4 +1,10 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import googleTranslateConfig from 'src/config/conf/google.translate.config';
 import { Translate } from '@google-cloud/translate/build/src/v2';
@@ -33,9 +39,11 @@ export class GoogleTranslateService {
       });
       return response;
     } catch (e) {
-      this.logger.error('Google Translate Error', e);
-      console.error(e);
-      throw new Error('Google Translate Error');
+      this.logger.error('translateText : ', e);
+      throw new HttpException(
+        'Google Translate Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

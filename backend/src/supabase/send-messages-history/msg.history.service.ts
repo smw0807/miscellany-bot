@@ -50,14 +50,10 @@ export class SendMessagesHistoryService {
       };
     } catch (e) {
       this.logger.error('메시지 전송 내역 조회에 실패했습니다.', e);
-      if (e instanceof HttpException) {
-        throw new HttpException(
-          '메시지 전송 내역 조회에 실패했습니다.',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      } else {
-        throw e;
-      }
+      throw new HttpException(
+        '메시지 전송 내역 조회에 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
