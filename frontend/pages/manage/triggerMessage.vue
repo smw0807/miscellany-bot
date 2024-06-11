@@ -6,13 +6,14 @@ import type {
   TriggerMessageType,
 } from '~/store/discordMessageTrigger';
 import { useDiscordMessagesTriggerStore } from '~/store/discordMessageTrigger';
-import { EditTypeEnum } from '~/types/enums';
+import { EditTypeEnum, ResultTypeEnum } from '~/types/enums';
 definePageMeta({
   layout: 'manage',
 });
 
 const config = useRuntimeConfig();
 const { loadGuild } = useGuild();
+const { useAlert } = useDialog();
 
 // 서버 정보
 const guild: Ref<DiscordGuildsType> = ref({} as DiscordGuildsType);
@@ -43,6 +44,17 @@ const saveTrigger = async (mode: EditTypeEnum, data: TriggerMessageType) => {
   if (mode === EditTypeEnum.ADD) {
     result = await triggerStore.addTriggerMessage(params);
   } else if (mode === EditTypeEnum.EDIT) {
+    // 기존 데이터와 변경된 데이터가 같은지 체크
+    if (
+      rowItem.value?.triggerWord === data.triggerWord &&
+      rowItem.value?.message === data.message
+    ) {
+      return await useAlert({
+        type: ResultTypeEnum.INFO,
+        title: '트리거 수정',
+        message: '변경된 내용이 없습니다.',
+      });
+    }
     result = await triggerStore.updateTriggerMessage(
       rowItem.value?.id!,
       params
