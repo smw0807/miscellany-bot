@@ -31,6 +31,8 @@ export type SendMessagesHistoryResponseType = {
 
 export const useDiscordMessagesStore = defineStore('discordMessages', () => {
   const { useAlert, useConfirm } = useDialog();
+  const ALERT_SEND_TITLE = '디스코드 메시지 전송';
+  const ALERT_HISTORY_TITLE = '디스코드 메시지 전송 내역';
   // ============= State =============
   const guildId = ref<string>(''); // 길드 아이디
   const pageIndex = ref<number>(1); // 페이지 인덱스
@@ -51,7 +53,7 @@ export const useDiscordMessagesStore = defineStore('discordMessages', () => {
     try {
       const confirm = await useConfirm({
         type: ResultTypeEnum.INFO,
-        title: '메시지 전송',
+        title: ALERT_SEND_TITLE,
         message: '메시지를 전송하시겠습니까?',
         okText: '전송',
         cancelText: '취소',
@@ -64,7 +66,7 @@ export const useDiscordMessagesStore = defineStore('discordMessages', () => {
       });
       await useAlert({
         type: ResultTypeEnum.SUCCESS,
-        title: '메시지 전송 성공',
+        title: ALERT_SEND_TITLE,
         message: res,
       });
       await findSendMessageHistory();
@@ -74,7 +76,7 @@ export const useDiscordMessagesStore = defineStore('discordMessages', () => {
       console.log(error.response?._data);
       await useAlert({
         type: ResultTypeEnum.ERROR,
-        title: '메시지 전송 실패',
+        title: ALERT_SEND_TITLE,
         message: error.response?._data,
       });
       return false;
@@ -106,7 +108,7 @@ export const useDiscordMessagesStore = defineStore('discordMessages', () => {
       const error: NestHttpException = e;
       await useAlert({
         type: ResultTypeEnum.ERROR,
-        title: '메시지 전송 내역 조회 실패',
+        title: ALERT_HISTORY_TITLE,
         message: error.response?._data || error.message,
       });
     }

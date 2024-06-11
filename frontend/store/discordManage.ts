@@ -9,6 +9,7 @@ export type ChannelType = {
 
 export const useDiscordManageStore = defineStore('discordManage', () => {
   const { useAlert, useConfirm } = useDialog();
+  const ALERT_TITLE = '디스코드 서버 목록';
   // ============= State =============
   //서버에 있는 채널 목록
   const channelList = ref<ChannelType[]>([]);
@@ -30,7 +31,7 @@ export const useDiscordManageStore = defineStore('discordManage', () => {
       console.log(error.response?._data);
       await useAlert({
         type: ResultTypeEnum.ERROR,
-        title: '서버 정보 조회 실패',
+        title: ALERT_TITLE,
         message: error.response?._data,
       });
     }

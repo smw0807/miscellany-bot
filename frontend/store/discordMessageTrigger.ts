@@ -23,6 +23,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
   'discordMessagesTrigger',
   () => {
     const { useAlert, useConfirm } = useDialog();
+    const ALERT_TITLE = '트리거 메시지';
     // ============= State =============
     const guildId = ref<string>(''); // 길드 아이디
     const pageIndex = ref<number>(1); // 페이지 인덱스
@@ -64,7 +65,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
         const error: NestHttpException = e;
         await useAlert({
           type: ResultTypeEnum.ERROR,
-          title: '트리거 메시지 목록 조회 실패',
+          title: ALERT_TITLE,
           message: error.response?._data || error.message,
         });
       }
@@ -80,7 +81,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
         });
         await useAlert({
           type: ResultTypeEnum.SUCCESS,
-          title: '트리거 메시지 등록',
+          title: ALERT_TITLE,
           message: res,
         });
         await getTriggerMessages();
@@ -89,7 +90,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
         const error: NestHttpException = e;
         await useAlert({
           type: ResultTypeEnum.ERROR,
-          title: '트리거 메시지 등록 실패',
+          title: ALERT_TITLE,
           message: error.response?._data || error.message,
         });
         return false;
@@ -110,7 +111,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
         );
         await useAlert({
           type: ResultTypeEnum.SUCCESS,
-          title: '트리거 메시지 수정',
+          title: ALERT_TITLE,
           message: res,
         });
         await getTriggerMessages();
@@ -119,7 +120,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
         const error: NestHttpException = e;
         await useAlert({
           type: ResultTypeEnum.ERROR,
-          title: '트리거 메시지 수정 실패',
+          title: ALERT_TITLE,
           message: error.response?._data || error.message,
         });
         return false;
@@ -131,7 +132,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
       try {
         const confirm = await useConfirm({
           type: ResultTypeEnum.WARNING,
-          title: '트리거 메시지 삭제',
+          title: ALERT_TITLE,
           message:
             id.length === 1
               ? '선택된 트리거를 정말 삭제하시겠습니까?'
@@ -144,7 +145,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
         });
         await useAlert({
           type: ResultTypeEnum.SUCCESS,
-          title: '트리거 메시지 삭제',
+          title: ALERT_TITLE,
           message: res as string,
         });
         await getTriggerMessages();
@@ -152,7 +153,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
         const error: NestHttpException = e;
         await useAlert({
           type: ResultTypeEnum.ERROR,
-          title: '트리거 메시지 삭제 실패',
+          title: ALERT_TITLE,
           message: error.response?._data || error.message,
         });
       }
