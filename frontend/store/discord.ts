@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import { ResultTypeEnum } from '~/types/enums';
 
 export type DiscordGuildsType = {
   id: string;
@@ -11,6 +12,7 @@ export type DiscordGuildsType = {
 };
 
 export const useDiscordStore = defineStore('discord', () => {
+  const { useAlert } = useDialog();
   // ============= State =============
   // 서버 목록
   const guilds = ref<DiscordGuildsType[]>([]);
@@ -36,7 +38,13 @@ export const useDiscordStore = defineStore('discord', () => {
       });
       guilds.value = result;
     } catch (e: any) {
-      console.error(e);
+      console.error(e.response);
+      await useAlert({
+        type: ResultTypeEnum.ERROR,
+        title: '서버 정보 조회 실패',
+        message:
+          '서버에 문제가 있을 수 있습니다.<br/>잠시 후 다시 시도해주세요.',
+      });
     }
   };
 

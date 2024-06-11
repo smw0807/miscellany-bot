@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useDiscordStore } from '~/store/discord';
 import Header from '~/components/header.vue';
+import Alert from '~/components/dialog/Alert.vue';
+import Confirm from '~/components/dialog/Confirm.vue';
 
 const router = useRouter();
 
@@ -26,6 +28,8 @@ if (hasToken()) {
   <v-layout class="rounded rounded-md">
     <Header />
     <v-main class="d-flex align-center">
+      <Alert />
+      <Confirm />
       <slot />
     </v-main>
   </v-layout>
