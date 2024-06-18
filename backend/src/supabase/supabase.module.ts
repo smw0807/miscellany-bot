@@ -12,7 +12,7 @@ import { SupabaseController } from './supabase.controller';
     SendMessagesHistoryService,
     TriggerMessagesService,
   ],
-  exports: [SendMessagesHistoryService],
+  exports: [SendMessagesHistoryService, TriggerMessagesService],
   imports: [PrismaModule],
 })
 export class SupabaseModule {}

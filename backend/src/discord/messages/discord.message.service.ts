@@ -12,6 +12,7 @@ import discordConfig from 'src/config/conf/discord.config';
 import { ConfigType } from '@nestjs/config';
 import { SendMessagesHistoryType, SendMessageType } from '../types/messages';
 import { SendMessagesHistoryService } from 'src/supabase/send-messages-history/msg.history.service';
+import { TriggerMessagesService } from 'src/supabase/trigger-messages/trigger.messages.service';
 
 @Injectable()
 export class DiscordMessageService extends DiscordClientService {
@@ -19,6 +20,7 @@ export class DiscordMessageService extends DiscordClientService {
   constructor(
     @Inject(discordConfig.KEY) config: ConfigType<typeof discordConfig>,
     private readonly supabase: SendMessagesHistoryService,
+    private readonly triggersService: TriggerMessagesService,
   ) {
     super(config);
   }
@@ -32,12 +34,27 @@ export class DiscordMessageService extends DiscordClientService {
       } else {
         logMessage += ` ${message.author.username} : ${message.content}`;
       }
+      const trigger = this.triggersService.checkingTrigger(
+        message.guildId as string,
+        message.content,
+      );
+      if (trigger) {
+        this.sendMessage(
+          {
+            guildId: message.guildId,
+            channelId: message.channelId,
+            isEveryone: false,
+            message: trigger,
+          },
+          false,
+        );
+      }
       this.logger.log(logMessage);
     });
   }
 
   // 메시지 보내기
-  async sendMessage(data: SendMessageType) {
+  async sendMessage(data: SendMessageType, saveHistory: boolean = true) {
     try {
       const { guildId, channelId, isEveryone, message } = data;
 
@@ -64,7 +81,9 @@ export class DiscordMessageService extends DiscordClientService {
         isEveryone: isEveryone,
         message: message,
       };
-      await this.supabase.saveSendMessageHistory(params);
+      if (saveHistory) {
+        await this.supabase.saveSendMessageHistory(params);
+      }
       return HttpStatus.OK;
     } catch (e) {
       this.logger.error('sendMessage', e);
