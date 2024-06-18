@@ -4,6 +4,7 @@ import { DiscordContextMenuService } from './commands/discord.contextMenu.servic
 import { DiscordMessageService } from './messages/discord.message.service';
 import { ConfigType } from '@nestjs/config';
 import discordConfig from 'src/config/conf/discord.config';
+import { TriggerMessagesService } from 'src/supabase/trigger-messages/trigger.messages.service';
 
 @Injectable()
 export class DiscordService extends DiscordClientService {
@@ -12,6 +13,7 @@ export class DiscordService extends DiscordClientService {
     @Inject(discordConfig.KEY) config: ConfigType<typeof discordConfig>,
     private readonly contextMenuService: DiscordContextMenuService,
     private readonly messageService: DiscordMessageService,
+    private readonly triggerService: TriggerMessagesService,
   ) {
     super(config);
     this.onReady();
@@ -27,6 +29,10 @@ export class DiscordService extends DiscordClientService {
       this.contextMenuService.onContextMenu(this.client);
       // 디스코드 메시지 이벤트 리스너
       this.messageService.onMessage(this.client);
+      // 트리거 메시지 캐싱
+      this.client.guilds.cache.forEach((v) => {
+        this.triggerService.loadTriggers(v.id);
+      });
     });
   }
 }
