@@ -140,7 +140,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
         if (!confirm) return;
         const res = await $fetch('/api/supabase/trigger-message', {
           method: 'DELETE',
-          body: JSON.stringify(id),
+          body: JSON.stringify({ guildId: guildId.value, id }),
         });
         await useAlert({
           type: ResultTypeEnum.SUCCESS,
