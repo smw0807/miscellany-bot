@@ -68,6 +68,7 @@ const saveTrigger = async (mode: EditTypeEnum, data: TriggerMessageType) => {
 // 트리거 삭제 이벤트
 const deleteTrigger = async () => {
   await triggerStore.deleteTriggerMessage(selectedTrigger.value);
+  selectedTrigger.value = [];
 };
 
 // 트리거 메시지 리스트 관련
