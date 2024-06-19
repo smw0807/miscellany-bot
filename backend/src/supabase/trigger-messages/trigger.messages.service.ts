@@ -7,7 +7,7 @@ export class TriggerMessagesService {
   private readonly logger = new Logger(TriggerMessagesService.name);
   constructor(private readonly prisma: PrismaService) {}
 
-  private triggers = new Map<string, Map<string, string>>();
+  private triggers = new Map<string, Map<string, TriggerMessageType>>();
 
   // 트리거 메시지 애플리케이션 내부에 저장
   async loadTriggers(guildId: string) {
@@ -18,9 +18,9 @@ export class TriggerMessagesService {
         },
       });
       if (triggers.length === 0) return;
-      const triggerMap = new Map<string, string>();
+      const triggerMap = new Map<string, TriggerMessageType>();
       triggers.forEach((v) => {
-        triggerMap.set(v.triggerWord, v.message);
+        triggerMap.set(v.triggerWord, v);
       });
       // 길드별 저장
       this.triggers.set(guildId, triggerMap);
@@ -31,10 +31,16 @@ export class TriggerMessagesService {
 
   // 저장된 트리거에 있는지 확인 및 메시지 반환
   checkingTrigger(guildId: string, triggerWord: string) {
-    const hasTriggers = this.triggers.has(guildId);
-    if (!hasTriggers) return;
-    const triggers = this.triggers.get(guildId);
-    return triggers.get(triggerWord);
+    if (!this.triggers.has(guildId)) return null;
+
+    const guildTrigger = this.triggers.get(guildId);
+    if (!guildTrigger.has(triggerWord)) return null;
+
+    const trigger = guildTrigger.get(triggerWord);
+    return {
+      isEveryone: trigger.isEveryone,
+      message: trigger.message,
+    };
   }
 
   // 트리거 캐싱 리프레쉬
