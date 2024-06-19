@@ -34,20 +34,24 @@ export class DiscordMessageService extends DiscordClientService {
       } else {
         logMessage += ` ${message.author.username} : ${message.content}`;
       }
-      const trigger = this.triggersService.checkingTrigger(
-        message.guildId as string,
-        message.content,
-      );
-      if (trigger) {
-        this.sendMessage(
-          {
-            guildId: message.guildId,
-            channelId: message.channelId,
-            isEveryone: false,
-            message: trigger,
-          },
-          false,
+
+      // 봇 메시지가 아닐 경우에만 트리거 체크 진행 (무한루프 방지)
+      if (!message.author.bot) {
+        const trigger = this.triggersService.checkingTrigger(
+          message.guildId as string,
+          message.content,
         );
+        if (trigger) {
+          this.sendMessage(
+            {
+              guildId: message.guildId,
+              channelId: message.channelId,
+              isEveryone: trigger.isEveryone,
+              message: trigger.message,
+            },
+            false,
+          );
+        }
       }
       this.logger.log(logMessage);
     });
