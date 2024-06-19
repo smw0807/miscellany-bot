@@ -30,6 +30,7 @@ const triggerWord: Ref<string> = ref('');
 // 유효성검사
 const triggerWordRules = [
   (v: string) => !!v || '트리거할 단어를 입력해주세요.',
+  (v: string) => v.match(/\s/) === null || '공백은 입력할 수 없습니다.',
 ];
 // 발송할 메시지
 const message: Ref<string> = ref('');
