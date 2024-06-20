@@ -57,6 +57,7 @@ onUnmounted(() => {
         <v-list-item
           prepend-icon="mdi-account"
           title="예약 메시지 관리"
+          @click="router.push('/manage/reservationMessage')"
         ></v-list-item>
       </v-list>
     </v-navigation-drawer>
