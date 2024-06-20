@@ -131,7 +131,7 @@ onMounted(() => {
       </div>
     </v-card-text>
     <v-card-title class="d-flex">
-      <span>메시지 전송 내역</span>
+      <span>등록된 트리거</span>
       <v-spacer />
       <div class="text-subtitle-1 text-">총 {{ totalItems }} 개</div>
     </v-card-title>
