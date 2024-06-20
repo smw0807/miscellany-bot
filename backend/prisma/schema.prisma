@@ -38,6 +38,7 @@ model ChannelMessage {
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
 
+  @@index([guildId, channelId])
   @@map("send_messages_history")
 }
 
@@ -51,5 +52,30 @@ model TriggerMessage {
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
 
+  @@index([guildId, triggerWord])
   @@map("trigger_messages")
+}
+
+// 예약 메시지
+model ScheduledMessage {
+  id            Int      @id @default(autoincrement())
+  guildId       String
+  channelId     String
+  scheduleType  ScheduleType //예약 유형 (반복성 또는 1회성)
+  title         String  // 예약 메시지 제목
+  messageContent String // 예약 메시지 내용
+  scheduledAt   DateTime // 예약 시간
+  repeatInterval Int?    // 반복 간격(반복성인 경우, 분 단위로 저장 (예: 1440은 하루))
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  createdBy     String
+  isActive      Boolean  @default(true) // 예약 메시지 활성화 여부
+  lastSentAt    DateTime? // 마지막 전송 시간
+
+  @@index([guildId, channelId])
+  @@map("scheduled_messages")
+}
+enum ScheduleType {
+  ONETIME
+  RECURRING
 }
