@@ -61,3 +61,5 @@
      - https://vuetifyjs.com/en/components/sheets/#usage
 7. pinia
    - https://pinia.vuejs.org/
+8. ETC
+   - https://stackoverflow.com/questions/69501363/discord-api-view-guild-channels-information-with-oauth2-guilds-scope
