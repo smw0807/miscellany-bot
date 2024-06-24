@@ -39,6 +39,7 @@ export class DiscordChannelService extends DiscordClientService {
 
       const channels = guild.channels.cache
         .filter((channel) => channel.type !== ChannelType.GuildCategory)
+        .filter((channel) => channel.type === ChannelType.GuildText)
         .map((channel) => ({
           id: channel.id,
           name: channel.name,
