@@ -10,3 +10,8 @@ export enum EditTypeEnum {
   EDIT = 'edit',
   DELETE = 'delete',
 }
+
+export enum ScheduleType {
+  ONETIME = 'onetime',
+  RECURRING = 'recurring',
+}
