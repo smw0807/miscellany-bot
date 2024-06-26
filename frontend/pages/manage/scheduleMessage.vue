@@ -10,7 +10,8 @@ definePageMeta({
 // 디스코드 관리 스토어
 const discordManageStore = useDiscordManageStore();
 // 채널 리스트
-const cChannels = computed<ChannelType[]>(() => discordManageStore.channelList);
+const channelList = ref<ChannelType[]>([]);
+const cChannels = computed(() => channelList);
 
 const totalItems = ref(0);
 // 예약 메시지 다이얼로그 오픈
@@ -26,6 +27,9 @@ const openDialog = () => {
 const closeDialog = () => {
   openEditScheduleDialog.value = false;
 };
+onMounted(() => {
+  channelList.value = discordManageStore.channelList;
+});
 </script>
 <template>
   <v-card>
@@ -49,6 +53,6 @@ const closeDialog = () => {
     @onClose="closeDialog"
     :open="openEditScheduleDialog"
     :mode="editMode"
-    :channels="cChannels"
+    :channels="cChannels.value"
   />
 </template>
