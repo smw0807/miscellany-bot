@@ -8,7 +8,7 @@ import type { DiscordGuildsType } from '~/store/discord';
 definePageMeta({
   layout: 'manage',
 });
-const config = useRuntimeConfig();
+
 const uGuild = useGuild();
 const discordManageStore = useDiscordManageStore();
 const discordMessageStore = useDiscordMessagesStore();
@@ -83,7 +83,7 @@ const pageUpdate = (value: number) => {
   discordMessageStore.findSendMessageHistory();
 };
 onMounted(() => {
-  guild.value = uGuild.loadGuild(config.public.discordStorageName);
+  guild.value = uGuild.loadGuild();
 
   discordMessageStore.guildId = guild.value.id;
   discordMessageStore.findSendMessageHistory();

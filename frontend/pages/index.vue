@@ -3,8 +3,7 @@ import useGuild from '~/composables/useGuild';
 import { useDiscordStore, type DiscordGuildsType } from '~/store/discord';
 
 const router = useRouter();
-const { saveGuild, clearGuild } = useGuild();
-
+const { saveGuild, clearGuild, hasGuild } = useGuild();
 const config = useRuntimeConfig();
 // 디스코드 봇 설치 URL
 const botInstallUrl = config.public.discordInstallUrl;
@@ -17,14 +16,14 @@ const cGuilds = computed<DiscordGuildsType[]>(() => discordStore.guilds);
 // 관리 페이지로 이동
 const moveAdminPage = (guild: DiscordGuildsType) => {
   // 서버 정보를 localStorage에 저장, 스토어는 새로고침 시 사라지기 때문에 로컬스토리지를 쓰는게 좋을 것 같음.
-  saveGuild(config.public.discordStorageName, guild);
+  saveGuild(guild);
   // 관리 페이지로 이동
   router.push('/manage');
 };
 onMounted(() => {
   // 메인페이지에서 길드 정보가 남아 있으면 초기화
-  if (localStorage.getItem(config.public.discordStorageName)) {
-    clearGuild(config.public.discordStorageName);
+  if (hasGuild()) {
+    clearGuild();
   }
 });
 </script>
