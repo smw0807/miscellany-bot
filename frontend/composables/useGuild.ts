@@ -10,8 +10,6 @@ export default function () {
   const config = useRuntimeConfig();
   const manageStore = useDiscordManageStore();
 
-  // 서버 정보
-  const guild = ref<DiscordGuildsType>({} as DiscordGuildsType);
   // 서버에 있는 채널 목록
   const channelList = computed<ChannelType[]>(() => manageStore.channelList);
   // 로컬 스토리지 이름
@@ -33,6 +31,14 @@ export default function () {
     // 길드 정보 존재 여부
     hasGuild(): boolean {
       return !!localStorage.getItem(storageName);
+    },
+    // 채널 목록
+    async getChannelList() {
+      if (channelList.value.length === 0) {
+        const guild = JSON.parse(localStorage.getItem(storageName) || '{}');
+        await manageStore.requestChannels(guild.id);
+      }
+      return channelList.value;
     },
   };
 }
