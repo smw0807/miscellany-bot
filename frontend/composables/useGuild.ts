@@ -33,7 +33,7 @@ export default function () {
       return !!localStorage.getItem(storageName);
     },
     // 채널 목록
-    async getChannelList() {
+    async getChannelList(): Promise<ChannelType[]> {
       if (channelList.value.length === 0) {
         const guild = JSON.parse(localStorage.getItem(storageName) || '{}');
         await manageStore.requestChannels(guild.id);
