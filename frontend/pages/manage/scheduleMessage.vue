@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { EditTypeEnum } from '~/types/enums';
-import { useDiscordManageStore } from '~/store/discordManage';
 import type { ChannelType } from '~/store/discordManage';
 import EditSchedule from '~/components/dialog/EditSchedule.vue';
 definePageMeta({
   layout: 'manage',
 });
 
-// 디스코드 관리 스토어
-const discordManageStore = useDiscordManageStore();
+const { getChannelList } = useGuild();
+
 // 채널 리스트
 const channelList = ref<ChannelType[]>([]);
-const cChannels = computed(() => channelList);
+const cChannels = computed(() => channelList.value);
 
 const totalItems = ref(0);
 // 예약 메시지 다이얼로그 오픈
@@ -27,8 +26,10 @@ const openDialog = () => {
 const closeDialog = () => {
   openEditScheduleDialog.value = false;
 };
-onMounted(() => {
-  channelList.value = discordManageStore.channelList;
+onMounted(async () => {
+  if (channelList.value.length === 0) {
+    channelList.value = await getChannelList();
+  }
 });
 </script>
 <template>
@@ -53,6 +54,6 @@ onMounted(() => {
     @onClose="closeDialog"
     :open="openEditScheduleDialog"
     :mode="editMode"
-    :channels="cChannels.value"
+    :channels="cChannels"
   />
 </template>

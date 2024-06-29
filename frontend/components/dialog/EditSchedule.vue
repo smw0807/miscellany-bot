@@ -2,29 +2,18 @@
 import { EditTypeEnum, ScheduleType } from '~/types/enums';
 import type { ChannelType } from '~/store/discordManage';
 import type { ScheduleMessageType } from '~/store/discordSchedule';
-const props = withDefaults(
-  defineProps<{
-    open: boolean;
-    mode?: EditTypeEnum;
-    channels?: ChannelType[];
-  }>(),
-  {
-    open: false,
-    mode: EditTypeEnum.ADD,
-  }
-);
+const props = defineProps<{
+  open: boolean;
+  mode: EditTypeEnum;
+  channels: ChannelType[];
+}>();
+
 const emit = defineEmits({
   'input-data': (mode: EditTypeEnum, data: ScheduleMessageType) => true,
   onClose: () => true,
 });
-
-const cChannels = computed(() => props.channels);
-watch(
-  () => cChannels,
-  (newVal) => {
-    console.log(newVal);
-  }
-);
+// 채널 리스트
+const cChannelList = computed(() => props.channels);
 
 const form = ref();
 // @everyone 여부
@@ -42,6 +31,18 @@ const emitSave = async () => {
   const { valid } = await form.value.validate();
   if (!valid) return;
   console.log('emitSave');
+};
+
+const rules = {
+  channel: [(v: ChannelType) => !!v || '채널을 선택해주세요.'],
+  title: [
+    (v: string) => !!v || '제목을 입력해주세요.',
+    (v: string) => v.length <= 100 || '100자 이하로 입력해주세요.',
+  ],
+  message: [
+    (v: string) => !!v || '메시지를 입력해주세요.',
+    (v: string) => v.length <= 1000 || '1000자 이하로 입력해주세요.',
+  ],
 };
 </script>
 <template>
@@ -86,19 +87,25 @@ const emitSave = async () => {
           <!-- 예약 메시지 전송 채널 -->
           <v-select
             v-model="selectedChannel"
-            :items="cChannels"
+            :items="cChannelList"
+            :rules="rules.channel"
             label="예약 메시지 발송할 채널"
-            item-text="name"
+            item-title="name"
             item-value="id"
             return-object
           ></v-select>
 
           <!-- 예약 메시지 제목 -->
-          <v-text-field v-model="title" label="예약 메시지 제목"></v-text-field>
+          <v-text-field
+            v-model="title"
+            :rules="rules.title"
+            label="예약 메시지 제목"
+          ></v-text-field>
 
           <!-- 예약 메시지 내용 -->
           <v-textarea
             v-model="message"
+            :rules="rules.message"
             clear-icon="mdi-close-circle"
             label="채널에 보낼 메시지를 입력해주세요."
             clearable
@@ -119,7 +126,7 @@ const emitSave = async () => {
             color="primary"
             variant="flat"
             rounded
-            @clic="emitSave"
+            @click="emitSave"
             >저장</v-btn
           >
           <v-btn rounded @click="emit('onClose')">닫기</v-btn>
