@@ -5,6 +5,7 @@ export type ScheduleMessageType = {
   id?: number;
   guildId: String;
   channelId: String;
+  isEveryone: Boolean;
   scheduleType: ScheduleType;
   title: String;
   messageContent: String;
