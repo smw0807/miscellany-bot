@@ -1,21 +1,22 @@
-import type { ScheduleType } from '~/types/enums';
+import type { RepeatType, ScheduleType } from '~/types/enums';
 
 // 예약 메시지 데이터 타입
 export type ScheduleMessageType = {
   id?: number;
-  guildId: String;
-  channelId: String;
-  isEveryone: Boolean;
+  guildId?: string;
+  channelId: string;
+  title: string;
+  messageContent: string;
   scheduleType: ScheduleType;
-  title: String;
-  messageContent: String;
-  scheduledAt?: Date;
+  scheduledAt?: string;
+  repeatedAt?: string;
   repeatInterval?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-  createdBy?: String;
+  repeatType?: RepeatType;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
   isActive?: Boolean;
-  lastSentAt?: Date;
+  lastSentAt?: string;
 };
 
 export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
