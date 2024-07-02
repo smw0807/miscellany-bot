@@ -15,3 +15,9 @@ export enum ScheduleType {
   ONETIME = 'onetime',
   RECURRING = 'recurring',
 }
+
+export enum RepeatType {
+  MINUTE = 'minute',
+  HOUR = 'hour',
+  DAY = 'day',
+}
