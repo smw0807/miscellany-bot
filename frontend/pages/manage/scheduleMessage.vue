@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { EditTypeEnum } from '~/types/enums';
 import type { ChannelType } from '~/store/discordManage';
+import type { ScheduleMessageType } from '~/store/discordSchedule';
 import EditSchedule from '~/components/dialog/EditSchedule.vue';
 definePageMeta({
   layout: 'manage',
 });
 
-const { getChannelList } = useGuild();
+const { getChannelList, loadGuild } = useGuild();
 
 // 채널 리스트
 const channelList = ref<ChannelType[]>([]);
@@ -17,6 +18,11 @@ const totalItems = ref(0);
 const openEditScheduleDialog = ref(false);
 // 예약 메시지 다이얼로그 모드
 const editMode = ref<EditTypeEnum>(EditTypeEnum.ADD);
+// 예약 메시지 저장
+const onInputData = (mode: EditTypeEnum, data: ScheduleMessageType) => {
+  const dataForm = { ...data };
+  dataForm.guildId = loadGuild().id;
+};
 // 예약 메시지 다이얼로그 열기
 const openDialog = () => {
   editMode.value = EditTypeEnum.ADD;
@@ -52,6 +58,7 @@ onMounted(async () => {
 
   <EditSchedule
     @onClose="closeDialog"
+    @input-data="onInputData"
     :open="openEditScheduleDialog"
     :mode="editMode"
     :channels="cChannels"
