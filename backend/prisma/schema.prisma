@@ -66,7 +66,8 @@ model ScheduledMessage {
   messageContent String // 예약 메시지 내용
   scheduledAt   DateTime? // 1회성 메시지 발송 시간
   repeatedAt    DateTime? // 반복 메시지 시작 시간
-  repeatInterval RepeatType?    // 반복 간격(일, 시, 분 (예: 1440은 하루))
+  repeatInterval Int?    // 반복 간격(일, 시, 분 (예: 1440은 하루))
+  repeatType    RepeatType? // 반복 유형(일, 시, 분)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   createdBy     String
