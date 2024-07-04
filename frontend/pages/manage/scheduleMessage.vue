@@ -37,8 +37,8 @@ const onInputData = async (mode: EditTypeEnum, data: ScheduleMessageType) => {
   if (!confirm) return;
   const dataForm = { ...data };
   dataForm.guildId = loadGuild().id;
-  await scheduleStore.saveScheduleMessage(dataForm);
-  // closeDialog();
+  const result = await scheduleStore.saveScheduleMessage(dataForm);
+  if (result) closeDialog();
 };
 // 예약 메시지 다이얼로그 열기
 const openDialog = () => {

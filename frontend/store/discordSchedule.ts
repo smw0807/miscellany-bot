@@ -54,6 +54,7 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
         title: ALERT_TITLE,
         message: res,
       });
+      return true;
     } catch (e: any) {
       const error: NestHttpException = e;
       await useAlert({
@@ -61,6 +62,7 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
         title: ALERT_TITLE,
         message: error.response?._data || error.message,
       });
+      return false;
     }
   };
   const asctions = { saveScheduleMessage };
