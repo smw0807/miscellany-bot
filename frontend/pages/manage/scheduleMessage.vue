@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { EditTypeEnum } from '~/types/enums';
+import { EditTypeEnum, ResultTypeEnum } from '~/types/enums';
 import type { ChannelType } from '~/store/discordManage';
 import type { ScheduleMessageType } from '~/store/discordSchedule';
 import EditSchedule from '~/components/dialog/EditSchedule.vue';
+import { useDiscordScheduleStore } from '~/store/discordSchedule';
 definePageMeta({
   layout: 'manage',
 });
 
+const scheduleStore = useDiscordScheduleStore();
 const { getChannelList, loadGuild } = useGuild();
+const { useConfirm } = useDialog();
 
 // 채널 리스트
 const channelList = ref<ChannelType[]>([]);
@@ -19,9 +22,23 @@ const openEditScheduleDialog = ref(false);
 // 예약 메시지 다이얼로그 모드
 const editMode = ref<EditTypeEnum>(EditTypeEnum.ADD);
 // 예약 메시지 저장
-const onInputData = (mode: EditTypeEnum, data: ScheduleMessageType) => {
+const onInputData = async (mode: EditTypeEnum, data: ScheduleMessageType) => {
+  const TITLE =
+    mode === EditTypeEnum.ADD ? '예약 메시지 추가' : '예약 메시지 수정';
+  const CONFIRM_MESSAGE =
+    mode === EditTypeEnum.ADD
+      ? '예약 메시지를 추가하시겠습니까?'
+      : '예약 메시지를 수정하시겠습니까?';
+  const confirm = await useConfirm({
+    type: ResultTypeEnum.INFO,
+    title: TITLE,
+    message: CONFIRM_MESSAGE,
+  });
+  if (!confirm) return;
   const dataForm = { ...data };
   dataForm.guildId = loadGuild().id;
+  await scheduleStore.saveScheduleMessage(dataForm);
+  // closeDialog();
 };
 // 예약 메시지 다이얼로그 열기
 const openDialog = () => {
