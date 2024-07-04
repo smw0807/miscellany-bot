@@ -11,7 +11,6 @@ definePageMeta({
   layout: 'manage',
 });
 
-const config = useRuntimeConfig();
 const { loadGuild } = useGuild();
 const { useAlert } = useDialog();
 
@@ -35,7 +34,7 @@ const closeDialog = () => {
 };
 // 트리거 저장
 const saveTrigger = async (mode: EditTypeEnum, data: TriggerMessageType) => {
-  const guild = loadGuild(config.public.discordStorageName);
+  const guild = loadGuild();
   const params = {
     guildId: guild.id,
     ...data,
@@ -107,7 +106,7 @@ const rowClickEvent = (
 };
 
 onMounted(() => {
-  guild.value = loadGuild(config.public.discordStorageName);
+  guild.value = loadGuild();
 
   triggerStore.guildId = guild.value.id;
   triggerStore.getTriggerMessages();
