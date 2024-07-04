@@ -1,4 +1,9 @@
-import type { RepeatType, ScheduleType } from '~/types/enums';
+import {
+  ResultTypeEnum,
+  type RepeatType,
+  type ScheduleType,
+} from '~/types/enums';
+import type { NestHttpException } from '~/types/errors';
 
 // 예약 메시지 데이터 타입
 export type ScheduleMessageType = {
@@ -20,6 +25,9 @@ export type ScheduleMessageType = {
 };
 
 export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
+  const { useAlert } = useDialog();
+
+  const ALERT_TITLE = '예약 메시지';
   // ============= State =============
   const guildId = ref<string>(''); // 길드 아이디
   const pageIndex = ref<number>(1); // 페이지 인덱스
@@ -35,7 +43,27 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
   };
 
   // ============= Actions =============
-  const asctions = {};
+  const saveScheduleMessage = async (params: ScheduleMessageType) => {
+    try {
+      const res = await $fetch<string>('/api/supabase/schedule-message', {
+        method: 'POST',
+        body: JSON.stringify(params),
+      });
+      await useAlert({
+        type: ResultTypeEnum.SUCCESS,
+        title: ALERT_TITLE,
+        message: res,
+      });
+    } catch (e: any) {
+      const error: NestHttpException = e;
+      await useAlert({
+        type: ResultTypeEnum.ERROR,
+        title: ALERT_TITLE,
+        message: error.response?._data || error.message,
+      });
+    }
+  };
+  const asctions = { saveScheduleMessage };
 
   // ============= Returns =============
   return {
