@@ -70,7 +70,6 @@ model ScheduledMessage {
   repeatType    RepeatType? // 반복 유형(일, 시, 분)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  createdBy     String
   isActive      Boolean  @default(true) // 예약 메시지 활성화 여부
   lastSentAt    DateTime? // 마지막 전송 시간
 
