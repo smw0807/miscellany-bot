@@ -4,6 +4,7 @@ import { SendMessagesHistoryService } from './send-messages-history/msg.history.
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { TriggerMessagesService } from './trigger-messages/trigger.messages.service';
 import { SupabaseController } from './supabase.controller';
+import { ScheduleMessageService } from './schedule-message/schedule.message.service';
 
 @Module({
   controllers: [SupabaseController],
@@ -11,6 +12,7 @@ import { SupabaseController } from './supabase.controller';
     SupabaseService,
     SendMessagesHistoryService,
     TriggerMessagesService,
+    ScheduleMessageService,
   ],
   exports: [SendMessagesHistoryService, TriggerMessagesService],
   imports: [PrismaModule],

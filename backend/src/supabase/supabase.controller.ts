@@ -11,11 +11,15 @@ import {
 } from '@nestjs/common';
 import { TriggerMessagesService } from './trigger-messages/trigger.messages.service';
 import { Request, Response } from 'express';
+import { ScheduleMessageService } from './schedule-message/schedule.message.service';
 
 @Controller('supabase')
 export class SupabaseController {
   private readonly logger = new Logger(SupabaseController.name);
-  constructor(private readonly triggerService: TriggerMessagesService) {}
+  constructor(
+    private readonly triggerService: TriggerMessagesService,
+    private readonly scheduleService: ScheduleMessageService,
+  ) {}
 
   // 트리거 메시지 목록 조회
   @Get('trigger-messages')
@@ -79,6 +83,21 @@ export class SupabaseController {
       return res.status(result.getStatus()).send(result.getResponse());
     } catch (e) {
       this.logger.error('트리거 메시지 삭제에 실패했습니다.', e);
+      res.status(e.getStatus()).send(e.getResponse());
+    }
+  }
+
+  // 예약 메시지 등록
+  @Post('schedule-message')
+  async addScheduleMessage(@Req() req: Request, @Res() res: Response) {
+    try {
+      const params = req.body;
+      const result = await this.scheduleService.addScheduleMessage(params);
+      if (result === HttpStatus.OK) {
+        return res.status(HttpStatus.OK).send('예약 메시지 등록 성공');
+      }
+    } catch (e) {
+      this.logger.error('예약 메시지 등록에 실패했습니다.', e);
       res.status(e.getStatus()).send(e.getResponse());
     }
   }
