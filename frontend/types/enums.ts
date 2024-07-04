@@ -12,12 +12,12 @@ export enum EditTypeEnum {
 }
 
 export enum ScheduleType {
-  ONETIME = 'onetime',
-  RECURRING = 'recurring',
+  ONETIME = 'ONETIME',
+  RECURRING = 'RECURRING',
 }
 
 export enum RepeatType {
-  MINUTE = 'minute',
-  HOUR = 'hour',
-  DAY = 'day',
+  MINUTE = 'MINUTE',
+  HOUR = 'HOUR',
+  DAY = 'DAY',
 }
