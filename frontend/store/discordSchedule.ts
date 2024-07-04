@@ -24,6 +24,11 @@ export type ScheduleMessageType = {
   lastSentAt?: string;
 };
 
+export type ScheduleMessagesListResponseType = {
+  data: ScheduleMessageType[];
+  total: number;
+};
+
 export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
   const { useAlert } = useDialog();
 
@@ -43,6 +48,32 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
   };
 
   // ============= Actions =============
+  // 예약 메시지 목록 조회
+  const getScheduleMessages = async () => {
+    try {
+      const res = await $fetch<ScheduleMessagesListResponseType>(
+        '/api/supabase/schedule-messages',
+        {
+          method: 'GET',
+          params: {
+            guildId: guildId.value,
+            pageSize: pageSize.value,
+            pageIndex: pageIndex.value - 1,
+          },
+        }
+      );
+      total.value = res.total;
+      scheduleMessages.value = res.data;
+    } catch (e: any) {
+      const error: NestHttpException = e;
+      await useAlert({
+        type: ResultTypeEnum.ERROR,
+        title: ALERT_TITLE,
+        message: error.response?._data || error.message,
+      });
+    }
+  };
+  // 예약 메시지 저장
   const saveScheduleMessage = async (params: ScheduleMessageType) => {
     try {
       const res = await $fetch<string>('/api/supabase/schedule-message', {
@@ -65,7 +96,7 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
       return false;
     }
   };
-  const asctions = { saveScheduleMessage };
+  const asctions = { getScheduleMessages, saveScheduleMessage };
 
   // ============= Returns =============
   return {
