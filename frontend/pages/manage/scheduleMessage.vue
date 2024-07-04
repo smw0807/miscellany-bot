@@ -16,7 +16,7 @@ const { useConfirm } = useDialog();
 const channelList = ref<ChannelType[]>([]);
 const cChannels = computed(() => channelList.value);
 
-const totalItems = ref(0);
+const totalItems = ref(scheduleStore.total);
 // 예약 메시지 다이얼로그 오픈
 const openEditScheduleDialog = ref(false);
 // 예약 메시지 다이얼로그 모드
@@ -39,6 +39,7 @@ const onInputData = async (mode: EditTypeEnum, data: ScheduleMessageType) => {
   dataForm.guildId = loadGuild().id;
   const result = await scheduleStore.saveScheduleMessage(dataForm);
   if (result) closeDialog();
+  await scheduleStore.getScheduleMessages();
 };
 // 예약 메시지 다이얼로그 열기
 const openDialog = () => {
@@ -50,9 +51,11 @@ const closeDialog = () => {
   openEditScheduleDialog.value = false;
 };
 onMounted(async () => {
+  scheduleStore.guildId = loadGuild().id;
   if (channelList.value.length === 0) {
     channelList.value = await getChannelList();
   }
+  await scheduleStore.getScheduleMessages();
 });
 </script>
 <template>
