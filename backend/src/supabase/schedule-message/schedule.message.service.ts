@@ -7,6 +7,39 @@ export class ScheduleMessageService {
   private readonly logger = new Logger(ScheduleMessageService.name);
   constructor(private readonly prisma: PrismaService) {}
 
+  // 예약 메시지 목록 조회
+  async getScheduleMessages(
+    guildId: string,
+    pageIndex: number,
+    pageSize: number,
+  ) {
+    console.log(guildId, pageIndex, pageSize);
+    try {
+      const result = {
+        data: [],
+        total: 0,
+      };
+      const total = await this.prisma.scheduledMessage.count({
+        where: { guildId },
+      });
+      if (total === 0) result;
+      result.total = total;
+      result.data = await this.prisma.scheduledMessage.findMany({
+        where: { guildId },
+        take: pageSize,
+        skip: pageIndex * pageSize,
+        orderBy: { createdAt: 'desc' },
+      });
+      return result;
+    } catch (e) {
+      this.logger.error('예약 메시지 목록 조회 실패', e.message);
+      throw new HttpException(
+        '예약 메시지 목록 조회에 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   // 예약 메시지 등록
   async addScheduleMessage(data: ScheduledMessage) {
     try {

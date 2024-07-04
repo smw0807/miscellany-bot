@@ -87,6 +87,23 @@ export class SupabaseController {
     }
   }
 
+  // 예약 메시지 목록 조회
+  @Get('schedule-messages')
+  async getScheduleMessages(@Req() req: Request, @Res() res: Response) {
+    try {
+      const { guildId, pageSize, pageIndex } = req.query;
+      const result = await this.scheduleService.getScheduleMessages(
+        guildId.toString(),
+        Number(pageSize),
+        Number(pageIndex),
+      );
+      res.send(result);
+    } catch (e) {
+      this.logger.error('예약 메시지 목록 조회에 실패했습니다.', e);
+      res.status(e.getStatus()).send(e.getResponse());
+    }
+  }
+
   // 예약 메시지 등록
   @Post('schedule-message')
   async addScheduleMessage(@Req() req: Request, @Res() res: Response) {
