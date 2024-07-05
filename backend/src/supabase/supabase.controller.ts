@@ -2,16 +2,19 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   HttpStatus,
   Logger,
   Patch,
   Post,
+  Query,
   Req,
   Res,
 } from '@nestjs/common';
 import { TriggerMessagesService } from './trigger-messages/trigger.messages.service';
 import { Request, Response } from 'express';
 import { ScheduleMessageService } from './schedule-message/schedule.message.service';
+import { DiscordDataListInput } from './inputs/common.inputs';
 
 @Controller('supabase')
 export class SupabaseController {
@@ -23,9 +26,18 @@ export class SupabaseController {
 
   // 트리거 메시지 목록 조회
   @Get('trigger-messages')
-  async getTriggerMessages(@Req() req: Request, @Res() res: Response) {
+  async getTriggerMessages(
+    @Query() params: DiscordDataListInput,
+    @Res() res: Response,
+  ) {
     try {
-      const { guildId, pageSize, pageIndex } = req.query;
+      const { guildId, pageSize, pageIndex } = params;
+      if (!guildId || !pageSize || !pageIndex) {
+        throw new HttpException(
+          '필수 파라미터가 누락되었습니다.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const result = await this.triggerService.getTriggerMessages(
         guildId.toString(),
         Number(pageSize),
@@ -33,7 +45,7 @@ export class SupabaseController {
       );
       res.send(result);
     } catch (e) {
-      this.logger.error('트리거 메시지 목록 조회에 실패했습니다.', e);
+      this.logger.error('트리거 메시지 목록 조회에 실패했습니다.', e.message);
       res.status(e.getStatus()).send(e.getResponse());
     }
   }
