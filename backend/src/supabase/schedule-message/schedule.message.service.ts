@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ScheduledMessage, ScheduleType } from '@prisma/client';
+import { DiscordDataListInput } from '../inputs/common.inputs';
 
 @Injectable()
 export class ScheduleMessageService {
@@ -8,13 +9,11 @@ export class ScheduleMessageService {
   constructor(private readonly prisma: PrismaService) {}
 
   // 예약 메시지 목록 조회
-  async getScheduleMessages(
-    guildId: string,
-    pageIndex: number,
-    pageSize: number,
-  ) {
-    console.log(guildId, pageIndex, pageSize);
+  async getScheduleMessages(params: DiscordDataListInput) {
     try {
+      const { guildId } = params;
+      const pageSize = +params.pageSize;
+      const pageIndex = +params.pageIndex;
       const result = {
         data: [],
         total: 0,
@@ -22,7 +21,6 @@ export class ScheduleMessageService {
       const total = await this.prisma.scheduledMessage.count({
         where: { guildId },
       });
-      console.log();
       if (total === 0) result;
       result.total = total;
       result.data = await this.prisma.scheduledMessage.findMany({

@@ -106,12 +106,7 @@ export class SupabaseController {
     @Res() res: Response,
   ) {
     try {
-      const { guildId, pageSize, pageIndex } = params;
-      const result = await this.scheduleService.getScheduleMessages(
-        guildId.toString(),
-        Number(pageSize),
-        Number(pageIndex),
-      );
+      const result = await this.scheduleService.getScheduleMessages(params);
       res.send(result);
     } catch (e) {
       this.logger.error('예약 메시지 목록 조회에 실패했습니다.', e.message);
