@@ -22,6 +22,7 @@ export class ScheduleMessageService {
       const total = await this.prisma.scheduledMessage.count({
         where: { guildId },
       });
+      console.log();
       if (total === 0) result;
       result.total = total;
       result.data = await this.prisma.scheduledMessage.findMany({

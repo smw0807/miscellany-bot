@@ -34,7 +34,7 @@ export class DiscordController {
       const guilds = await this.guildsService.getOwnerGuilds(accessToken);
       res.send(guilds);
     } catch (e) {
-      this.logger.error('디스코드 채널 리스트 조회에 실패했습니다.', e);
+      this.logger.error('디스코드 채널 리스트 조회에 실패했습니다.', e.message);
       res.status(e.getStatus()).send(e.getResponse());
     }
   }
@@ -49,7 +49,7 @@ export class DiscordController {
       }
       res.send(channels);
     } catch (e) {
-      this.logger.error('디스코드 채널 리스트 조회에 실패했습니다.', e);
+      this.logger.error('디스코드 채널 리스트 조회에 실패했습니다.', e.message);
       res.status(e.getStatus()).send(e.getResponse());
     }
   }
@@ -73,7 +73,7 @@ export class DiscordController {
       }
       res.status(result.getStatus()).send(result.getResponse());
     } catch (e) {
-      this.logger.error('메시지 전송에 실패했습니다.', e);
+      this.logger.error('메시지 전송에 실패했습니다.', e.message);
       res.status(e.getStatus()).send(e.getResponse());
     }
   }
@@ -90,7 +90,7 @@ export class DiscordController {
       );
       res.send(result);
     } catch (e) {
-      this.logger.error('메시지 전송 내역 조회에 실패했습니다.', e);
+      this.logger.error('메시지 전송 내역 조회에 실패했습니다.', e.message);
       res.status(e.getStatus()).send(e.getResponse());
     }
   }
