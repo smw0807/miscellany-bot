@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import {
   ResultTypeEnum,
   type RepeatType,
@@ -63,7 +64,18 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
         }
       );
       total.value = res.total;
-      scheduleMessages.value = res.data;
+      scheduleMessages.value = res.data.map((item) => ({
+        ...item,
+        scheduledAt: dayjs(item.scheduledAt).format('YYYY-MM-DD HH:mm:ss'),
+        repeatedAt: item.repeatedAt
+          ? dayjs(item.repeatedAt).format('YYYY-MM-DD HH:mm:ss')
+          : '',
+        createdAt: dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
+        updatedAt: dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
+        lastSentAt: item.lastSentAt
+          ? dayjs(item.lastSentAt).format('YYYY-MM-DD HH:mm:ss')
+          : '',
+      }));
     } catch (e: any) {
       const error: NestHttpException = e;
       await useAlert({
