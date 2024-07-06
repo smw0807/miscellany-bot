@@ -50,6 +50,22 @@ const openDialog = () => {
 const closeDialog = () => {
   openEditScheduleDialog.value = false;
 };
+
+//### 테이블 관련 ###
+// 선택 로우
+const selectedSchedule = ref<string[]>([]);
+// 헤더
+const headers = [
+  { text: '제목', value: 'title' },
+  { text: '예약 유형', value: 'scheduleType' },
+  { text: '예약 시간', value: 'scheduleTime' },
+  { text: '내용', value: 'scheduleTime' },
+  { text: '반복 예약 시간', value: 'scheduleTime' },
+  { text: '반복 간격', value: 'scheduleTime' },
+  { text: '반복 유형', value: 'scheduleTime' },
+  { text: '전송 여부', value: 'isSend' },
+  { text: '등록일', value: 'createdAt' },
+];
 onMounted(async () => {
   scheduleStore.guildId = loadGuild().id;
   if (channelList.value.length === 0) {
@@ -74,6 +90,36 @@ onMounted(async () => {
       <v-spacer />
       <div class="text-subtitle-1 text-">총 {{ totalItems }} 개</div>
     </v-card-title>
+    <v-card-text>
+      <v-data-table
+        v-model="selectedSchedule"
+        :headers="headers"
+        :items="items"
+        :items-length="totalItems"
+        @click:row="rowClickEvent"
+        show-select
+        items-per-page="10"
+        density="comfortable"
+        hide-default-footer
+        no-data-text="등록된 트리거 메시지가 없습니다."
+      >
+        <template #item.message="{ item }">
+          {{
+            item.message.length > 10
+              ? item.message.slice(0, 10) + '...'
+              : item.message
+          }}
+        </template>
+      </v-data-table>
+      <v-pagination
+        v-model="page"
+        :length="Math.ceil(totalItems / 10)"
+        rounded
+        color="primary"
+        @update:model-value="pageUpdate"
+        class="my-4"
+      ></v-pagination>
+    </v-card-text>
   </v-card>
 
   <EditSchedule

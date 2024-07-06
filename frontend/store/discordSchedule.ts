@@ -21,7 +21,7 @@ export type ScheduleMessageType = {
   createdAt?: string;
   updatedAt?: string;
   createdBy?: string;
-  isActive?: Boolean;
+  isSend?: Boolean;
   lastSentAt?: string;
 };
 
