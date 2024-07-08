@@ -66,9 +66,9 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
       total.value = res.total;
       scheduleMessages.value = res.data.map((item) => ({
         ...item,
-        scheduledAt: dayjs(item.scheduledAt).format('YYYY-MM-DD HH:mm:ss'),
+        scheduledAt: dayjs(item.scheduledAt).format('YYYY-MM-DD HH:mm'),
         repeatedAt: item.repeatedAt
-          ? dayjs(item.repeatedAt).format('YYYY-MM-DD HH:mm:ss')
+          ? dayjs(item.repeatedAt).format('YYYY-MM-DD HH:mm')
           : '',
         createdAt: dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
         updatedAt: dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
