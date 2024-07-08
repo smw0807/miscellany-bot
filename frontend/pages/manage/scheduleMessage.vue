@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { EditTypeEnum, ResultTypeEnum } from '~/types/enums';
+import { EditTypeEnum, ResultTypeEnum, ScheduleType } from '~/types/enums';
 import type { ChannelType } from '~/store/discordManage';
 import type { ScheduleMessageType } from '~/store/discordSchedule';
 import EditSchedule from '~/components/dialog/EditSchedule.vue';
@@ -16,7 +16,7 @@ const { useConfirm } = useDialog();
 const channelList = ref<ChannelType[]>([]);
 const cChannels = computed(() => channelList.value);
 
-const totalItems = ref(scheduleStore.total);
+const totalItems = computed(() => scheduleStore.total);
 // 예약 메시지 다이얼로그 오픈
 const openEditScheduleDialog = ref(false);
 // 예약 메시지 다이얼로그 모드
@@ -56,22 +56,49 @@ const closeDialog = () => {
 const selectedSchedule = ref<string[]>([]);
 // 헤더
 const headers = [
-  { text: '제목', value: 'title' },
-  { text: '예약 유형', value: 'scheduleType' },
-  { text: '예약 시간', value: 'scheduleTime' },
-  { text: '내용', value: 'scheduleTime' },
-  { text: '반복 예약 시간', value: 'scheduleTime' },
-  { text: '반복 간격', value: 'scheduleTime' },
-  { text: '반복 유형', value: 'scheduleTime' },
-  { text: '전송 여부', value: 'isSend' },
-  { text: '등록일', value: 'createdAt' },
+  { title: '제목', value: 'title' },
+  { title: '예약 유형', value: 'scheduleType' },
+  { title: '예약 시간', value: 'scheduledAt' },
+  { title: '내용', value: 'messageContent' },
+  { title: '전송 여부', value: 'isSend' },
+  { title: '등록일', value: 'createdAt' },
 ];
+// 예약 유형 한글 표기
+const scheduleType = (type: ScheduleType) => {
+  switch (type) {
+    case ScheduleType.ONETIME:
+      return '1회 전송';
+    case ScheduleType.RECURRING:
+      return '반복 전송';
+    default:
+      return '알 수 없음';
+  }
+};
+// 데이터
+const items = computed(() => scheduleStore.scheduleMessages);
+// row 클릭 이벤트
+const rowClickEvent = (
+  _event: Event,
+  { item }: { item: ScheduleMessageType }
+) => {
+  editMode.value = EditTypeEnum.EDIT;
+  console.log(item);
+};
+// 현재 페이지
+const page = computed(() => scheduleStore.pageIndex);
+// 페이지 이벤트
+const pageUpdate = (value: number) => {
+  console.log(value);
+  scheduleStore.pageIndex = value;
+  scheduleStore.getScheduleMessages();
+};
+
 onMounted(async () => {
   scheduleStore.guildId = loadGuild().id;
   if (channelList.value.length === 0) {
     channelList.value = await getChannelList();
   }
-  await scheduleStore.getScheduleMessages();
+  scheduleStore.getScheduleMessages();
 });
 </script>
 <template>
@@ -101,14 +128,26 @@ onMounted(async () => {
         items-per-page="10"
         density="comfortable"
         hide-default-footer
-        no-data-text="등록된 트리거 메시지가 없습니다."
+        no-data-text="등록된 예약 메시지가 없습니다."
       >
-        <template #item.message="{ item }">
+        <template #item.scheduleType="{ item }">
+          {{ scheduleType(item.scheduleType) }}
+        </template>
+        <template #item.messageContent="{ item }">
           {{
-            item.message.length > 10
-              ? item.message.slice(0, 10) + '...'
-              : item.message
+            item.messageContent.length > 10
+              ? item.messageContent.slice(0, 10) + '...'
+              : item.messageContent
           }}
+        </template>
+        <template #item.isSend="{ item }">
+          <v-chip
+            :color="item.isSend ? 'success' : 'error'"
+            text-color="white"
+            small
+          >
+            {{ item.isSend ? '전송 완료' : '전송 대기' }}
+          </v-chip>
         </template>
       </v-data-table>
       <v-pagination
