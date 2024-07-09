@@ -54,6 +54,8 @@ const closeDialog = () => {
 //### 테이블 관련 ###
 // 선택 로우
 const selectedSchedule = ref<string[]>([]);
+// 선택 로우 아이템
+const rowItem = ref<ScheduleMessageType>();
 // 헤더
 const headers = [
   { title: '제목', value: 'title' },
@@ -81,8 +83,9 @@ const rowClickEvent = (
   _event: Event,
   { item }: { item: ScheduleMessageType }
 ) => {
+  rowItem.value = item;
   editMode.value = EditTypeEnum.EDIT;
-  console.log(item);
+  openEditScheduleDialog.value = true;
 };
 // 현재 페이지
 const page = computed(() => scheduleStore.pageIndex);
@@ -167,5 +170,6 @@ onMounted(async () => {
     :open="openEditScheduleDialog"
     :mode="editMode"
     :channels="cChannels"
+    :edit-data="rowItem"
   />
 </template>

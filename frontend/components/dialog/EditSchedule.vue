@@ -8,6 +8,7 @@ const props = defineProps<{
   open: boolean;
   mode: EditTypeEnum;
   channels: ChannelType[];
+  editData?: ScheduleMessageType;
 }>();
 
 const emit = defineEmits({
@@ -48,12 +49,52 @@ const repeatInterval = ref<number>(30);
 // 날짜 최소값
 const minDate = dayjs().subtract(1, 'day').toDate();
 
+// 초기화
+const initializeData = (data: ScheduleMessageType | undefined) => {
+  if (data) {
+    isEveryone.value = data.messageContent.includes('@everyone');
+    selectedChannel.value = cChannelList.value.find(
+      (channel) => channel.id === data.channelId
+    );
+    title.value = data.title;
+    message.value = data.messageContent;
+    scheduleType.value = data.scheduleType;
+    if (scheduleType.value === ScheduleType.ONETIME) {
+      sendDateForOnetime.value = new Date(
+        dayjs(data.scheduledAt).format('YYYY-MM-DD')
+      );
+      sendTimeForOnetime.value = dayjs(data.scheduledAt).format('HH:mm');
+    } else {
+      sendDateForRepeat.value = new Date(
+        dayjs(data.scheduledAt).format('YYYY-MM-DD')
+      );
+      sendTimeForRepeat.value = dayjs(data.scheduledAt).format('HH:mm');
+      repeatType.value = data.repeatType as RepeatType;
+      repeatInterval.value = data.repeatInterval as number;
+    }
+  } else {
+    isEveryone.value = true;
+    selectedChannel.value = cChannelList.value[0];
+    title.value = '';
+    message.value = '';
+    scheduleType.value = ScheduleType.ONETIME;
+    sendDateForOnetime.value = new Date();
+    sendTimeForOnetime.value = dayjs().format('HH:mm');
+    sendDateForRepeat.value = new Date();
+    sendTimeForRepeat.value = dayjs().format('HH:mm');
+    repeatType.value = RepeatType.MINUTE;
+    repeatInterval.value = 30;
+  }
+};
+
+// 데이터 폼 생성
 const makeDataForm = (): ScheduleMessageType => {
   if (scheduleType.value === ScheduleType.ONETIME) {
     return oneTimeDataForm();
   }
   return repeatDataForm();
 };
+// 1회성 데이터
 const oneTimeDataForm = (): ScheduleMessageType => {
   const messageContent = `${isEveryone.value ? '@everyone' : ''}
   ${message.value}`;
@@ -67,6 +108,7 @@ const oneTimeDataForm = (): ScheduleMessageType => {
     }:00`,
   };
 };
+// 반복 데이터
 const repeatDataForm = (): ScheduleMessageType => {
   const messageContent = `${isEveryone.value ? '@everyone' : ''}
   ${message.value}`;
@@ -104,6 +146,7 @@ const rules = {
   ],
 };
 
+// 반복 주기 타입
 const suffixRepeatType = computed(() => {
   switch (repeatType.value) {
     case RepeatType.DAY:
@@ -116,6 +159,30 @@ const suffixRepeatType = computed(() => {
       return '';
   }
 });
+
+// 초기화
+watch(
+  () => props.open,
+  (value) => {
+    if (props.mode === EditTypeEnum.ADD) {
+      initializeData(undefined);
+    }
+  }
+);
+// 수정 데이터
+watch(
+  () => props.editData,
+  (value) => {
+    console.log(value);
+    if (value) {
+      initializeData(value);
+    }
+  },
+  {
+    // 컴포넌트가 처음 렌더링될 때 props.editData가 존재하면 ㅊ포기 데이터를 설정
+    immediate: true,
+  }
+);
 </script>
 <template>
   <v-sheet>
