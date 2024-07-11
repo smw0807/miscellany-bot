@@ -41,6 +41,7 @@ const sendTimeForOnetime = ref<string>(dayjs().format('HH:mm'));
 const sendDateForRepeat = ref<Date>(new Date());
 // 반복 전송 - 시작 시간
 const sendTimeForRepeat = ref<string>(dayjs().format('HH:mm'));
+
 // 반복 전송 - 예약 메시지 반복 타입(일, 시, 분)
 const repeatType = ref<RepeatType>(RepeatType.MINUTE);
 // 반복 전송 - 예약 메시지 반복 주기(일, 시, 분)
@@ -173,7 +174,6 @@ watch(
 watch(
   () => props.editData,
   (value) => {
-    console.log(value);
     if (value) {
       initializeData(value);
     }
@@ -254,10 +254,11 @@ watch(
               :prepend-icon="null"
             ></v-date-input>
             <TimePicker
+              v-model="sendTimeForOnetime"
               :open="timePicker"
-              :time="sendTimeForOnetime"
               label="메시지를 전송할 시간을 선택해주세요."
             />
+            <!-- :time="sendTimeForOnetime" -->
           </template>
 
           <!-- 반복 전송일 때, 시작 날짜 및 시간, 반복주기 -->
@@ -269,8 +270,8 @@ watch(
               :prepend-icon="null"
             ></v-date-input>
             <TimePicker
+              v-model="sendTimeForRepeat"
               :open="timePicker"
-              :time="sendTimeForRepeat"
               label="반복 메시지가 시작할 시간을 선택해주세요."
             />
             <v-select
