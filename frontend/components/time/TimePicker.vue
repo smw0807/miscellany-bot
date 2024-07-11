@@ -1,20 +1,20 @@
 <script setup lang="ts">
 const props = withDefaults(
   defineProps<{
-    time: string;
+    modelValue: string;
     open: boolean;
     label: string;
   }>(),
   {
-    time: '',
+    modelValue: '',
     open: false,
     label: 'Time',
   }
 );
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'update:modelValue']);
 
 const open = ref(props.open);
-const time = ref(props.time);
+const time = ref(props.modelValue);
 </script>
 <template>
   <v-text-field v-model="time" :active="open" :label="props.label" readonly>
@@ -29,6 +29,7 @@ const time = ref(props.time);
         v-model="time"
         color="green-lighten-1"
         full-width
+        @update:model-value="emit('update:modelValue', time)"
       >
       </v-time-picker>
     </v-menu>
