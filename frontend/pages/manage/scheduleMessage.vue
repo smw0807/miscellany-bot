@@ -21,7 +21,7 @@ const totalItems = computed(() => scheduleStore.total);
 const openEditScheduleDialog = ref(false);
 // 예약 메시지 다이얼로그 모드
 const editMode = ref<EditTypeEnum>(EditTypeEnum.ADD);
-// 예약 메시지 저장
+// 예약 메시지 처리
 const onInputData = async (mode: EditTypeEnum, data: ScheduleMessageType) => {
   const TITLE =
     mode === EditTypeEnum.ADD ? '예약 메시지 추가' : '예약 메시지 수정';
@@ -37,7 +37,16 @@ const onInputData = async (mode: EditTypeEnum, data: ScheduleMessageType) => {
   if (!confirm) return;
   const dataForm = { ...data };
   dataForm.guildId = loadGuild().id;
-  const result = await scheduleStore.saveScheduleMessage(dataForm);
+  await processData(dataForm);
+};
+// 예약 메시지 저장
+const processData = async (dataForm: ScheduleMessageType) => {
+  let result = false;
+  if (editMode.value === EditTypeEnum.ADD) {
+    result = await scheduleStore.saveScheduleMessage(dataForm);
+  } else {
+    result = await scheduleStore.updateScheduleMessage(dataForm);
+  }
   if (result) closeDialog();
   await scheduleStore.getScheduleMessages();
 };
@@ -134,7 +143,23 @@ onMounted(async () => {
         no-data-text="등록된 예약 메시지가 없습니다."
       >
         <template #item.scheduleType="{ item }">
-          {{ scheduleType(item.scheduleType) }}
+          <v-chip
+            v-if="item.scheduleType === ScheduleType.ONETIME"
+            variant="flat"
+            color="#1E88E5"
+          >
+            {{ scheduleType(item.scheduleType) }}
+          </v-chip>
+          <v-chip
+            v-else-if="item.scheduleType === ScheduleType.RECURRING"
+            variant="flat"
+            color="#43A047"
+          >
+            {{ scheduleType(item.scheduleType) }}
+          </v-chip>
+          <v-chip v-else variant="flat" color="#757575">
+            {{ scheduleType(item.scheduleType) }}
+          </v-chip>
         </template>
         <template #item.messageContent="{ item }">
           {{
@@ -147,7 +172,7 @@ onMounted(async () => {
           <v-chip
             :color="item.isSend ? 'success' : 'error'"
             text-color="white"
-            small
+            variant="flat"
           >
             {{ item.isSend ? '전송 완료' : '전송 대기' }}
           </v-chip>
