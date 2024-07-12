@@ -58,7 +58,7 @@ model TriggerMessage {
 
 // 예약 메시지
 model ScheduledMessage {
-  id            Int      @id @default(autoincrement())
+  id            String      @id @default(cuid())
   guildId       String
   channelId     String
   scheduleType  ScheduleType //예약 유형 (반복성 또는 1회성)
