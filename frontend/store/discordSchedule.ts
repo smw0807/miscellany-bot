@@ -8,7 +8,7 @@ import type { NestHttpException } from '~/types/errors';
 
 // 예약 메시지 데이터 타입
 export type ScheduleMessageType = {
-  id?: number;
+  id?: string;
   guildId?: string;
   channelId: string;
   title: string;
@@ -108,11 +108,43 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
       return false;
     }
   };
-  const asctions = { getScheduleMessages, saveScheduleMessage };
+  // 예약 메시지 수정
+  const updateScheduleMessage = async (
+    id: string,
+    params: ScheduleMessageType
+  ) => {
+    try {
+      const res = await $fetch<string>(`/api/supabase/schedule-message/${id}`, {
+        method: 'PATCH',
+        params: {
+          data: params,
+        },
+      });
+      await useAlert({
+        type: ResultTypeEnum.SUCCESS,
+        title: ALERT_TITLE,
+        message: res,
+      });
+      return true;
+    } catch (e: any) {
+      const error: NestHttpException = e;
+      await useAlert({
+        type: ResultTypeEnum.ERROR,
+        title: ALERT_TITLE,
+        message: error.response?._data || error.message,
+      });
+      return false;
+    }
+  };
+  const actions = {
+    getScheduleMessages,
+    saveScheduleMessage,
+    updateScheduleMessage,
+  };
 
   // ============= Returns =============
   return {
     ...state,
-    ...asctions,
+    ...actions,
   };
 });

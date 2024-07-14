@@ -44,8 +44,14 @@ const processData = async (dataForm: ScheduleMessageType) => {
   let result = false;
   if (editMode.value === EditTypeEnum.ADD) {
     result = await scheduleStore.saveScheduleMessage(dataForm);
+  } else if (editMode.value === EditTypeEnum.EDIT) {
+    result = await scheduleStore.updateScheduleMessage(
+      rowItem.value?.id!,
+      dataForm
+    );
   } else {
-    result = await scheduleStore.updateScheduleMessage(dataForm);
+    console.error('예약 메시지 처리 오류');
+    return;
   }
   if (result) closeDialog();
   await scheduleStore.getScheduleMessages();
