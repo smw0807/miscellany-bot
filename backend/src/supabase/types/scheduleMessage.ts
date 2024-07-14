@@ -1,7 +1,7 @@
 import { RepeatType, ScheduleType } from '@prisma/client';
 
 export type ScheduleMessageType = {
-  id?: number;
+  id?: string;
   guildId?: string;
   channelId: string;
   title: string;
