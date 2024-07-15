@@ -43,7 +43,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
     const getTriggerMessages = async (): Promise<void> => {
       try {
         const res = await $fetch<TriggerMessagesListResponseType>(
-          '/api/supabase/trigger-messages',
+          '/api/trigger/messages',
           {
             method: 'GET',
             params: {
@@ -74,7 +74,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
       params: TriggerMessageType
     ): Promise<boolean> => {
       try {
-        const res = await $fetch<string>('/api/supabase/trigger-message', {
+        const res = await $fetch<string>('/api/trigger/message', {
           method: 'POST',
           body: JSON.stringify(params),
         });
@@ -101,13 +101,10 @@ export const useDiscordMessagesTriggerStore = defineStore(
       params: TriggerMessageType
     ): Promise<boolean> => {
       try {
-        const res = await $fetch<string>(
-          `/api/supabase/trigger-message/${id}`,
-          {
-            method: 'PATCH',
-            body: JSON.stringify(params),
-          }
-        );
+        const res = await $fetch<string>(`/api/trigger/message/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify(params),
+        });
         await useAlert({
           type: ResultTypeEnum.SUCCESS,
           title: ALERT_TITLE,
@@ -138,7 +135,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
               : '선택한 트리거들을 정말 삭제하시겠습니까?',
         });
         if (!confirm) return;
-        const res = await $fetch('/api/supabase/trigger-message', {
+        const res = await $fetch('/api/trigger/message', {
           method: 'DELETE',
           body: JSON.stringify({ guildId: guildId.value, id }),
         });
