@@ -8,12 +8,10 @@ export type ScheduleMessageType = {
   messageContent: string;
   scheduleType: ScheduleType;
   scheduledAt?: string;
-  repeatedAt?: string;
   repeatInterval?: number;
   repeatType?: RepeatType;
   createdAt?: string;
   updatedAt?: string;
-  createdBy?: string;
   isSend?: boolean;
   lastSentAt?: string;
 };
