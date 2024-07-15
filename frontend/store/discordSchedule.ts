@@ -53,7 +53,7 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
   const getScheduleMessages = async () => {
     try {
       const res = await $fetch<ScheduleMessagesListResponseType>(
-        '/api/supabase/schedule-messages',
+        '/api/schedule/messages',
         {
           method: 'GET',
           params: {
@@ -88,7 +88,7 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
   // 예약 메시지 저장
   const saveScheduleMessage = async (params: ScheduleMessageType) => {
     try {
-      const res = await $fetch<string>('/api/supabase/schedule-message', {
+      const res = await $fetch<string>('/api/schedule/message', {
         method: 'POST',
         body: JSON.stringify(params),
       });
@@ -114,7 +114,7 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
     params: ScheduleMessageType
   ) => {
     try {
-      const res = await $fetch<string>(`/api/supabase/schedule-message/${id}`, {
+      const res = await $fetch<string>(`/api/schedule/message/${id}`, {
         method: 'PATCH',
         params: {
           data: params,

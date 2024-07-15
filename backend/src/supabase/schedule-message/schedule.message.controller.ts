@@ -1,8 +1,6 @@
 import {
   Controller,
-  Delete,
   Get,
-  HttpException,
   HttpStatus,
   Logger,
   Param,
@@ -12,22 +10,17 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { TriggerMessagesService } from './trigger-messages/trigger.messages.service';
 import { Request, Response } from 'express';
-import { ScheduleMessageService } from './schedule-message/schedule.message.service';
-import { DiscordDataListInput } from './inputs/common.inputs';
-import { ScheduleMessageType } from './types/scheduleMessage';
+import { ScheduleMessageService } from './schedule.message.service';
+import { DiscordDataListInput } from '../inputs/common.inputs';
 
-@Controller('supabase')
-export class SupabaseController {
-  private readonly logger = new Logger(SupabaseController.name);
-  constructor(
-    private readonly triggerService: TriggerMessagesService,
-    private readonly scheduleService: ScheduleMessageService,
-  ) {}
+@Controller('schedule')
+export class ScheduleMessageController {
+  private readonly logger = new Logger(ScheduleMessageController.name);
+  constructor(private readonly scheduleService: ScheduleMessageService) {}
 
   // 예약 메시지 목록 조회
-  @Get('schedule-messages')
+  @Get('messages')
   async getScheduleMessages(
     @Query() params: DiscordDataListInput,
     @Res() res: Response,
@@ -42,7 +35,7 @@ export class SupabaseController {
   }
 
   // 예약 메시지 등록
-  @Post('schedule-message')
+  @Post('message')
   async addScheduleMessage(@Req() req: Request, @Res() res: Response) {
     try {
       const params = req.body;
@@ -57,7 +50,7 @@ export class SupabaseController {
   }
 
   // 예약 메시지 수정
-  @Patch('schedule-message/:id')
+  @Patch('message/:id')
   async updateScheduleMessage(
     @Param('id') id: string,
     @Query('data') data: string,
