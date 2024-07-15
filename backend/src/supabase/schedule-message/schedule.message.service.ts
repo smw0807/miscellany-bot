@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ScheduledMessage, ScheduleType } from '@prisma/client';
 import { DiscordDataListInput } from '../inputs/common.inputs';
+import { ScheduleMessageType } from '../types/scheduleMessage';
 
 @Injectable()
 export class ScheduleMessageService {
@@ -60,6 +61,40 @@ export class ScheduleMessageService {
       this.logger.error('예약 메시지 등록 실패', e.message);
       throw new HttpException(
         '예약 메시지 등록에 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // 예약 메시지 수정
+  async updateScheduleMessage(id: string, data: ScheduleMessageType) {
+    try {
+      if (!id) {
+        return new HttpException(
+          'id가 누락되었습니다.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const dataFormat = {
+        ...data,
+        scheduledAt: new Date(data.scheduledAt),
+        repeatInterval: +data.repeatInterval || null,
+        repeatType: data.repeatType || null,
+        lastSentAt: data.lastSentAt ? new Date(data.lastSentAt) : null,
+        updatedAt: new Date(),
+      };
+
+      const result = await this.prisma.scheduledMessage.update({
+        where: { id },
+        data: dataFormat,
+      });
+      this.logger.debug(result, '예약 메시지 수정 성공');
+      return HttpStatus.OK;
+    } catch (e) {
+      this.logger.error('예약 메시지 수정 실패', e.message);
+      throw new HttpException(
+        '예약 메시지 수정에 실패했습니다.',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

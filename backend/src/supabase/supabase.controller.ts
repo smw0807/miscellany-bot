@@ -135,11 +135,14 @@ export class SupabaseController {
   @Patch('schedule-message/:id')
   async updateScheduleMessage(
     @Param('id') id: string,
-    @Query('data') data: ScheduleMessageType,
+    @Query('data') data: string,
     @Res() res: Response,
   ) {
     try {
-      const result = await this.scheduleService.updateScheduleMessage(id, data);
+      const result = await this.scheduleService.updateScheduleMessage(
+        id,
+        JSON.parse(data),
+      );
       if (result === HttpStatus.OK) {
         return res.status(HttpStatus.OK).send('예약 메시지 수정 성공');
       }
