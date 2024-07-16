@@ -87,7 +87,6 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
       const res = await $fetch<string>('/api/schedule/message', {
         method: 'POST',
         params,
-        // body: JSON.stringify(params),
       });
       await useAlert({
         type: ResultTypeEnum.SUCCESS,
