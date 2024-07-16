@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  HttpException,
   HttpStatus,
   Logger,
   Param,
@@ -26,6 +27,13 @@ export class ScheduleMessageController {
     @Res() res: Response,
   ) {
     try {
+      const { guildId, pageSize, pageIndex } = params;
+      if (!guildId || !pageSize || !pageIndex) {
+        throw new HttpException(
+          '필수 파라미터가 누락되었습니다.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const result = await this.scheduleService.getScheduleMessages(params);
       res.send(result);
     } catch (e) {
