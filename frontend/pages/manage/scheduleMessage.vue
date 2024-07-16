@@ -8,6 +8,19 @@ definePageMeta({
   layout: 'manage',
 });
 
+const TITLE = computed(() => {
+  if (editMode.value === EditTypeEnum.ADD) return '예약 메시지 추가';
+  if (editMode.value === EditTypeEnum.EDIT) return '예약 메시지 수정';
+  return '예약 메시지 추가';
+});
+const CONFIRM_MESSAGE = computed(() => {
+  if (editMode.value === EditTypeEnum.ADD)
+    return '예약 메시지를 추가하시겠습니까?';
+  if (editMode.value === EditTypeEnum.EDIT)
+    return '예약 메시지를 수정하시겠습니까?';
+  return '예약 메시지를 추가하시겠습니까?';
+});
+
 const scheduleStore = useDiscordScheduleStore();
 const { getChannelList, loadGuild } = useGuild();
 const { useConfirm } = useDialog();
@@ -22,17 +35,11 @@ const openEditScheduleDialog = ref(false);
 // 예약 메시지 다이얼로그 모드
 const editMode = ref<EditTypeEnum>(EditTypeEnum.ADD);
 // 예약 메시지 처리
-const onInputData = async (mode: EditTypeEnum, data: ScheduleMessageType) => {
-  const TITLE =
-    mode === EditTypeEnum.ADD ? '예약 메시지 추가' : '예약 메시지 수정';
-  const CONFIRM_MESSAGE =
-    mode === EditTypeEnum.ADD
-      ? '예약 메시지를 추가하시겠습니까?'
-      : '예약 메시지를 수정하시겠습니까?';
+const onInputData = async (data: ScheduleMessageType) => {
   const confirm = await useConfirm({
     type: ResultTypeEnum.INFO,
-    title: TITLE,
-    message: CONFIRM_MESSAGE,
+    title: TITLE.value,
+    message: CONFIRM_MESSAGE.value,
   });
   if (!confirm) return;
   const dataForm = { ...data };
