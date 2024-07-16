@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ScheduledMessage, ScheduleType } from '@prisma/client';
 import { DiscordDataListInput } from '../inputs/common.inputs';
-import { ScheduleMessageType } from '../types/scheduleMessage';
+import { ScheduleMessageInput } from '../inputs/schedule.inputs';
 
 @Injectable()
 export class ScheduleMessageService {
@@ -41,7 +41,7 @@ export class ScheduleMessageService {
   }
 
   // 예약 메시지 등록
-  async addScheduleMessage(data: ScheduledMessage) {
+  async addScheduleMessage(data: ScheduleMessageInput) {
     try {
       if (!ScheduleType[data.scheduleType as keyof typeof ScheduleType]) {
         throw new HttpException(
@@ -67,7 +67,7 @@ export class ScheduleMessageService {
   }
 
   // 예약 메시지 수정
-  async updateScheduleMessage(id: string, data: ScheduleMessageType) {
+  async updateScheduleMessage(id: string, data: ScheduleMessageInput) {
     try {
       if (!id) {
         return new HttpException(

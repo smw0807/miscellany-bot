@@ -11,17 +11,16 @@ export type ScheduleMessageType = {
   id?: string;
   guildId?: string;
   channelId: string;
+  isEveryone: boolean;
   title: string;
   messageContent: string;
   scheduleType: ScheduleType;
   scheduledAt?: string;
-  repeatedAt?: string;
   repeatInterval?: number;
   repeatType?: RepeatType;
   createdAt?: string;
   updatedAt?: string;
-  createdBy?: string;
-  isSend?: Boolean;
+  isSend?: boolean;
   lastSentAt?: string;
 };
 
@@ -67,9 +66,6 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
       scheduleMessages.value = res.data.map((item) => ({
         ...item,
         scheduledAt: dayjs(item.scheduledAt).format('YYYY-MM-DD HH:mm'),
-        repeatedAt: item.repeatedAt
-          ? dayjs(item.repeatedAt).format('YYYY-MM-DD HH:mm')
-          : '',
         createdAt: dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss'),
         updatedAt: dayjs(item.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
         lastSentAt: item.lastSentAt
@@ -90,7 +86,8 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
     try {
       const res = await $fetch<string>('/api/schedule/message', {
         method: 'POST',
-        body: JSON.stringify(params),
+        params,
+        // body: JSON.stringify(params),
       });
       await useAlert({
         type: ResultTypeEnum.SUCCESS,
@@ -116,9 +113,7 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
     try {
       const res = await $fetch<string>(`/api/schedule/message/${id}`, {
         method: 'PATCH',
-        params: {
-          data: params,
-        },
+        params,
       });
       await useAlert({
         type: ResultTypeEnum.SUCCESS,

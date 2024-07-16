@@ -1,6 +1,6 @@
 import { RepeatType, ScheduleType } from '@prisma/client';
 
-export type ScheduleMessageInsertInput = {
+export type ScheduleMessageInput = {
   guildId: string;
   channelId: string;
   isEveryone: boolean;

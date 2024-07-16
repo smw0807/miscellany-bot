@@ -14,6 +14,7 @@ import {
 import { Request, Response } from 'express';
 import { ScheduleMessageService } from './schedule.message.service';
 import { DiscordDataListInput } from '../inputs/common.inputs';
+import { ScheduleMessageInput } from '../inputs/schedule.inputs';
 
 @Controller('schedule')
 export class ScheduleMessageController {
@@ -44,9 +45,13 @@ export class ScheduleMessageController {
 
   // 예약 메시지 등록
   @Post('message')
-  async addScheduleMessage(@Req() req: Request, @Res() res: Response) {
+  async addScheduleMessage(
+    @Query() params: ScheduleMessageInput,
+    @Res() res: Response,
+  ) {
     try {
-      const params = req.body;
+      console.log('params', params);
+      // const params = req.body;
       const result = await this.scheduleService.addScheduleMessage(params);
       if (result === HttpStatus.OK) {
         return res.status(HttpStatus.OK).send('예약 메시지 등록 성공');
@@ -61,13 +66,13 @@ export class ScheduleMessageController {
   @Patch('message/:id')
   async updateScheduleMessage(
     @Param('id') id: string,
-    @Query('data') data: string,
+    @Query() params: ScheduleMessageInput,
     @Res() res: Response,
   ) {
     try {
       const result = await this.scheduleService.updateScheduleMessage(
         id,
-        JSON.parse(data),
+        params,
       );
       if (result === HttpStatus.OK) {
         return res.status(HttpStatus.OK).send('예약 메시지 수정 성공');
