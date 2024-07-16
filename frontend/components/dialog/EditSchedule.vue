@@ -12,7 +12,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits({
-  'input-data': (mode: EditTypeEnum, data: ScheduleMessageType) => true,
+  'input-data': (data: ScheduleMessageType) => true,
   onClose: () => true,
 });
 
@@ -53,7 +53,7 @@ const minDate = dayjs().subtract(1, 'day').toDate();
 // 초기화
 const initializeData = (data: ScheduleMessageType | undefined) => {
   if (data) {
-    isEveryone.value = data.messageContent.includes('@everyone');
+    isEveryone.value = data.isEveryone;
     selectedChannel.value = cChannelList.value.find(
       (channel) => channel.id === data.channelId
     );
@@ -97,12 +97,11 @@ const makeDataForm = (): ScheduleMessageType => {
 };
 // 1회성 데이터
 const oneTimeDataForm = (): ScheduleMessageType => {
-  const messageContent = `${isEveryone.value ? '@everyone' : ''}
-  ${message.value}`;
   return {
     channelId: selectedChannel.value?.id as string,
     title: title.value,
-    messageContent,
+    isEveryone: isEveryone.value,
+    messageContent: message.value,
     scheduleType: scheduleType.value,
     scheduledAt: `${dayjs(sendDateForOnetime.value).format('YYYY-MM-DD')} ${
       sendTimeForOnetime.value
@@ -111,12 +110,11 @@ const oneTimeDataForm = (): ScheduleMessageType => {
 };
 // 반복 데이터
 const repeatDataForm = (): ScheduleMessageType => {
-  const messageContent = `${isEveryone.value ? '@everyone' : ''}
-  ${message.value}`;
   return {
     channelId: selectedChannel.value?.id as string,
     title: title.value,
-    messageContent,
+    isEveryone: isEveryone.value,
+    messageContent: message.value,
     scheduleType: scheduleType.value,
     scheduledAt: `${dayjs(sendDateForRepeat.value).format('YYYY-MM-DD')} ${
       sendTimeForRepeat.value
@@ -132,7 +130,7 @@ const timePicker = ref(false);
 const emitSave = async () => {
   const { valid } = await form.value.validate();
   if (!valid) return;
-  emit('input-data', props.mode, makeDataForm());
+  emit('input-data', makeDataForm());
 };
 
 const rules = {
