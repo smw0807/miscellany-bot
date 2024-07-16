@@ -52,6 +52,11 @@ export class ScheduleMessageService {
       const result = await this.prisma.scheduledMessage.create({
         data: {
           ...data,
+          isEveryone:
+            typeof data.isEveryone === 'string'
+              ? data.isEveryone === 'true'
+              : data.isEveryone,
+          repeatInterval: +data.repeatInterval || null,
           scheduledAt: new Date(data.scheduledAt),
         },
       });
@@ -75,9 +80,18 @@ export class ScheduleMessageService {
           HttpStatus.BAD_REQUEST,
         );
       }
-
+      if (!ScheduleType[data.scheduleType as keyof typeof ScheduleType]) {
+        throw new HttpException(
+          '예약 타입이 잘못되었습니다.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const dataFormat = {
         ...data,
+        isEveryone:
+          typeof data.isEveryone === 'string'
+            ? data.isEveryone === 'true'
+            : data.isEveryone,
         scheduledAt: new Date(data.scheduledAt),
         repeatInterval: +data.repeatInterval || null,
         repeatType: data.repeatType || null,
