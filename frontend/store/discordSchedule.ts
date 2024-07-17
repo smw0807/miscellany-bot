@@ -30,7 +30,7 @@ export type ScheduleMessagesListResponseType = {
 };
 
 export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
-  const { useAlert } = useDialog();
+  const { useAlert, useConfirm } = useDialog();
 
   const ALERT_TITLE = '예약 메시지';
   // ============= State =============
@@ -130,10 +130,43 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
       return false;
     }
   };
+  // 예약 메시지 삭제
+  const deleteScheduleMessage = async (id: string[]) => {
+    try {
+      const confirm = await useConfirm({
+        type: ResultTypeEnum.WARNING,
+        title: ALERT_TITLE,
+        message:
+          id.length === 1
+            ? '선택된 예약 메시지를 정말 삭제하시겠습니까?'
+            : '선택한 예약 메시지들을 정말 삭제하시겠습니까?',
+      });
+      if (!confirm) return;
+      const res = await $fetch<string>('/api/schedule/message', {
+        method: 'DELETE',
+        params: { id },
+      });
+      await useAlert({
+        type: ResultTypeEnum.SUCCESS,
+        title: ALERT_TITLE,
+        message: res,
+      });
+      return true;
+    } catch (e: any) {
+      const error: NestHttpException = e;
+      await useAlert({
+        type: ResultTypeEnum.ERROR,
+        title: ALERT_TITLE,
+        message: error.response?._data || error.message,
+      });
+      return false;
+    }
+  };
   const actions = {
     getScheduleMessages,
     saveScheduleMessage,
     updateScheduleMessage,
+    deleteScheduleMessage,
   };
 
   // ============= Returns =============

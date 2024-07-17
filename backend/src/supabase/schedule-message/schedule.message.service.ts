@@ -113,4 +113,28 @@ export class ScheduleMessageService {
       );
     }
   }
+
+  // 예약 메시지 삭제
+  async deleteScheduleMessage(id: string | string[]) {
+    try {
+      if (!id) {
+        return new HttpException(
+          'id가 누락되었습니다.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const where = typeof id === 'string' ? { id } : { id: { in: id } };
+      const result = await this.prisma.scheduledMessage.deleteMany({
+        where,
+      });
+      this.logger.debug(result, '예약 메시지 삭제 성공');
+      return HttpStatus.OK;
+    } catch (e) {
+      this.logger.error('예약 메시지 삭제 실패', e.message);
+      throw new HttpException(
+        '예약 메시지 삭제에 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

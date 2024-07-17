@@ -63,6 +63,14 @@ const processData = async (dataForm: ScheduleMessageType) => {
   if (result) closeDialog();
   await scheduleStore.getScheduleMessages();
 };
+// 예약 메시지 삭제
+const deleteSchedule = async () => {
+  const result = await scheduleStore.deleteScheduleMessage(
+    selectedSchedule.value
+  );
+  if (result) await scheduleStore.getScheduleMessages();
+  selectedSchedule.value = [];
+};
 // 예약 메시지 다이얼로그 열기
 const openDialog = () => {
   editMode.value = EditTypeEnum.ADD;
@@ -133,7 +141,9 @@ onMounted(async () => {
       <alerts-schedule-message />
       <div class="text-right mt-3">
         <v-btn color="warning" @click="openDialog"> 예약 메시지 추가 </v-btn>
-        <v-btn color="red" class="ml-1"> 예약 메시지 삭제</v-btn>
+        <v-btn color="red" @click="deleteSchedule" class="ml-1">
+          예약 메시지 삭제
+        </v-btn>
       </div>
     </v-card-text>
 

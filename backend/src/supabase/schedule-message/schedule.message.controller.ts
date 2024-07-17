@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -80,6 +81,24 @@ export class ScheduleMessageController {
       res.status(HttpStatus.NOT_MODIFIED).send('예약 메시지 수정 실패');
     } catch (e) {
       this.logger.error('예약 메시지 수정에 실패했습니다.', e.message);
+      res.status(e.getStatus()).send(e.getResponse());
+    }
+  }
+
+  // 예약 메시지 삭제
+  @Delete('message')
+  async deleteScheduleMessage(
+    @Query('id') id: string | string[],
+    @Res() res: Response,
+  ) {
+    try {
+      const result = await this.scheduleService.deleteScheduleMessage(id);
+      if (result === HttpStatus.OK) {
+        return res.status(HttpStatus.OK).send('예약 메시지 삭제 성공');
+      }
+      res.status(HttpStatus.NOT_MODIFIED).send('예약 메시지 삭제 실패');
+    } catch (e) {
+      this.logger.error('예약 메시지 삭제에 실패했습니다.', e.message);
       res.status(e.getStatus()).send(e.getResponse());
     }
   }
