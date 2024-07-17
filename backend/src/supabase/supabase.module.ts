@@ -6,6 +6,8 @@ import { TriggerMessagesService } from './trigger-messages/trigger.messages.serv
 import { ScheduleMessageService } from './schedule-message/schedule.message.service';
 import { TriggerMessageController } from './trigger-messages/trigger.message.controller';
 import { ScheduleMessageController } from './schedule-message/schedule.message.controller';
+import { ScheduleMessageJobService } from './schedule-message/schedule.job.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   controllers: [TriggerMessageController, ScheduleMessageController],
@@ -14,8 +16,9 @@ import { ScheduleMessageController } from './schedule-message/schedule.message.c
     SendMessagesHistoryService,
     TriggerMessagesService,
     ScheduleMessageService,
+    ScheduleMessageJobService,
   ],
   exports: [SendMessagesHistoryService, TriggerMessagesService],
-  imports: [PrismaModule],
+  imports: [PrismaModule, ScheduleModule.forRoot()],
 })
 export class SupabaseModule {}
