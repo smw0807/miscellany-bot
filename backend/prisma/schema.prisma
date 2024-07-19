@@ -70,7 +70,7 @@ model ScheduledMessage {
   repeatType    RepeatType? // 반복 유형(일, 시, 분)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  isSend      Boolean  @default(false) // 예약 메시지 전송 여부
+  sendStatus    SendStatus  @default(WAIT) // 전송 상태
   lastSentAt    DateTime? // 마지막 전송 시간
 
   @@index([guildId, channelId])
@@ -84,4 +84,10 @@ enum RepeatType {
   MINUTE
   HOUR
   DAY
+}
+
+enum SendStatus {
+  SUCCESS
+  WAIT
+  FAIL
 }
