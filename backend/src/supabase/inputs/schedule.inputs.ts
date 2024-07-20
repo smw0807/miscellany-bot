@@ -1,4 +1,4 @@
-import { RepeatType, ScheduleType } from '@prisma/client';
+import { RepeatType, ScheduleType, SendStatus } from '@prisma/client';
 
 export type ScheduleMessageInput = {
   guildId: string;
@@ -13,6 +13,6 @@ export type ScheduleMessageInput = {
   createdAt?: string;
   updatedAt?: string;
   createdBy?: string;
-  isSend: boolean;
+  sendStatus: SendStatus;
   lastSentAt?: string;
 };

@@ -1,8 +1,9 @@
 import dayjs from 'dayjs';
 import {
   ResultTypeEnum,
-  type RepeatType,
-  type ScheduleType,
+  RepeatType,
+  ScheduleType,
+  SendStatus,
 } from '~/types/enums';
 import type { NestHttpException } from '~/types/errors';
 
@@ -20,7 +21,7 @@ export type ScheduleMessageType = {
   repeatType?: RepeatType;
   createdAt?: string;
   updatedAt?: string;
-  isSend?: boolean;
+  sendStatus?: SendStatus;
   lastSentAt?: string;
 };
 

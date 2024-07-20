@@ -21,3 +21,9 @@ export enum RepeatType {
   HOUR = 'HOUR',
   DAY = 'DAY',
 }
+
+export enum SendStatus {
+  SUCCESS = 'SUCCESS',
+  FAIL = 'FAIL',
+  WAIT = 'WAIT',
+}

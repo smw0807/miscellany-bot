@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { EditTypeEnum, ResultTypeEnum, ScheduleType } from '~/types/enums';
+import {
+  EditTypeEnum,
+  ResultTypeEnum,
+  ScheduleType,
+  SendStatus,
+} from '~/types/enums';
 import type { ChannelType } from '~/store/discordManage';
 import type { ScheduleMessageType } from '~/store/discordSchedule';
 import EditSchedule from '~/components/dialog/EditSchedule.vue';
@@ -92,7 +97,7 @@ const headers = [
   { title: '예약 유형', value: 'scheduleType' },
   { title: '예약 시간', value: 'scheduledAt' },
   { title: '내용', value: 'messageContent' },
-  { title: '전송 여부', value: 'isSend' },
+  { title: '전송 여부', value: 'sendStatus' },
   { title: '등록일', value: 'createdAt' },
 ];
 // 예약 유형 한글 표기
@@ -191,13 +196,25 @@ onMounted(async () => {
               : item.messageContent
           }}
         </template>
-        <template #item.isSend="{ item }">
+        <template #item.sendStatus="{ item }">
           <v-chip
-            :color="item.isSend ? 'success' : 'error'"
+            v-if="item.sendStatus === SendStatus.SUCCESS"
+            color="primary"
             text-color="white"
             variant="flat"
           >
-            {{ item.isSend ? '전송 완료' : '전송 대기' }}
+            전송 완료
+          </v-chip>
+          <v-chip
+            v-else-if="item.sendStatus === SendStatus.FAIL"
+            color="red"
+            text-color="white"
+            variant="flat"
+          >
+            전송 실패
+          </v-chip>
+          <v-chip v-else color="green" text-color="white" variant="flat">
+            전송 대기
           </v-chip>
         </template>
       </v-data-table>
