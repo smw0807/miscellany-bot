@@ -15,6 +15,8 @@ export class ScheduleMessageJobService implements OnModuleInit {
     this.failOneTimeMessages();
     // 처리할 예약 메시지들 처리 시작
     this.getScheduleMessages();
+
+    this.listCronJobs();
   }
   onModuleDestroy() {
     this.logger.warn('ScheduleMessageJobService has been destroyed.');
@@ -44,6 +46,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
   //============= List ============= E
 
   //============= ETC ============== S
+  // todo 크론잡에 등록하기
   // 아직 발송안된 1회성 메시지 FAIL 처리
   async failOneTimeMessages() {
     try {
@@ -52,7 +55,10 @@ export class ScheduleMessageJobService implements OnModuleInit {
         select: { id: true },
       });
       const updated = await this.prisma.scheduledMessage.updateMany({
-        where: { id: { in: oneTimeMessages.map((m) => m.id) } },
+        where: {
+          id: { in: oneTimeMessages.map((m) => m.id) },
+          sendStatus: 'WAIT',
+        },
         data: { sendStatus: 'FAIL' },
       });
       this.logger.log(
