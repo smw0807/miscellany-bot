@@ -137,4 +137,33 @@ export class ScheduleMessageService {
       );
     }
   }
+
+  // 아직 발송안된 1회성 메시지 FAIL 처리
+  async failOneTimeMessages() {
+    try {
+      const oneTimeMessages = await this.prisma.scheduledMessage.findMany({
+        where: { scheduleType: 'ONETIME', scheduledAt: { lt: new Date() } },
+        select: { id: true },
+      });
+      const updated = await this.prisma.scheduledMessage.updateMany({
+        where: {
+          id: { in: oneTimeMessages.map((m) => m.id) },
+          sendStatus: 'WAIT',
+        },
+        data: { sendStatus: 'FAIL' },
+      });
+      console.log(
+        `1회성 메시지 중에 아직 전송 안된 메시지 ${updated.count}개 FAIL 처리`,
+      );
+      // this.logger.log(
+      //   `1회성 메시지 중에 아직 전송 안된 메시지 ${updated.count}개 FAIL 처리`,
+      // );
+    } catch (e) {
+      console.error('아직 발송안된 1회성 메시지 FAIL 처리 실패', e.message);
+      // this.logger.error(
+      //   '1회성 메시지 중에 아직 전송 안된 메시지 FAIL 처리에 실패했습니다.',
+      //   e.message,
+      // );
+    }
+  }
 }

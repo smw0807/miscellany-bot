@@ -1,21 +1,29 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SchedulerRegistry } from '@nestjs/schedule';
+import { CronExpression, SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
+import { ScheduleMessageService } from './schedule.message.service';
+
 @Injectable()
 export class ScheduleMessageJobService implements OnModuleInit {
   private readonly logger = new Logger(ScheduleMessageJobService.name);
   constructor(
     private readonly prisma: PrismaService,
     private schedulerRegistry: SchedulerRegistry,
+    private readonly scheduleService: ScheduleMessageService,
   ) {}
   onModuleInit() {
     this.logger.warn('ScheduleMessageJobService has been initialized.');
-    // 발송안된 1회성 예약 메시지 FAIL 처리
-    this.failOneTimeMessages();
+    // 발송안된 1회성 예약 메시지 FAIL 처리 (매일 10분마다 실행)
+    this.addCronJob(
+      'failOneTimeMessagesCronJob',
+      CronExpression.EVERY_5_MINUTES,
+      this.scheduleService.failOneTimeMessages,
+    );
     // 처리할 예약 메시지들 처리 시작
     this.getScheduleMessages();
 
+    // 등록된 크론잡 리스트
     this.listCronJobs();
   }
   onModuleDestroy() {
@@ -35,52 +43,32 @@ export class ScheduleMessageJobService implements OnModuleInit {
 
   //============= List ============= S
   // 등록되어 있는 목록
-  async listCronJobs() {
+  listCronJobs() {
     // 등록되어 있는 크론잡 목록
     const jobs = this.schedulerRegistry.getCronJobs();
+    this.logger.log('============ [ CronJob List ] ============');
     jobs.forEach((value, key) => {
       const nextDate = value.nextDates();
       this.logger.log(`CronJob: ${key} -> Next Date: ${nextDate}`);
     });
+    this.logger.log('=========================================');
   }
   //============= List ============= E
 
-  //============= ETC ============== S
-  // todo 크론잡에 등록하기
-  // 아직 발송안된 1회성 메시지 FAIL 처리
-  async failOneTimeMessages() {
-    try {
-      const oneTimeMessages = await this.prisma.scheduledMessage.findMany({
-        where: { scheduleType: 'ONETIME', scheduledAt: { lt: new Date() } },
-        select: { id: true },
-      });
-      const updated = await this.prisma.scheduledMessage.updateMany({
-        where: {
-          id: { in: oneTimeMessages.map((m) => m.id) },
-          sendStatus: 'WAIT',
-        },
-        data: { sendStatus: 'FAIL' },
-      });
-      this.logger.log(
-        `1회성 메시지 중에 아직 전송 안된 메시지 ${updated.count}개 FAIL 처리`,
-      );
-    } catch (e) {
-      this.logger.error(
-        '1회성 메시지 중에 아직 전송 안된 메시지 FAIL 처리에 실패했습니다.',
-        e.message,
-      );
-    }
-  }
-  //============= ETC ============== E
-
+  //============ CronJob ============ S
   // 크론잡 삭제
   async deleteCronJob() {
     // 크론잡 삭제
   }
 
   // 크론잡 등록
-  async addCronJob(message: any) {
+  addCronJob(jobName: string, time: string, func: Function) {
     // 크론잡 등록
+    const job = new CronJob(time, () => {
+      func();
+    });
+    this.schedulerRegistry.addCronJob(jobName, job);
+    job.start();
   }
 
   // 스케줄 등록
