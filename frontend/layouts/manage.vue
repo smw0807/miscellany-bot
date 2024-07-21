@@ -40,7 +40,10 @@ onUnmounted(() => {
 
     <v-navigation-drawer permanent>
       <v-list density="compact" nav min-width="220">
-        <v-list-item :prepend-avatar="guild.icon ? guild.icon : ''">
+        <v-list-item
+          :prepend-avatar="guild.icon ? guild.icon : ''"
+          @click="router.push('/manage')"
+        >
           <div class="text-h6">{{ guild.name }}</div>
         </v-list-item>
         <v-divider />
