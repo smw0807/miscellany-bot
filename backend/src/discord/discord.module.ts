@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { DiscordClientService } from './client/discord.client.service';
 import { GoogleTranslateModule } from 'src/google-translate/google.translate.module';
 import { DiscordService } from './discord.service';
@@ -19,7 +19,11 @@ import { SupabaseModule } from 'src/supabase/supabase.module';
     DiscordGuildsService,
     DiscordChannelService,
   ],
-  imports: [GoogleTranslateModule, HttpModule, SupabaseModule],
+  imports: [
+    GoogleTranslateModule,
+    HttpModule,
+    forwardRef(() => SupabaseModule),
+  ],
   exports: [DiscordMessageService],
   controllers: [DiscordController],
 })
