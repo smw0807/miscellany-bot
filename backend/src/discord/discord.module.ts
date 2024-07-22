@@ -20,6 +20,7 @@ import { SupabaseModule } from 'src/supabase/supabase.module';
     DiscordChannelService,
   ],
   imports: [GoogleTranslateModule, HttpModule, SupabaseModule],
+  exports: [DiscordMessageService],
   controllers: [DiscordController],
 })
 export class DiscordModule {}
