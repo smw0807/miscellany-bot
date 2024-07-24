@@ -3,11 +3,15 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ScheduledMessage, ScheduleType } from '@prisma/client';
 import { DiscordDataListInput } from '../inputs/common.inputs';
 import { ScheduleMessageInput } from '../inputs/schedule.inputs';
+import { ScheduleMessageJobService } from './schedule.job.service';
 
 @Injectable()
 export class ScheduleMessageService {
   private readonly logger = new Logger(ScheduleMessageService.name);
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jobService: ScheduleMessageJobService,
+  ) {}
 
   // 예약 메시지 목록 조회
   async getScheduleMessages(params: DiscordDataListInput) {
@@ -60,6 +64,13 @@ export class ScheduleMessageService {
           scheduledAt: new Date(data.scheduledAt),
         },
       });
+      if (data.scheduleType === 'ONETIME') {
+        this.jobService.addOneTimeCronJobForData(
+          `${result.id}@@${result.channelId}`,
+          new Date(data.scheduledAt),
+          result,
+        );
+      }
       this.logger.debug(result, '예약 메시지 등록 성공');
       return HttpStatus.OK;
     } catch (e) {

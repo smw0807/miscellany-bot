@@ -19,7 +19,11 @@ import { DiscordModule } from 'src/discord/discord.module';
     ScheduleMessageService,
     ScheduleMessageJobService,
   ],
-  exports: [SendMessagesHistoryService, TriggerMessagesService],
+  exports: [
+    SendMessagesHistoryService,
+    TriggerMessagesService,
+    ScheduleMessageJobService,
+  ],
   imports: [
     forwardRef(() => DiscordModule),
     PrismaModule,

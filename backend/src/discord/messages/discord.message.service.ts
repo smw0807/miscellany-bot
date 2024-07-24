@@ -13,6 +13,7 @@ import { ConfigType } from '@nestjs/config';
 import { SendMessagesHistoryType, SendMessageType } from '../types/messages';
 import { SendMessagesHistoryService } from 'src/supabase/send-messages-history/msg.history.service';
 import { TriggerMessagesService } from 'src/supabase/trigger-messages/trigger.messages.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class DiscordMessageService extends DiscordClientService {
@@ -21,6 +22,7 @@ export class DiscordMessageService extends DiscordClientService {
     @Inject(discordConfig.KEY) config: ConfigType<typeof discordConfig>,
     private readonly supabase: SendMessagesHistoryService,
     private readonly triggersService: TriggerMessagesService,
+    private readonly prisma: PrismaService,
   ) {
     super(config);
   }
@@ -95,6 +97,31 @@ export class DiscordMessageService extends DiscordClientService {
         '메시지를 보내는데 실패했습니다.',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  // 예약 메시지 보내기
+  async snedScheduleMessage(id: string, data: SendMessageType) {
+    try {
+      const { channelId, isEveryone, message } = data;
+
+      const channel = this.client.channels.cache.get(channelId);
+      if (!channel) {
+        this.logger.error(`${channelId} 채널을 찾을 수 없습니다.`);
+      }
+      if (!(channel instanceof TextChannel)) {
+        this.logger.error(
+          `${channelId} 메시지를 보낼 수 있는 채널이 아닙니다.`,
+        );
+      } else {
+        await channel.send(isEveryone ? `@everyone\n${message}` : message);
+        await this.prisma.scheduledMessage.update({
+          where: { id },
+          data: { sendStatus: 'SUCCESS' },
+        });
+      }
+    } catch (e) {
+      this.logger.error('예약메시지를 보내는데 실패했습니다.', e.message);
     }
   }
 }

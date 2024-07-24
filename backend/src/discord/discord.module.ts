@@ -9,6 +9,7 @@ import { DiscordController } from './discord.controller';
 import { DiscordGuildsService } from './guilds/discord.guilds.service';
 import { DiscordChannelService } from './guilds/discord.channel.service';
 import { SupabaseModule } from 'src/supabase/supabase.module';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
   providers: [
@@ -23,6 +24,7 @@ import { SupabaseModule } from 'src/supabase/supabase.module';
     GoogleTranslateModule,
     HttpModule,
     forwardRef(() => SupabaseModule),
+    PrismaModule,
   ],
   exports: [DiscordMessageService],
   controllers: [DiscordController],
