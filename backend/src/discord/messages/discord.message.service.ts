@@ -121,6 +121,10 @@ export class DiscordMessageService extends DiscordClientService {
         });
       }
     } catch (e) {
+      await this.prisma.scheduledMessage.update({
+        where: { id },
+        data: { sendStatus: 'FAIL' },
+      });
       this.logger.error('예약메시지를 보내는데 실패했습니다.', e.message);
     }
   }
