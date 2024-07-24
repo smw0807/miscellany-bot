@@ -125,35 +125,26 @@ export class ScheduleMessageService {
     }
   }
 
-  // 아직 발송안된 1회성 메시지 FAIL 처리(스케줄러용)
-  async failOneTimeMessages() {
-    const logger = new Logger(ScheduleMessageService.name);
+  // 예약 메시지 삭제
+  async deleteScheduleMessage(id: string | string[]) {
     try {
-      const prisma = new PrismaService();
-      await prisma.$connect();
-      const oneTimeMessages = await prisma.scheduledMessage.findMany({
-        where: { scheduleType: 'ONETIME', scheduledAt: { lt: new Date() } },
-        select: { id: true },
+      if (!id) {
+        return new HttpException(
+          'id가 누락되었습니다.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const where = typeof id === 'string' ? { id } : { id: { in: id } };
+      const result = await this.prisma.scheduledMessage.deleteMany({
+        where,
       });
-      const updated = await prisma.scheduledMessage.updateMany({
-        where: {
-          id: { in: oneTimeMessages.map((m) => m.id) },
-          sendStatus: 'WAIT',
-        },
-        data: { sendStatus: 'FAIL' },
-      });
-      console.log(
-        `1회성 메시지 중에 아직 전송 안된 메시지 ${updated.count}개 FAIL 처리`,
-      );
-      await prisma.$disconnect();
-      logger.log(
-        `1회성 메시지 중에 아직 전송 안된 메시지 ${updated.count}개 FAIL 처리`,
-      );
+      this.logger.debug(result, '예약 메시지 삭제 성공');
+      return HttpStatus.OK;
     } catch (e) {
-      console.error('아직 발송안된 1회성 메시지 FAIL 처리 실패', e.message);
-      logger.error(
-        '1회성 메시지 중에 아직 전송 안된 메시지 FAIL 처리에 실패했습니다.',
-        e.message,
+      this.logger.error('예약 메시지 삭제 실패', e.message);
+      throw new HttpException(
+        '예약 메시지 삭제에 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
