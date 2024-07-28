@@ -14,6 +14,7 @@ import { SendMessagesHistoryType, SendMessageType } from '../types/messages';
 import { SendMessagesHistoryService } from 'src/supabase/send-messages-history/msg.history.service';
 import { TriggerMessagesService } from 'src/supabase/trigger-messages/trigger.messages.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class DiscordMessageService extends DiscordClientService {
@@ -117,7 +118,7 @@ export class DiscordMessageService extends DiscordClientService {
         await channel.send(isEveryone ? `@everyone\n${message}` : message);
         await this.prisma.scheduledMessage.update({
           where: { id },
-          data: { sendStatus: 'SUCCESS' },
+          data: { sendStatus: 'SUCCESS', lastSentAt: dayjs().toDate() },
         });
       }
     } catch (e) {
