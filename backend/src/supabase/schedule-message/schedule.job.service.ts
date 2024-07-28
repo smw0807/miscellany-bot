@@ -9,9 +9,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CronExpression, SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
 import { ScheduleMessageService } from './schedule.message.service';
-import { ScheduledMessage } from '@prisma/client';
+import { RepeatType, ScheduledMessage } from '@prisma/client';
 import { DiscordMessageService } from 'src/discord/messages/discord.message.service';
 import { SendMessageType } from 'src/discord/types/messages';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class ScheduleMessageJobService implements OnModuleInit {
@@ -25,15 +26,8 @@ export class ScheduleMessageJobService implements OnModuleInit {
   ) {}
   async onModuleInit() {
     this.logger.warn('ScheduleMessageJobService has been initialized.');
-    // 발송안된 1회성 예약 메시지 FAIL 처리 (매일 10분마다 실행)
-    // this.addCronJob(
-    //   'failOneTimeMessagesCronJob',
-    //   CronExpression.EVERY_5_MINUTES,
-    //   this.scheduleService.failOneTimeMessages,
-    // );
     // 처리할 예약 메시지들 처리 시작
-    await this.getScheduleMessages();
-
+    await this.makeScheduleMessages();
     // 등록된 크론잡 리스트
     this.listCronJobs();
   }
@@ -73,26 +67,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
 
   //============ CronJob ============ S
   // 크론잡 등록
-  private addCronJob(jobName: string, time: string, func: Function) {
-    const job = new CronJob(time, () => {
-      func();
-    });
-    this.schedulerRegistry.addCronJob(jobName, job);
-    job.start();
-  }
-
-  // 한 번만 실행하는 크론잡
-  async addOneTimeCronJob(jobName: string, date: Date, func: Function) {
-    const job = new CronJob(date, () => {
-      func();
-      this.schedulerRegistry.deleteCronJob(jobName);
-    });
-    this.schedulerRegistry.addCronJob(jobName, job);
-    job.start();
-  }
-
-  // 1회성 메시지 크론잡 등록
-  async addOneTimeCronJobForData(
+  async addCronJob(
     jobName: string,
     date: Date,
     data: Partial<ScheduledMessage>,
@@ -100,8 +75,8 @@ export class ScheduleMessageJobService implements OnModuleInit {
     if (await this.checkCronJob(jobName)) {
       return;
     }
-    this.logger.log('1회성 예약 메시지 크론잡 등록', jobName, date, data);
-    // 전달 받은 시간에 디스코드 메시지 발 송 후 크론잡 삭제
+    this.logger.log(`예약 메시지 크론잡 등록: ${jobName}, ${date}, ${data}`);
+
     const job = new CronJob(date, async () => {
       // 디스코드 메시지 발송
       const sendMessage: SendMessageType = {
@@ -115,34 +90,111 @@ export class ScheduleMessageJobService implements OnModuleInit {
         data.id,
         sendMessage,
       );
-      this.schedulerRegistry.deleteCronJob(jobName);
+      if (data.scheduleType === 'ONETIME') {
+        // 전달 받은 시간에 디스코드 메시지 발 송 후 크론잡 삭제
+        this.schedulerRegistry.deleteCronJob(jobName);
+      }
     });
     this.schedulerRegistry.addCronJob(jobName, job);
     job.start();
   }
 
-  // 데이터베이스에 있는 예약메시지 데이터 가져와서 스케줄 등록하기
-  private async getScheduleMessages() {
+  // 크론잡 삭제
+  private deleteCronJob(jobName: string) {
     try {
-      // 현재 시간보다 큰 예약메시지 데이터 가져오기
-      const scheduledMessages = await this.prisma.scheduledMessage.findMany({
-        where: { scheduledAt: { gte: new Date() } },
-      });
+      const job = this.schedulerRegistry.getCronJob(jobName);
+      job.stop();
+      this.schedulerRegistry.deleteCronJob(jobName);
+      this.logger.log('크론잡 삭제 성공', jobName);
+    } catch (e) {
+      this.logger.error('크론잡 삭제 실패', e.message);
+    }
+  }
+  //============ CronJob ============ E
 
-      for (const message of scheduledMessages) {
-        if (message.scheduleType === 'ONETIME') {
-          await this.addOneTimeCronJobForData(
-            `${message.channelId}`,
+  // 데이터베이스에 있는 예약메시지 데이터 가져와서 스케줄 등록하기
+  private async makeScheduleMessages() {
+    try {
+      // 현재 시간보다 큰 1회성 예약 메시지 조회
+      const oneTimeScheduleMessages =
+        await this.prisma.scheduledMessage.findMany({
+          where: {
+            scheduledAt: { gte: new Date() },
+            scheduleType: 'ONETIME',
+            sendStatus: 'WAIT',
+          },
+        });
+      // 전송 대기 또는 성공한 반복 예약 메시지 조회
+      const recurringScheduleMessages =
+        await this.prisma.scheduledMessage.findMany({
+          where: {
+            scheduleType: 'RECURRING',
+            sendStatus: { in: ['WAIT', 'SUCCESS'] },
+          },
+        });
+      const scheduleMessages = [
+        ...oneTimeScheduleMessages,
+        ...recurringScheduleMessages,
+      ];
+
+      for (const message of scheduleMessages) {
+        const now = dayjs().locale('ko').format();
+        const scheduledAt = dayjs(message.scheduledAt).locale('ko').format();
+        console.log('now : ', now);
+        console.log('scheduledAt : ', now);
+        // 현재 시간보다 낮은 경우
+        if (new Date(now) < new Date(scheduledAt)) {
+          await this.addCronJob(
+            `${message.id}@@${message.channelId}`,
             message.scheduledAt,
             message,
           );
-        } else if (message.scheduleType === 'RECURRING') {
         } else {
-          this.logger.error('예약 타입이 잘못된 데이터가 있습니다.', message);
+          const nextScheduledAt = await this.makeCronJobNextStartTime(
+            new Date(now),
+            new Date(scheduledAt),
+            message.repeatInterval,
+            message.repeatType,
+          );
+          console.log('check : ', nextScheduledAt);
+          await this.addCronJob(
+            `${message.id}@@${message.channelId}`,
+            nextScheduledAt,
+            message,
+          );
         }
       }
     } catch (e) {
       this.logger.error('예약 메시지 스케줄 등록에 실패했습니다.', e.message);
     }
+  }
+
+  // 반복 메시지 시작 시간이 현재 시간보다 작을 경우 다음 시작 시간 계산
+  private async makeCronJobNextStartTime(
+    nowDate: Date,
+    scheduledAt: Date,
+    repeatInterval: number,
+    repeatType: RepeatType,
+  ) {
+    if (nowDate < scheduledAt) {
+      return scheduledAt;
+    }
+    const now = dayjs(nowDate);
+    let nextScheduledAt = dayjs(scheduledAt);
+    while (now > nextScheduledAt) {
+      // 하루 이상 차이가 날 경우엔 날짜 차이만큼 추가해줌.
+      const diff = now.diff(nextScheduledAt, 'day');
+      if (diff > 0) {
+        nextScheduledAt = nextScheduledAt
+          .add(diff, 'day')
+          .add(repeatInterval, repeatType as any);
+      } else {
+        nextScheduledAt = dayjs(nextScheduledAt).add(
+          repeatInterval,
+          repeatType as any,
+        );
+      }
+    }
+    return nextScheduledAt.locale('ko').toDate();
   }
 }

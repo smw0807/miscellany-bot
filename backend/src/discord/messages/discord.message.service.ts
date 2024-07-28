@@ -14,7 +14,7 @@ import { SendMessagesHistoryType, SendMessageType } from '../types/messages';
 import { SendMessagesHistoryService } from 'src/supabase/send-messages-history/msg.history.service';
 import { TriggerMessagesService } from 'src/supabase/trigger-messages/trigger.messages.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class DiscordMessageService extends DiscordClientService {
