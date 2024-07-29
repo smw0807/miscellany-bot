@@ -98,6 +98,23 @@ export class ScheduleMessageJobService implements OnModuleInit {
     this.schedulerRegistry.addCronJob(jobName, job);
     job.start();
   }
+  // 반복 메시지 크론잡 인터벌 값 반환
+  private makeCronTime(
+    date: Date,
+    repeatInterval: number,
+    repeatType: RepeatType,
+  ) {
+    const d = dayjs(date);
+    if (repeatType === 'DAY') {
+      return `0 ${d.minute} ${d.hour} * * *`;
+    } else if (repeatType === 'HOUR') {
+      return `0 ${d.minute} * * * *`;
+    } else if (repeatType === 'MINUTE') {
+      // todo 분단위는 어떻게 해야할지 생각해봐야함....
+      //${startMinute} ${startHour}-23/${Math.floor(intervalMinutes / 60)} * * *`;
+      return `0 ${repeatInterval} * * * *`;
+    }
+  }
 
   // 크론잡 삭제
   private deleteCronJob(jobName: string) {
