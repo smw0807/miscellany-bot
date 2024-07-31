@@ -64,13 +64,11 @@ export class ScheduleMessageService {
           scheduledAt: new Date(data.scheduledAt),
         },
       });
-      if (data.scheduleType === 'ONETIME') {
-        this.jobService.addCronJob(
-          `${result.id}@@${result.channelId}`,
-          new Date(data.scheduledAt),
-          result,
-        );
-      }
+      this.jobService.addCronJob(
+        `${result.id}@@${result.channelId}`,
+        new Date(data.scheduledAt),
+        result,
+      );
       this.logger.debug(result, '예약 메시지 등록 성공');
       return HttpStatus.OK;
     } catch (e) {
@@ -115,6 +113,14 @@ export class ScheduleMessageService {
         data: dataFormat,
       });
       this.logger.debug(result, '예약 메시지 수정 성공');
+      // 기존 스케줄 삭제
+      await this.jobService.deleteCronJob(`${id}@@${result.channelId}`);
+      // 스케줄 등록
+      this.jobService.addCronJob(
+        `${result.id}@@${result.channelId}`,
+        new Date(data.scheduledAt),
+        result,
+      );
       return HttpStatus.OK;
     } catch (e) {
       this.logger.error('예약 메시지 수정 실패', e.message);
@@ -135,10 +141,16 @@ export class ScheduleMessageService {
         );
       }
       const where = typeof id === 'string' ? { id } : { id: { in: id } };
+      const lists = await this.prisma.scheduledMessage.findMany({
+        where,
+      });
       const result = await this.prisma.scheduledMessage.deleteMany({
         where,
       });
       this.logger.debug(result, '예약 메시지 삭제 성공');
+      for (const list of lists) {
+        await this.jobService.deleteCronJob(`${list.id}@@${list.channelId}`);
+      }
       return HttpStatus.OK;
     } catch (e) {
       this.logger.error('예약 메시지 삭제 실패', e.message);

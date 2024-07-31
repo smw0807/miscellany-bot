@@ -27,7 +27,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
   async onModuleInit() {
     this.logger.warn('ScheduleMessageJobService has been initialized.');
     // 처리할 예약 메시지들 처리 시작
-    await this.makeScheduleMessages();
+    await this.initMakeScheduleMessages();
     // 등록된 크론잡 리스트
     this.listCronJobs();
   }
@@ -75,9 +75,11 @@ export class ScheduleMessageJobService implements OnModuleInit {
     if (await this.checkCronJob(jobName)) {
       return;
     }
-    this.logger.log(`예약 메시지 크론잡 등록: ${jobName}, ${date}, ${data}`);
-
-    const job = new CronJob(date, async () => {
+    const cronTime =
+      data.scheduleType === 'ONETIME'
+        ? date
+        : this.makeCronTime(date, data.repeatInterval, data.repeatType);
+    const job = new CronJob(cronTime, async () => {
       // 디스코드 메시지 발송
       const sendMessage: SendMessageType = {
         guildId: data.guildId,
@@ -97,8 +99,10 @@ export class ScheduleMessageJobService implements OnModuleInit {
     });
     this.schedulerRegistry.addCronJob(jobName, job);
     job.start();
+    this.logger.log('크론잡 등록');
+    this.listCronJobs();
   }
-  // 반복 메시지 크론잡 인터벌 값 반환
+  // 반복 메시지 크론잡 시간 설정
   private makeCronTime(
     date: Date,
     repeatInterval: number,
@@ -106,23 +110,26 @@ export class ScheduleMessageJobService implements OnModuleInit {
   ) {
     const d = dayjs(date);
     if (repeatType === 'DAY') {
-      return `0 ${d.minute} ${d.hour} * * *`;
+      return `0 ${d.minute()} ${d.hour()} * * *`;
     } else if (repeatType === 'HOUR') {
-      return `0 ${d.minute} * * * *`;
+      return `0 ${d.minute()} * * * *`;
     } else if (repeatType === 'MINUTE') {
-      // todo 분단위는 어떻게 해야할지 생각해봐야함....
-      //${startMinute} ${startHour}-23/${Math.floor(intervalMinutes / 60)} * * *`;
-      return `0 ${repeatInterval} * * * *`;
+      return `${d.minute()}/${repeatInterval} ${d.hour()}-23 * * *`;
     }
   }
 
   // 크론잡 삭제
-  private deleteCronJob(jobName: string) {
+  async deleteCronJob(jobName: string) {
     try {
+      const check = await this.checkCronJob(jobName);
+      if (!check) {
+        return;
+      }
       const job = this.schedulerRegistry.getCronJob(jobName);
       job.stop();
       this.schedulerRegistry.deleteCronJob(jobName);
       this.logger.log('크론잡 삭제 성공', jobName);
+      this.listCronJobs();
     } catch (e) {
       this.logger.error('크론잡 삭제 실패', e.message);
     }
@@ -130,7 +137,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
   //============ CronJob ============ E
 
   // 데이터베이스에 있는 예약메시지 데이터 가져와서 스케줄 등록하기
-  private async makeScheduleMessages() {
+  private async initMakeScheduleMessages() {
     try {
       // 현재 시간보다 큰 1회성 예약 메시지 조회
       const oneTimeScheduleMessages =
@@ -157,8 +164,6 @@ export class ScheduleMessageJobService implements OnModuleInit {
       for (const message of scheduleMessages) {
         const now = dayjs().locale('ko').format();
         const scheduledAt = dayjs(message.scheduledAt).locale('ko').format();
-        console.log('now : ', now);
-        console.log('scheduledAt : ', now);
         // 현재 시간보다 낮은 경우
         if (new Date(now) < new Date(scheduledAt)) {
           await this.addCronJob(
@@ -173,7 +178,6 @@ export class ScheduleMessageJobService implements OnModuleInit {
             message.repeatInterval,
             message.repeatType,
           );
-          console.log('check : ', nextScheduledAt);
           await this.addCronJob(
             `${message.id}@@${message.channelId}`,
             nextScheduledAt,
