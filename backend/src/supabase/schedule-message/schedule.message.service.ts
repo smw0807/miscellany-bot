@@ -70,11 +70,13 @@ export class ScheduleMessageService {
           scheduledAt: new Date(data.scheduledAt),
         },
       });
+      // 스케줄 등록
       this.jobService.addCronJob(
         `${result.id}@@${result.channelId}`,
         new Date(data.scheduledAt),
         result,
       );
+
       this.logger.debug(result, '예약 메시지 등록 성공');
       return HttpStatus.OK;
     } catch (e) {
@@ -122,7 +124,6 @@ export class ScheduleMessageService {
         where: { id },
         data: dataFormat,
       });
-      this.logger.debug(result, '예약 메시지 수정 성공');
       // 기존 스케줄 삭제
       await this.jobService.deleteCronJob(`${id}@@${result.channelId}`);
       // 스케줄 등록
@@ -131,6 +132,8 @@ export class ScheduleMessageService {
         new Date(data.scheduledAt),
         result,
       );
+
+      this.logger.debug(result, '예약 메시지 수정 성공');
       return HttpStatus.OK;
     } catch (e) {
       this.logger.error('예약 메시지 수정 실패', e.message);
@@ -160,12 +163,13 @@ export class ScheduleMessageService {
       const result = await this.prisma.scheduledMessage.deleteMany({
         where,
       });
-      this.logger.debug(result, '예약 메시지 삭제 성공');
 
       // 크론잡 삭제
       for (const list of lists) {
         await this.jobService.deleteCronJob(`${list.id}@@${list.channelId}`);
       }
+
+      this.logger.debug(result, '예약 메시지 삭제 성공');
       return HttpStatus.OK;
     } catch (e) {
       this.logger.error('예약 메시지 삭제 실패', e.message);
