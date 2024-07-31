@@ -17,7 +17,10 @@ export class TriggerMessagesService {
           guildId,
         },
       });
-      if (triggers.length === 0) return;
+      if (triggers.length === 0) {
+        this.triggers.delete(guildId);
+        return;
+      }
       const triggerMap = new Map<string, TriggerMessageType>();
       triggers.forEach((v) => {
         triggerMap.set(v.triggerWord, v);
