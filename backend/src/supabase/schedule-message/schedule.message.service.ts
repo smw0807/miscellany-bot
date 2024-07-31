@@ -13,7 +13,10 @@ export class ScheduleMessageService {
     private readonly jobService: ScheduleMessageJobService,
   ) {}
 
-  // 예약 메시지 목록 조회
+  /** [예약메시지 목록 조회]
+   * @param params
+   * @returns
+   */
   async getScheduleMessages(params: DiscordDataListInput) {
     try {
       const { guildId } = params;
@@ -44,7 +47,10 @@ export class ScheduleMessageService {
     }
   }
 
-  // 예약 메시지 등록
+  /** [예약메시지 등록]
+   * @param data
+   * @returns
+   */
   async addScheduleMessage(data: ScheduleMessageInput) {
     try {
       if (!ScheduleType[data.scheduleType as keyof typeof ScheduleType]) {
@@ -80,7 +86,11 @@ export class ScheduleMessageService {
     }
   }
 
-  // 예약 메시지 수정
+  /** [예약메시지 수정]
+   * @param id string : 예약 메시지 id
+   * @param data
+   * @returns
+   */
   async updateScheduleMessage(id: string, data: ScheduleMessageInput) {
     try {
       if (!id) {
@@ -131,7 +141,10 @@ export class ScheduleMessageService {
     }
   }
 
-  // 예약 메시지 삭제
+  /** [예약메시지 삭제]
+   * @param id string | string[] : 예약 메시지 id
+   * @returns
+   */
   async deleteScheduleMessage(id: string | string[]) {
     try {
       if (!id) {
@@ -148,6 +161,8 @@ export class ScheduleMessageService {
         where,
       });
       this.logger.debug(result, '예약 메시지 삭제 성공');
+
+      // 크론잡 삭제
       for (const list of lists) {
         await this.jobService.deleteCronJob(`${list.id}@@${list.channelId}`);
       }
