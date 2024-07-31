@@ -146,7 +146,12 @@ onMounted(async () => {
       <alerts-schedule-message />
       <div class="text-right mt-3">
         <v-btn color="warning" @click="openDialog"> 예약 메시지 추가 </v-btn>
-        <v-btn color="red" @click="deleteSchedule" class="ml-1">
+        <v-btn
+          :disabled="selectedSchedule.length === 0"
+          color="red"
+          @click="deleteSchedule"
+          class="ml-1"
+        >
           예약 메시지 삭제
         </v-btn>
       </div>
