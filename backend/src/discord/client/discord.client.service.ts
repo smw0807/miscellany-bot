@@ -1,16 +1,19 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import discordConfig from 'src/config/conf/discord.config';
 import { Client, GatewayIntentBits } from 'discord.js';
 
 @Injectable()
-export class DiscordClientService {
+export class DiscordClientService implements OnModuleInit {
   // 봇 클라이언트
   private clientInstance: Client;
   constructor(
     @Inject(discordConfig.KEY) private config: ConfigType<typeof discordConfig>,
-  ) {
-    this.setupDiscordBot();
+  ) {}
+
+  // 모듈 초기화 시 실행
+  async onModuleInit() {
+    await this.setupDiscordBot();
   }
 
   // 디스코드 봇 클라이언트 생성 및 로그인
