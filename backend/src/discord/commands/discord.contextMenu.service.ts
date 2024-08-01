@@ -69,10 +69,6 @@ export class DiscordContextMenuService {
       ) {
         await this.trnaslateCommand(interaction);
       }
-
-      if (interaction.commandName === 'TEST') {
-        this.logger.debug('### [ TEST ] ###');
-      }
     });
   }
 
