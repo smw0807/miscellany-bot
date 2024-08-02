@@ -34,61 +34,6 @@ export class ScheduleMessageJobService implements OnModuleInit {
     this.logger.warn('ScheduleMessageJobService has been destroyed.');
   }
 
-  // 데이터베이스에 있는 예약메시지 데이터 가져와서 스케줄 등록하기
-  private async initMakeScheduleMessages() {
-    try {
-      // 현재 시간보다 큰 1회성 예약 메시지 조회
-      const oneTimeScheduleMessages =
-        await this.prisma.scheduledMessage.findMany({
-          where: {
-            scheduledAt: { gte: new Date() },
-            scheduleType: 'ONETIME',
-            sendStatus: 'WAIT',
-          },
-        });
-      // 전송 대기 또는 성공한 반복 예약 메시지 조회
-      const recurringScheduleMessages =
-        await this.prisma.scheduledMessage.findMany({
-          where: {
-            scheduleType: 'RECURRING',
-            sendStatus: { in: ['WAIT', 'SUCCESS'] },
-          },
-        });
-      const scheduleMessages = [
-        ...oneTimeScheduleMessages,
-        ...recurringScheduleMessages,
-      ];
-
-      for (const message of scheduleMessages) {
-        const now = dayjs().locale('ko').format();
-        const scheduledAt = dayjs(message.scheduledAt).locale('ko').format();
-        // 현재 시간보다 낮은 경우
-        if (new Date(now) < new Date(scheduledAt)) {
-          await this.addCronJob(
-            `${message.id}@@${message.channelId}`,
-            message.scheduledAt,
-            message,
-          );
-        } else {
-          // 현재 시간보다 큰 경우 다음 시작 시간 계산해서 크론잡 등록
-          const nextScheduledAt = await this.makeCronJobNextStartTime(
-            new Date(now),
-            new Date(scheduledAt),
-            message.repeatInterval,
-            message.repeatType,
-          );
-          await this.addCronJob(
-            `${message.id}@@${message.channelId}`,
-            nextScheduledAt,
-            message,
-          );
-        }
-      }
-    } catch (e) {
-      this.logger.error('예약 메시지 스케줄 등록에 실패했습니다.', e.message);
-    }
-  }
-
   //============= List ============= S
   // 등록되어 있는 목록
   private listCronJobs() {
@@ -147,7 +92,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
           message: data.messageContent,
         };
 
-        await this.discordMessageService.snedScheduleMessage(
+        await this.discordMessageService.sendScheduleMessage(
           data.id,
           sendMessage,
         );
@@ -183,6 +128,61 @@ export class ScheduleMessageJobService implements OnModuleInit {
     }
   }
   //============ CronJob ============ E
+
+  // 데이터베이스에 있는 예약메시지 데이터 가져와서 스케줄 등록하기
+  private async initMakeScheduleMessages() {
+    try {
+      // 현재 시간보다 큰 1회성 예약 메시지 조회
+      const oneTimeScheduleMessages =
+        await this.prisma.scheduledMessage.findMany({
+          where: {
+            scheduledAt: { gte: new Date() },
+            scheduleType: 'ONETIME',
+            sendStatus: 'WAIT',
+          },
+        });
+      // 전송 대기 또는 성공한 반복 예약 메시지 조회
+      const recurringScheduleMessages =
+        await this.prisma.scheduledMessage.findMany({
+          where: {
+            scheduleType: 'RECURRING',
+            sendStatus: { in: ['WAIT', 'SUCCESS'] },
+          },
+        });
+      const scheduleMessages = [
+        ...oneTimeScheduleMessages,
+        ...recurringScheduleMessages,
+      ];
+
+      for (const message of scheduleMessages) {
+        const now = dayjs().locale('ko').format();
+        const scheduledAt = dayjs(message.scheduledAt).locale('ko').format();
+        // 현재 시간보다 낮은 경우
+        if (new Date(now) < new Date(scheduledAt)) {
+          await this.addCronJob(
+            `${message.id}@@${message.channelId}`,
+            message.scheduledAt,
+            message,
+          );
+        } else {
+          // 현재 시간보다 큰 경우 다음 시작 시간 계산해서 크론잡 등록
+          const nextScheduledAt = await this.makeCronJobNextStartTime(
+            new Date(now),
+            new Date(scheduledAt),
+            message.repeatInterval,
+            message.repeatType,
+          );
+          await this.addCronJob(
+            `${message.id}@@${message.channelId}`,
+            nextScheduledAt,
+            message,
+          );
+        }
+      }
+    } catch (e) {
+      this.logger.error('예약 메시지 스케줄 등록에 실패했습니다.', e.message);
+    }
+  }
 
   // 반복 메시지 시작 시간이 현재 시간보다 작을 경우 다음 시작 시간 계산
   private async makeCronJobNextStartTime(

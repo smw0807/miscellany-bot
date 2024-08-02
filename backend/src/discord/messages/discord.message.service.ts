@@ -102,7 +102,7 @@ export class DiscordMessageService extends DiscordClientService {
   }
 
   // 예약 메시지 보내기
-  async snedScheduleMessage(id: string, data: SendMessageType) {
+  async sendScheduleMessage(id: string, data: SendMessageType) {
     try {
       const { channelId, isEveryone, message } = data;
 
