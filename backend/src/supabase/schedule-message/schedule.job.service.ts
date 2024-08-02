@@ -126,39 +126,43 @@ export class ScheduleMessageJobService implements OnModuleInit {
     date: Date,
     data: Partial<ScheduledMessage>,
   ) {
-    // 이미 등록되어 있는 크론잡인지 확인
-    if (await this.checkCronJob(jobName)) {
-      return;
-    }
-    // 크론잡 시간 설정
-    const cronTime =
-      data.scheduleType === 'ONETIME'
-        ? date
-        : this.makeCronTime(date, data.repeatInterval, data.repeatType);
-
-    // 크론잡 등록
-    const job = new CronJob(cronTime, async () => {
-      // 디스코드 메시지 발송
-      const sendMessage: SendMessageType = {
-        guildId: data.guildId,
-        channelId: data.channelId,
-        isEveryone: data.isEveryone,
-        message: data.messageContent,
-      };
-
-      await this.discordMessageService.snedScheduleMessage(
-        data.id,
-        sendMessage,
-      );
-      if (data.scheduleType === 'ONETIME') {
-        // 전달 받은 시간에 디스코드 메시지 발 송 후 크론잡 삭제
-        this.schedulerRegistry.deleteCronJob(jobName);
+    try {
+      // 이미 등록되어 있는 크론잡인지 확인
+      if (await this.checkCronJob(jobName)) {
+        return;
       }
-    });
-    this.schedulerRegistry.addCronJob(jobName, job);
-    job.start();
-    this.logger.log('크론잡 등록');
-    this.listCronJobs();
+      // 크론잡 시간 설정
+      const cronTime =
+        data.scheduleType === 'ONETIME'
+          ? date
+          : this.makeCronTime(date, data.repeatInterval, data.repeatType);
+
+      // 크론잡 등록
+      const job = new CronJob(cronTime, async () => {
+        // 디스코드 메시지 발송
+        const sendMessage: SendMessageType = {
+          guildId: data.guildId,
+          channelId: data.channelId,
+          isEveryone: data.isEveryone,
+          message: data.messageContent,
+        };
+
+        await this.discordMessageService.snedScheduleMessage(
+          data.id,
+          sendMessage,
+        );
+        if (data.scheduleType === 'ONETIME') {
+          // 전달 받은 시간에 디스코드 메시지 발 송 후 크론잡 삭제
+          this.schedulerRegistry.deleteCronJob(jobName);
+        }
+      });
+      this.schedulerRegistry.addCronJob(jobName, job);
+      job.start();
+      this.logger.log('크론잡 등록');
+      this.listCronJobs();
+    } catch (e) {
+      this.logger.error('크론잡 등록 실패', e.message);
+    }
   }
 
   // 크론잡 삭제
