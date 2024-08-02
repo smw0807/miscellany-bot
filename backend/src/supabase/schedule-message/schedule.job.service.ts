@@ -8,7 +8,6 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
-import { ScheduleMessageService } from './schedule.message.service';
 import { RepeatType, ScheduledMessage } from '@prisma/client';
 import { DiscordMessageService } from 'src/discord/messages/discord.message.service';
 import { SendMessageType } from 'src/discord/types/messages';
@@ -20,7 +19,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
   constructor(
     private readonly prisma: PrismaService,
     private schedulerRegistry: SchedulerRegistry,
-    @Inject(forwardRef(() => ScheduleMessageService))
+    @Inject(forwardRef(() => DiscordMessageService))
     private readonly discordMessageService: DiscordMessageService,
   ) {}
   async onModuleInit() {
