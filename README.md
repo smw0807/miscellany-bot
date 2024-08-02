@@ -115,6 +115,8 @@
 
 ## 채팅 번역 기능
 
+Google Translate API를 이용해 구현했다.
+
 <img src="images/8.png"/>
 번역하고자 하는 채팅 메시지를 우클릭 해서 [앱] 메뉴를 열면 번역할 수 있는 메뉴가 나온다.   
 5개만 넣을 수 있어서, 같이 게임하는 외국인들의 나라를 선정해서 선택했다.   
@@ -137,6 +139,11 @@
 
 ## 트리거 메시지 관리
 
+등록한 트리거는 supabase database에 저장된다.  
+애플리케이션이 실행되면 데이터베이스에서 가져와서 애플리케이션 내부에 저장한다.  
+등록, 수정, 삭제 시에 최신화 시킨다.  
+디스코드 메시지가 입력될때마다 체크해서 있으면 전송한다.
+
 <img src="images/13.png"/>
 특정 단어에 메시지 트리거를 설정하는 페이지.
 <img src="images/14.png"/>
@@ -145,6 +152,29 @@
 등록된 트리거 단어를 디스코드 채팅에 입력했을 때 메시지가 전송된 모습
 
 ## 예약 메시지 관리
+
+@nestjs/schedule 패키지를 이용했다.  
+틍록한 예약 메시지는 supabase database에 저장한다.  
+애플리케이션이 실행되면 데이터베이스에서 가져와서 크론잡을 등록한다.  
+1회성 메시지는 발송 시간을 넣고, 반복 메시지는 크론시간을 계산해서 반복적으로 등록할 수 있게 한다.
+
+```typescript
+// 반복 메시지 크론잡 시간 설정
+  private makeCronTime(
+    date: Date,
+    repeatInterval: number,
+    repeatType: RepeatType,
+  ) {
+    const d = dayjs(date);
+    if (repeatType === 'DAY') {
+      return `0 ${d.minute()} ${d.hour()} * * *`;
+    } else if (repeatType === 'HOUR') {
+      return `0 ${d.minute()} * * * *`;
+    } else if (repeatType === 'MINUTE') {
+      return `${d.minute()}/${repeatInterval} ${d.hour()}-23 * * *`;
+    }
+  }
+```
 
 <img src="images/16.png"/>
 특정 메시지를 정해진 시간에 1회 전송 또는 일정 주기마다 메시지를 반복적으로 보낼 수있는 페이지
