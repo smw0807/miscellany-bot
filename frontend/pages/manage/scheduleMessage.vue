@@ -96,17 +96,17 @@ const headers = [
   { title: '제목', value: 'title' },
   { title: '예약 유형', value: 'scheduleType' },
   { title: '예약 시간', value: 'scheduledAt' },
+  { title: '마지막 전송 시간', value: 'lastSentAt' },
   { title: '내용', value: 'messageContent' },
   { title: '전송 여부', value: 'sendStatus' },
-  { title: '등록일', value: 'createdAt' },
 ];
 // 예약 유형 한글 표기
 const scheduleType = (type: ScheduleType) => {
   switch (type) {
     case ScheduleType.ONETIME:
-      return '1회 전송';
+      return '단일';
     case ScheduleType.RECURRING:
-      return '반복 전송';
+      return '반복';
     default:
       return '알 수 없음';
   }
@@ -194,6 +194,7 @@ onMounted(async () => {
             {{ scheduleType(item.scheduleType) }}
           </v-chip>
         </template>
+
         <template #item.messageContent="{ item }">
           {{
             item.messageContent.length > 10
