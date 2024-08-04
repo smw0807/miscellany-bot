@@ -75,6 +75,7 @@ const deleteTrigger = async () => {
 const headers = [
   { title: '트리거 단어', value: 'triggerWord' },
   { title: '메시지', value: 'message' },
+  { title: '사용여부', value: 'isUse' },
   { title: '생성일', value: 'createdAt' },
   { title: '수정일', value: 'updatedAt' },
 ];
@@ -147,6 +148,15 @@ onMounted(() => {
         hide-default-footer
         no-data-text="등록된 트리거 메시지가 없습니다."
       >
+        <template #item.isUse="{ item }">
+          <v-chip
+            :color="item.isUse ? 'success' : 'error'"
+            text-color="white"
+            small
+          >
+            {{ item.isUse ? '사용' : '미사용' }}
+          </v-chip>
+        </template>
         <template #item.message="{ item }">
           {{
             item.message.length > 10

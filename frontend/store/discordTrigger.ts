@@ -7,6 +7,7 @@ export type TriggerMessageType = {
   triggerWord: string;
   message: string;
   isEveryone: boolean;
+  isUse: boolean;
 };
 // 트리거 메시지 데이터 타입
 export type TriggerMessagesDataType = {
