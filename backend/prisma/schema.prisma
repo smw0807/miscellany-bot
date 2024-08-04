@@ -48,6 +48,7 @@ model TriggerMessage {
   guildId   String
   triggerWord String
   message   String
+  isUse    Boolean @default(true)
   isEveryone Boolean
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
@@ -72,6 +73,7 @@ model ScheduledMessage {
   updatedAt     DateTime @updatedAt
   sendStatus    SendStatus  @default(WAIT) // 전송 상태
   lastSentAt    DateTime? // 마지막 전송 시간
+  isUse    Boolean @default(true)
 
   @@index([guildId, channelId])
   @@map("scheduled_messages")
