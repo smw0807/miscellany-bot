@@ -94,10 +94,10 @@ const rowItem = ref<ScheduleMessageType>();
 // 헤더
 const headers = [
   { title: '제목', value: 'title' },
+  { title: '내용', value: 'messageContent' },
   { title: '예약 유형', value: 'scheduleType' },
   { title: '예약 시간', value: 'scheduledAt' },
   { title: '마지막 전송 시간', value: 'lastSentAt' },
-  { title: '내용', value: 'messageContent' },
   { title: '전송 여부', value: 'sendStatus' },
 ];
 // 예약 유형 한글 표기
