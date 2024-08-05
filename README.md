@@ -72,7 +72,10 @@
      - https://vuetifyjs.com/en/components/sheets/#usage
 7. pinia
    - https://pinia.vuejs.org/
-8. ETC
+8. NestJS
+   - dynamic cron jobs
+     - https://docs.nestjs.com/techniques/task-scheduling#dynamic-cron-jobs
+9. ETC
    - https://stackoverflow.com/questions/69501363/discord-api-view-guild-channels-information-with-oauth2-guilds-scope
 
 # 구현 화면
