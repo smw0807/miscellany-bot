@@ -178,14 +178,12 @@ onMounted(async () => {
         <template #item.scheduleType="{ item }">
           <v-chip
             v-if="item.scheduleType === ScheduleType.ONETIME"
-            variant="flat"
             color="#1E88E5"
           >
             {{ scheduleType(item.scheduleType) }}
           </v-chip>
           <v-chip
             v-else-if="item.scheduleType === ScheduleType.RECURRING"
-            variant="flat"
             color="#43A047"
           >
             {{ scheduleType(item.scheduleType) }}
