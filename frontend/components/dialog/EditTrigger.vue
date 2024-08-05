@@ -25,6 +25,8 @@ const emit = defineEmits({
 const form = ref();
 // @everyone 여부
 const isEveryone: Ref<boolean> = ref(true);
+// 사용여부
+const isUse: Ref<boolean> = ref(true);
 // 트리거할 단어
 const triggerWord: Ref<string> = ref('');
 // 유효성검사
@@ -54,6 +56,7 @@ const emitSave = async () => {
   if (confirm) {
     const dataForm: Ref<TriggerMessageType> = ref({
       isEveryone: isEveryone.value,
+      isUse: isUse.value,
       triggerWord: triggerWord.value,
       message: message.value,
     });
@@ -64,10 +67,12 @@ const emitSave = async () => {
 const initializeData = (data: TriggerMessageType | undefined) => {
   if (data) {
     isEveryone.value = data.isEveryone;
+    isUse.value = data.isUse;
     triggerWord.value = data.triggerWord;
     message.value = data.message;
   } else {
     isEveryone.value = true;
+    isUse.value = true;
     triggerWord.value = '';
     message.value = '';
   }
@@ -111,12 +116,21 @@ watch(
         </h2>
         <alerts-add-trigger-message />
         <v-form ref="form">
-          <!-- @everyon 여부 -->
-          <v-checkbox
-            v-model="isEveryone"
-            label="@everyone 적용"
-            hide-details
-          ></v-checkbox>
+          <div class="d-flex">
+            <!-- @everyon 여부 -->
+            <v-checkbox
+              v-model="isEveryone"
+              label="@everyone 적용"
+              hide-details
+            ></v-checkbox>
+            <v-spacer />
+            <!-- 사용여부 -->
+            <v-checkbox
+              v-model="isUse"
+              label="사용여부"
+              hide-details
+            ></v-checkbox>
+          </div>
 
           <!-- 트리거할 단어 입력  -->
           <v-text-field

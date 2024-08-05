@@ -46,7 +46,8 @@ const saveTrigger = async (mode: EditTypeEnum, data: TriggerMessageType) => {
     // 기존 데이터와 변경된 데이터가 같은지 체크
     if (
       rowItem.value?.triggerWord === data.triggerWord &&
-      rowItem.value?.message === data.message
+      rowItem.value?.message === data.message &&
+      rowItem.value?.isUse === data.isUse
     ) {
       return await useAlert({
         type: ResultTypeEnum.INFO,
