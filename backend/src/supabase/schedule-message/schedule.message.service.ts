@@ -66,6 +66,8 @@ export class ScheduleMessageService {
             typeof data.isEveryone === 'string'
               ? data.isEveryone === 'true'
               : data.isEveryone,
+          isUse:
+            typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse,
           repeatInterval: +data.repeatInterval || null,
           scheduledAt: new Date(data.scheduledAt),
         },
@@ -113,6 +115,8 @@ export class ScheduleMessageService {
           typeof data.isEveryone === 'string'
             ? data.isEveryone === 'true'
             : data.isEveryone,
+        isUse:
+          typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse,
         scheduledAt: new Date(data.scheduledAt),
         repeatInterval: +data.repeatInterval || null,
         repeatType: data.repeatType || null,

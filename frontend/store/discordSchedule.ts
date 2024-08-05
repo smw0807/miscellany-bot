@@ -23,6 +23,7 @@ export type ScheduleMessageType = {
   updatedAt?: string;
   sendStatus?: SendStatus;
   lastSentAt?: string;
+  isUse: boolean;
 };
 
 export type ScheduleMessagesListResponseType = {

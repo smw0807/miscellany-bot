@@ -4,6 +4,7 @@ export type ScheduleMessageInput = {
   guildId: string;
   channelId: string;
   isEveryone: boolean;
+  isUse: boolean;
   title: string;
   messageContent: string;
   scheduleType: ScheduleType;

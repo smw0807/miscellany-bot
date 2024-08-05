@@ -95,10 +95,11 @@ const rowItem = ref<ScheduleMessageType>();
 const headers = [
   { title: '제목', value: 'title' },
   { title: '내용', value: 'messageContent' },
+  { title: '사용 여부', value: 'isUse' },
   { title: '예약 유형', value: 'scheduleType' },
+  { title: '전송 여부', value: 'sendStatus' },
   { title: '예약 시간', value: 'scheduledAt' },
   { title: '마지막 전송 시간', value: 'lastSentAt' },
-  { title: '전송 여부', value: 'sendStatus' },
 ];
 // 예약 유형 한글 표기
 const scheduleType = (type: ScheduleType) => {
@@ -175,6 +176,15 @@ onMounted(async () => {
         hide-default-footer
         no-data-text="등록된 예약 메시지가 없습니다."
       >
+        <template #item.isUse="{ item }">
+          <v-chip
+            :color="item.isUse ? 'success' : 'error'"
+            text-color="white"
+            small
+          >
+            {{ item.isUse ? '사용' : '미사용' }}
+          </v-chip>
+        </template>
         <template #item.scheduleType="{ item }">
           <v-chip
             v-if="item.scheduleType === ScheduleType.ONETIME"

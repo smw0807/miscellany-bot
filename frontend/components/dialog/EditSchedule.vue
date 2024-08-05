@@ -22,6 +22,8 @@ const cChannelList = computed(() => props.channels);
 const form = ref();
 // @everyone 여부
 const isEveryone = ref<boolean>(true);
+// 사용여부
+const isUse = ref<boolean>(true);
 // 예약 메시지 전송할 채널
 const selectedChannel = ref<ChannelType>();
 // 예약 메시지 제목
@@ -54,6 +56,7 @@ const minDate = dayjs().subtract(1, 'day').toDate();
 const initializeData = (data: ScheduleMessageType | undefined) => {
   if (data) {
     isEveryone.value = data.isEveryone;
+    isUse.value = data.isUse;
     selectedChannel.value = cChannelList.value.find(
       (channel) => channel.id === data.channelId
     );
@@ -75,6 +78,7 @@ const initializeData = (data: ScheduleMessageType | undefined) => {
     }
   } else {
     isEveryone.value = true;
+    isUse.value = true;
     selectedChannel.value = cChannelList.value[0];
     title.value = '';
     message.value = '';
@@ -101,6 +105,7 @@ const oneTimeDataForm = (): ScheduleMessageType => {
     channelId: selectedChannel.value?.id as string,
     title: title.value,
     isEveryone: isEveryone.value,
+    isUse: isUse.value,
     messageContent: message.value,
     scheduleType: scheduleType.value,
     scheduledAt: `${dayjs(sendDateForOnetime.value).format('YYYY-MM-DD')} ${
@@ -114,6 +119,7 @@ const repeatDataForm = (): ScheduleMessageType => {
     channelId: selectedChannel.value?.id as string,
     title: title.value,
     isEveryone: isEveryone.value,
+    isUse: isUse.value,
     messageContent: message.value,
     scheduleType: scheduleType.value,
     scheduledAt: `${dayjs(sendDateForRepeat.value).format('YYYY-MM-DD')} ${
@@ -198,12 +204,21 @@ watch(
         <alerts-edit-schedule-message />
         <v-divider class="mt-4" />
         <v-form ref="form">
-          <!-- @everyone 여부 -->
-          <v-checkbox
-            v-model="isEveryone"
-            label="@everyone 적용"
-            hide-details
-          ></v-checkbox>
+          <div class="d-flex">
+            <!-- @everyone 여부 -->
+            <v-checkbox
+              v-model="isEveryone"
+              label="@everyone 적용"
+              hide-details
+            ></v-checkbox>
+            <v-spacer />
+            <!-- 사용여부 -->
+            <v-checkbox
+              v-model="isUse"
+              label="사용여부"
+              hide-details
+            ></v-checkbox>
+          </div>
 
           <!-- 예약 메시지 전송 채널 -->
           <v-select
