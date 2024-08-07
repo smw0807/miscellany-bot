@@ -9,19 +9,32 @@ import {
   Patch,
   Post,
   Query,
-  Req,
   Res,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { ScheduleMessageService } from './schedule.message.service';
 import { DiscordDataListInput } from '../inputs/common.inputs';
 import { ScheduleMessageInput } from '../inputs/schedule.inputs';
+import { ScheduleMessageJobService } from './schedule.job.service';
 
 @Controller('schedule')
 export class ScheduleMessageController {
   private readonly logger = new Logger(ScheduleMessageController.name);
-  constructor(private readonly scheduleService: ScheduleMessageService) {}
+  constructor(
+    private readonly scheduleService: ScheduleMessageService,
+    private readonly jobService: ScheduleMessageJobService,
+  ) {}
 
+  @Get('list')
+  async getScheduleList(@Res() res: Response) {
+    try {
+      const result = await this.jobService.listCronJobs();
+      res.send(result);
+    } catch (e) {
+      this.logger.error('예약 목록 조회에 실패했습니다.', e.message);
+      res.status(e.getStatus()).send(e.getResponse);
+    }
+  }
   // 예약 메시지 목록 조회
   @Get('messages')
   async getScheduleMessages(

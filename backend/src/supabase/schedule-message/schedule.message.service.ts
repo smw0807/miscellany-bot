@@ -137,7 +137,7 @@ export class ScheduleMessageService {
         // 스케줄 등록
         this.jobService.addCronJob(
           `${result.id}@@${result.channelId}`,
-          new Date(data.scheduledAt),
+          new Date(result.scheduledAt),
           result,
         );
       }

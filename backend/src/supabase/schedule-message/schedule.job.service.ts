@@ -35,15 +35,19 @@ export class ScheduleMessageJobService implements OnModuleInit {
 
   //============= List ============= S
   // 등록되어 있는 목록
-  private listCronJobs() {
+  listCronJobs() {
     // 등록되어 있는 크론잡 목록
+    let result = '등록된 크론잡 목록\n';
     const jobs = this.schedulerRegistry.getCronJobs();
     this.logger.log('============ [ CronJob List ] ============');
     jobs.forEach((value, key) => {
       const nextDate = value.nextDates();
-      this.logger.log(`CronJob: ${key} -> Next Date: ${nextDate}`);
+      const msg = `CronJob: ${key} -> Next Date: ${nextDate}`;
+      this.logger.log(msg);
+      result += msg + '\n';
     });
     this.logger.log('=========================================');
+    return result;
   }
   //============= List ============= E
 
