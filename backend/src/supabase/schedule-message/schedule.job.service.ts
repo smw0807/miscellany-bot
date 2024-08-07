@@ -142,6 +142,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
             scheduledAt: { gte: new Date() },
             scheduleType: 'ONETIME',
             sendStatus: 'WAIT',
+            isUse: true,
           },
         });
       // 전송 대기 또는 성공한 반복 예약 메시지 조회
@@ -150,6 +151,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
           where: {
             scheduleType: 'RECURRING',
             sendStatus: { in: ['WAIT', 'SUCCESS'] },
+            isUse: true,
           },
         });
       const scheduleMessages = [
