@@ -25,6 +25,6 @@ export class CachingService {
   }
 
   async has(key: string): Promise<boolean> {
-    return this.cacheManager.get(key) ? true : false;
+    return (await this.cacheManager.get(key)) ? true : false;
   }
 }

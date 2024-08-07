@@ -30,7 +30,7 @@ export class DiscordMessageService extends DiscordClientService {
 
   // 메시지 이벤트 리스너
   onMessage(client: Client) {
-    client.on('messageCreate', (message) => {
+    client.on('messageCreate', async (message) => {
       let logMessage = `[ ${message.guild.name} ]`;
       if (message.author.globalName) {
         logMessage += ` ${message.author.globalName}(${message.member.nickname}): ${message.content}`;
@@ -40,7 +40,7 @@ export class DiscordMessageService extends DiscordClientService {
 
       // 봇 메시지가 아닐 경우에만 트리거 체크 진행 (무한루프 방지)
       if (!message.author.bot) {
-        const trigger = this.triggersService.checkingTrigger(
+        const trigger = await this.triggersService.checkingTrigger(
           message.guildId as string,
           message.content,
         );

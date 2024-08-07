@@ -1,13 +1,15 @@
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TriggerMessageType } from '../types/triggerMessages';
+import { CachingService } from 'src/caching/cacing.service';
 
 @Injectable()
 export class TriggerMessagesService {
   private readonly logger = new Logger(TriggerMessagesService.name);
-  constructor(private readonly prisma: PrismaService) {}
-
-  private triggers = new Map<string, Map<string, TriggerMessageType>>();
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cachingService: CachingService,
+  ) {}
 
   // 트리거 메시지 애플리케이션 내부에 저장
   async loadTriggers(guildId: string) {
@@ -15,10 +17,11 @@ export class TriggerMessagesService {
       const triggers = await this.prisma.triggerMessage.findMany({
         where: {
           guildId,
+          isUse: true,
         },
       });
       if (triggers.length === 0) {
-        this.triggers.delete(guildId);
+        await this.cachingService.del(guildId);
         return;
       }
       const triggerMap = new Map<string, TriggerMessageType>();
@@ -26,20 +29,23 @@ export class TriggerMessagesService {
         triggerMap.set(v.triggerWord, v);
       });
       // 길드별 저장
-      this.triggers.set(guildId, triggerMap);
+      await this.cachingService.set(guildId, triggerMap);
+      console.log('test : ', await this.cachingService.get(guildId));
     } catch (e) {
       this.logger.error('트리거 로드 실패');
     }
   }
 
   // 저장된 트리거에 있는지 확인 및 메시지 반환
-  checkingTrigger(guildId: string, triggerWord: string) {
-    if (!this.triggers.has(guildId)) return null;
-
-    const guildTrigger = this.triggers.get(guildId);
-    if (!guildTrigger.has(triggerWord)) return null;
+  async checkingTrigger(guildId: string, triggerWord: string) {
+    // if (!(await this.cachingService.has(guildId))) return null;
+    console.log('guildId : ', guildId);
+    const guildTrigger = await this.cachingService.get(guildId);
+    console.log('guildTrigger : ', guildTrigger);
+    if (!guildTrigger) return null;
 
     const trigger = guildTrigger.get(triggerWord);
+    console.log('trigger : ', trigger);
     return {
       isEveryone: trigger.isEveryone,
       message: trigger.message,
@@ -49,13 +55,6 @@ export class TriggerMessagesService {
   // 트리거 캐싱 리프레쉬
   async refreshTriggers(guildId: string) {
     await this.loadTriggers(guildId);
-  }
-
-  // 트리거 캐싱 체크 및 다시 로드
-  async triggerCachingcheck(guildId: string) {
-    if (this.triggers.size === 0) {
-      await this.loadTriggers(guildId);
-    }
   }
 
   // 트리거 메시지 목록 조회
