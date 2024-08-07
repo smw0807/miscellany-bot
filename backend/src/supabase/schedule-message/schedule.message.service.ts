@@ -126,6 +126,10 @@ export class ScheduleMessageService {
         lastSentAt: data.lastSentAt ? new Date(data.lastSentAt) : null,
         updatedAt: new Date(),
       };
+      if (data.isUse) {
+        dataFormat.lastSentAt = null;
+        dataFormat.sendStatus = 'WAIT';
+      }
 
       const result = await this.prisma.scheduledMessage.update({
         where: { id },
