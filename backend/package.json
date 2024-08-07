@@ -26,6 +26,7 @@
   "dependencies": {
     "@google-cloud/translate": "^8.1.0",
     "@nestjs/axios": "^3.0.2",
+    "@nestjs/cache-manager": "^2.2.2",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.0",
     "@nestjs/core": "^10.0.0",
@@ -33,6 +34,7 @@
     "@nestjs/schedule": "^4.1.0",
     "@prisma/client": "^5.11.0",
     "@supabase/supabase-js": "^2.42.0",
+    "cache-manager": "^5.7.6",
     "dayjs": "^1.11.11",
     "discord.js": "^14.14.1",
     "express-session": "^1.18.0",
