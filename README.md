@@ -75,6 +75,8 @@
 8. NestJS
    - dynamic cron jobs
      - https://docs.nestjs.com/techniques/task-scheduling#dynamic-cron-jobs
+   - Caching
+     - https://docs.nestjs.com/techniques/caching
 9. ETC
    - https://stackoverflow.com/questions/69501363/discord-api-view-guild-channels-information-with-oauth2-guilds-scope
 
