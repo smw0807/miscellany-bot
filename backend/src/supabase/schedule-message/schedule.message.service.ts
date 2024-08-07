@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ScheduledMessage, ScheduleType } from '@prisma/client';
+import { ScheduleType } from '@prisma/client';
 import { DiscordDataListInput } from '../inputs/common.inputs';
 import { ScheduleMessageInput } from '../inputs/schedule.inputs';
 import { ScheduleMessageJobService } from './schedule.job.service';
@@ -72,12 +72,15 @@ export class ScheduleMessageService {
           scheduledAt: new Date(data.scheduledAt),
         },
       });
-      // 스케줄 등록
-      this.jobService.addCronJob(
-        `${result.id}@@${result.channelId}`,
-        new Date(data.scheduledAt),
-        result,
-      );
+
+      if (result.isUse) {
+        // 스케줄 등록
+        this.jobService.addCronJob(
+          `${result.id}@@${result.channelId}`,
+          new Date(data.scheduledAt),
+          result,
+        );
+      }
 
       this.logger.debug(result, '예약 메시지 등록 성공');
       return HttpStatus.OK;
@@ -130,12 +133,14 @@ export class ScheduleMessageService {
       });
       // 기존 스케줄 삭제
       await this.jobService.deleteCronJob(`${id}@@${result.channelId}`);
-      // 스케줄 등록
-      this.jobService.addCronJob(
-        `${result.id}@@${result.channelId}`,
-        new Date(data.scheduledAt),
-        result,
-      );
+      if (result.isUse) {
+        // 스케줄 등록
+        this.jobService.addCronJob(
+          `${result.id}@@${result.channelId}`,
+          new Date(data.scheduledAt),
+          result,
+        );
+      }
 
       this.logger.debug(result, '예약 메시지 수정 성공');
       return HttpStatus.OK;
