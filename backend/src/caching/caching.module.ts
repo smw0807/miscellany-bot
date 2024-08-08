@@ -7,4 +7,4 @@ import { CachingService } from './cacing.service';
   providers: [CachingService],
   exports: [CachingService],
 })
-export class CachingModule {}
+export class CachingManageModule {}

@@ -9,7 +9,7 @@ import { ScheduleMessageController } from './schedule-message/schedule.message.c
 import { ScheduleMessageJobService } from './schedule-message/schedule.job.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { DiscordModule } from 'src/discord/discord.module';
-import { CachingModule } from 'src/caching/caching.module';
+import { CachingManageModule } from 'src/caching/caching.module';
 
 @Module({
   controllers: [TriggerMessageController, ScheduleMessageController],
@@ -29,7 +29,7 @@ import { CachingModule } from 'src/caching/caching.module';
     forwardRef(() => DiscordModule),
     PrismaModule,
     ScheduleModule.forRoot(),
-    CachingModule,
+    CachingManageModule,
   ],
 })
 export class SupabaseModule {}
