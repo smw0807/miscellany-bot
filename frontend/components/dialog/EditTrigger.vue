@@ -57,7 +57,9 @@ const emitSave = async () => {
     const dataForm: Ref<TriggerMessageType> = ref({
       isEveryone: isEveryone.value,
       isUse: isUse.value,
-      triggerWord: triggerWord.value,
+      triggerWord: triggerWord.value.startsWith('!')
+        ? triggerWord.value
+        : `!${triggerWord.value}`,
       message: message.value,
     });
     emit('input-data', props.mode, dataForm.value);
@@ -68,7 +70,7 @@ const initializeData = (data: TriggerMessageType | undefined) => {
   if (data) {
     isEveryone.value = data.isEveryone;
     isUse.value = data.isUse;
-    triggerWord.value = data.triggerWord;
+    triggerWord.value = data.triggerWord.replace('!', '');
     message.value = data.message;
   } else {
     isEveryone.value = true;
@@ -140,6 +142,7 @@ watch(
             outlined
             placeholder="트리거할 단어를 입력해주세요."
             required
+            prefix="!"
           />
 
           <!-- 발송할 메시지 입력 -->
