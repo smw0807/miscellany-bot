@@ -7,6 +7,36 @@ export class TriggerMessagesService {
   private readonly logger = new Logger(TriggerMessagesService.name);
   constructor(private readonly prisma: PrismaService) {}
 
+  // 트리거 조회
+  async findTrigger(guildId: string, triggerWord: string) {
+    try {
+      const result = await this.prisma.triggerMessage.findFirst({
+        where: {
+          guildId,
+          triggerWord,
+          isUse: true,
+        },
+        select: {
+          isEveryone: true,
+          message: true,
+        },
+      });
+      if (!result) {
+        this.logger.debug(
+          `트리거 단어 ${triggerWord} 은/는 존재하지 않습니다.`,
+        );
+        return null;
+      }
+      return result;
+    } catch (e) {
+      this.logger.error('findTrigger', e.message);
+      throw new HttpException(
+        '트리거 조회에 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   // 트리거 메시지 목록 조회
   async getTriggerMessages(
     guildId: string,
@@ -30,7 +60,7 @@ export class TriggerMessagesService {
         total: total,
       };
     } catch (e) {
-      this.logger.error('getTriggerMessages', e);
+      this.logger.error('getTriggerMessages', e.message);
       throw new HttpException(
         '트리거 메시지 목록 조회에 실패했습니다.',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -67,7 +97,7 @@ export class TriggerMessagesService {
       this.logger.debug(result, '트리거 메시지 등록 성공');
       return HttpStatus.OK;
     } catch (e) {
-      this.logger.error('addTriggerMessage', e);
+      this.logger.error('addTriggerMessage', e.message);
       throw new HttpException(
         '트리거 메시지 등록에 실패했습니다.',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -85,7 +115,7 @@ export class TriggerMessagesService {
       this.logger.debug(result, '트리거 메시지 수정 성공');
       return HttpStatus.OK;
     } catch (e) {
-      this.logger.error('updateTriggerMessage', e);
+      this.logger.error('updateTriggerMessage', e.message);
       throw new HttpException(
         '트리거 메시지 수정에 실패했습니다.',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -120,7 +150,7 @@ export class TriggerMessagesService {
       this.logger.debug(result, '트리거 메시지 삭제 성공');
       return HttpStatus.OK;
     } catch (e) {
-      this.logger.error('deleteTriggerMessage', e);
+      this.logger.error('deleteTriggerMessage', e.message);
       throw new HttpException(
         '트리거 메시지 삭제에 실패했습니다.',
         HttpStatus.INTERNAL_SERVER_ERROR,

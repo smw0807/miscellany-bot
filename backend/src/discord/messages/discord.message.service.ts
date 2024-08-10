@@ -30,7 +30,7 @@ export class DiscordMessageService extends DiscordClientService {
 
   // 메시지 이벤트 리스너
   onMessage(client: Client) {
-    client.on('messageCreate', (message) => {
+    client.on('messageCreate', async (message) => {
       let logMessage = `[ ${message.guild.name} ]`;
       if (message.author.globalName) {
         logMessage += ` ${message.author.globalName}(${message.member.nickname}): ${message.content}`;
@@ -40,15 +40,25 @@ export class DiscordMessageService extends DiscordClientService {
 
       // 봇 메시지가 아니고, 첫 단어가 !로 시작할 경우 트리거 체크 진행 (무한루프 방지)
       if (!message.author.bot && message.content.startsWith('!')) {
-        // this.sendMessage(
-        //   {
-        //     guildId: message.guildId,
-        //     channelId: message.channelId,
-        //     isEveryone: trigger.isEveryone,
-        //     message: trigger.message,
-        //   },
-        //   false,
-        // );
+        try {
+          const trigger = await this.triggersService.findTrigger(
+            message.guildId,
+            message.content,
+          );
+          if (trigger) {
+            this.sendMessage(
+              {
+                guildId: message.guildId,
+                channelId: message.channelId,
+                isEveryone: trigger.isEveryone,
+                message: trigger.message,
+              },
+              false,
+            );
+          }
+        } catch (e) {
+          this.logger.error('onMessage', e.message);
+        }
       }
       this.logger.log(logMessage);
     });
