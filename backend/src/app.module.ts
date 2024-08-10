@@ -7,7 +7,6 @@ import { GoogleTranslateModule } from './google-translate/google.translate.modul
 import { PrismaModule } from './prisma/prisma.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { AuthModule } from './auth/auth.module';
-import { CachingManageModule } from './caching/caching.module';
 
 @Module({
   imports: [
@@ -17,7 +16,6 @@ import { CachingManageModule } from './caching/caching.module';
     PrismaModule,
     SupabaseModule,
     AuthModule,
-    CachingManageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
