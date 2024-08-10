@@ -8,7 +8,7 @@ import {
 import { DiscordClientService } from '../client/discord.client.service';
 import { ConfigType } from '@nestjs/config';
 import discordConfig from 'src/config/conf/discord.config';
-import { ChannelType } from 'discord.js';
+import { ChannelType, TextChannel } from 'discord.js';
 
 @Injectable()
 export class DiscordChannelService extends DiscordClientService {
@@ -19,6 +19,9 @@ export class DiscordChannelService extends DiscordClientService {
     super(config);
   }
 
+  getChannel(channelId) {
+    return this.client.channels.cache.get(channelId);
+  }
   /**
    * 길드 채널 가져오기
    * @param guildId
@@ -51,6 +54,33 @@ export class DiscordChannelService extends DiscordClientService {
       this.logger.error('getGuildChannels', e);
       throw new HttpException(
         '서버 채널 정보를 가져오는데 실패했습니다.',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // 채널로 메시지 보내기
+  async sendChannelMessage(channelId: string, content: string) {
+    try {
+      const channel = this.getChannel(channelId);
+      if (!channel) {
+        return new HttpException(
+          '채널을 찾을 수 없습니다.',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      if (!(channel instanceof TextChannel)) {
+        return new HttpException(
+          '텍스트 채널이 아닙니다.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      await channel.send(content);
+      this.logger.log(`트리거 메시지 전송 : ${content}`);
+    } catch (e) {
+      this.logger.error('sendChannelMessage', e);
+      throw new HttpException(
+        '메시지 전송에 실패했습니다.',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
