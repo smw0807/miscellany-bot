@@ -150,7 +150,10 @@ Google Translate API를 이용해 구현했다.
 <img src="images/13.png"/>
 특정 단어에 메시지 트리거를 설정하는 페이지.
 <img src="images/14.png"/>
-트리거 추가 다이얼로그
+트리거 추가 다이얼로그.
+
+!는 자동으로 붙게 처리되어 있어서 트리거할 단어만 입력하면 된다.
+<img src="images/14-1.png"/>
 <img src="images/15.png"/>
 등록된 트리거 단어를 디스코드 채팅에 입력했을 때 메시지가 전송된 모습
 
