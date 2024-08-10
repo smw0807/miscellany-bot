@@ -10,7 +10,6 @@ import { DiscordGuildsService } from './guilds/discord.guilds.service';
 import { DiscordChannelService } from './guilds/discord.channel.service';
 import { SupabaseModule } from 'src/supabase/supabase.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { CachingManageModule } from 'src/caching/caching.module';
 
 @Module({
   providers: [
@@ -26,7 +25,6 @@ import { CachingManageModule } from 'src/caching/caching.module';
     HttpModule,
     forwardRef(() => SupabaseModule),
     PrismaModule,
-    CachingManageModule,
   ],
   exports: [DiscordMessageService],
   controllers: [DiscordController],
