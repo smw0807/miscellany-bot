@@ -29,10 +29,6 @@ export class DiscordService extends DiscordClientService {
       this.contextMenuService.onContextMenu(this.client);
       // 디스코드 메시지 이벤트 리스너
       this.messageService.onMessage(this.client);
-      // 트리거 메시지 캐싱
-      this.client.guilds.cache.forEach((v) => {
-        this.triggerService.loadTriggers(v.id);
-      });
     });
   }
 }
