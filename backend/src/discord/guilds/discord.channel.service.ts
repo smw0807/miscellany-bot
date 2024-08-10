@@ -19,7 +19,7 @@ export class DiscordChannelService extends DiscordClientService {
     super(config);
   }
 
-  getChannel(channelId) {
+  getChannel(channelId: string) {
     return this.client.channels.cache.get(channelId);
   }
   /**

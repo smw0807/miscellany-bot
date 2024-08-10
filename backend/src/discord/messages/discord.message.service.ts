@@ -16,6 +16,7 @@ import { TriggerMessagesService } from 'src/supabase/trigger-messages/trigger.me
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as dayjs from 'dayjs';
 import { TriggerMessage } from '@prisma/client';
+import { DiscordChannelService } from '../guilds/discord.channel.service';
 
 @Injectable()
 export class DiscordMessageService extends DiscordClientService {
@@ -24,6 +25,7 @@ export class DiscordMessageService extends DiscordClientService {
     @Inject(discordConfig.KEY) config: ConfigType<typeof discordConfig>,
     private readonly supabase: SendMessagesHistoryService,
     private readonly triggersService: TriggerMessagesService,
+    private readonly channelService: DiscordChannelService,
     private readonly prisma: PrismaService,
   ) {
     super(config);
@@ -59,32 +61,24 @@ export class DiscordMessageService extends DiscordClientService {
   async sendMessage(data: SendMessageType, saveHistory: boolean = true) {
     try {
       const { guildId, channelId, isEveryone, message } = data;
-
+      // const channel = this.channelService.getChannel(channelId);
       const channel = this.client.channels.cache.get(channelId);
-      if (!channel) {
-        return new HttpException(
-          '채널을 찾을 수 없습니다.',
-          HttpStatus.NOT_FOUND,
-        );
-      }
-      if (!(channel instanceof TextChannel)) {
-        return new HttpException(
-          '메시지를 보낼 수 있는 채널이 아닙니다.',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      await channel.send(isEveryone ? `@everyone\n${message}` : message);
-
-      const params: SendMessagesHistoryType = {
-        guildId: guildId,
-        guildName: channel.guild.name,
-        channelId: channelId,
-        channelName: channel.name,
-        isEveryone: isEveryone,
-        message: message,
-      };
-      if (saveHistory) {
-        await this.supabase.saveSendMessageHistory(params);
+      await this.channelService.sendChannelMessage(
+        channelId,
+        isEveryone ? `@everyone\n${message}` : message,
+      );
+      if (channel instanceof TextChannel) {
+        const params: SendMessagesHistoryType = {
+          guildId: guildId,
+          guildName: channel.guild.name,
+          channelId: channelId,
+          channelName: channel.name,
+          isEveryone: isEveryone,
+          message: message,
+        };
+        if (saveHistory) {
+          await this.supabase.saveSendMessageHistory(params);
+        }
       }
       return HttpStatus.OK;
     } catch (e) {
@@ -99,27 +93,15 @@ export class DiscordMessageService extends DiscordClientService {
   // 트리거 메시지 보내기
   async sendTriggerMessage(message: Message, trigger: Partial<TriggerMessage>) {
     try {
-      // let desc = '등록되어 있지 않은 트리거 단어 입니다.';
-      // if (trigger) {
-      //   desc = trigger.message;
-      // }
-      // const embed = new EmbedBuilder()
-      //   .setColor(0x1f23f3)
-      //   .setTitle(message.content)
-      //   .setDescription(desc)
-      //   .setURL(message.url)
-      //   .setTimestamp();
-      // // .setFooter({ text: '트리거 메시지!' });
-
-      const channel = this.client.channels.cache.get(message.channelId);
-      if (channel instanceof TextChannel) {
-        // await channel.send({ embeds: [embed] });
-        await channel.send(
-          trigger.isEveryone
-            ? `@everyone\n${trigger.message}`
-            : trigger.message,
-        );
+      if (!trigger) {
+        return;
       }
+      const channelId = message.channelId;
+      const content = trigger.isEveryone
+        ? `@everyone\n${trigger.message}`
+        : trigger.message;
+
+      await this.channelService.sendChannelMessage(channelId, content);
     } catch (e) {
       this.logger.error('sendTriggerMessage', e.message);
     }
@@ -128,22 +110,14 @@ export class DiscordMessageService extends DiscordClientService {
   async sendScheduleMessage(id: string, data: SendMessageType) {
     try {
       const { channelId, isEveryone, message } = data;
-
-      const channel = this.client.channels.cache.get(channelId);
-      if (!channel) {
-        this.logger.error(`${channelId} 채널을 찾을 수 없습니다.`);
-      }
-      if (!(channel instanceof TextChannel)) {
-        this.logger.error(
-          `${channelId} 메시지를 보낼 수 있는 채널이 아닙니다.`,
-        );
-      } else {
-        await channel.send(isEveryone ? `@everyone\n${message}` : message);
-        await this.prisma.scheduledMessage.update({
-          where: { id },
-          data: { sendStatus: 'SUCCESS', lastSentAt: dayjs().toDate() },
-        });
-      }
+      await this.channelService.sendChannelMessage(
+        channelId,
+        isEveryone ? `@everyone\n${message}` : message,
+      );
+      await this.prisma.scheduledMessage.update({
+        where: { id },
+        data: { sendStatus: 'SUCCESS', lastSentAt: dayjs().toDate() },
+      });
     } catch (e) {
       await this.prisma.scheduledMessage.update({
         where: { id },

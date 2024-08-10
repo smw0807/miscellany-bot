@@ -24,6 +24,10 @@ export class DiscordGuildsService extends DiscordClientService {
     super(config);
   }
 
+  getGuild(guildId: string) {
+    return this.client.guilds.cache.get(guildId);
+  }
+
   /**
    * 관리중인 길드 목록 가져오기(디스코드 채널)
    * @param accessToken

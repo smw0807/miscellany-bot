@@ -65,13 +65,10 @@ export class DiscordController {
         message: message as string,
         isEveryone: Boolean(isEveryone),
       };
-      const result = await this.messageService.sendMessage(data);
-      if (result === HttpStatus.OK) {
-        return res
-          .status(HttpStatus.CREATED)
-          .send('메시지를 성공적으로 보냈습니다.');
-      }
-      res.status(result.getStatus()).send(result.getResponse());
+      await this.messageService.sendMessage(data);
+      return res
+        .status(HttpStatus.CREATED)
+        .send('메시지를 성공적으로 보냈습니다.');
     } catch (e) {
       this.logger.error('메시지 전송에 실패했습니다.', e.message);
       res.status(e.getStatus()).send(e.getResponse());
