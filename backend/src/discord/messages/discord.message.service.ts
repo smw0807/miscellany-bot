@@ -6,7 +6,7 @@ import {
   Injectable,
   Logger,
 } from '@nestjs/common';
-import { Client, TextChannel } from 'discord.js';
+import { Client, Message, TextChannel } from 'discord.js';
 import { DiscordClientService } from '../client/discord.client.service';
 import discordConfig from 'src/config/conf/discord.config';
 import { ConfigType } from '@nestjs/config';
@@ -15,6 +15,7 @@ import { SendMessagesHistoryService } from 'src/supabase/send-messages-history/m
 import { TriggerMessagesService } from 'src/supabase/trigger-messages/trigger.messages.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as dayjs from 'dayjs';
+import { TriggerMessage } from '@prisma/client';
 
 @Injectable()
 export class DiscordMessageService extends DiscordClientService {
@@ -45,17 +46,7 @@ export class DiscordMessageService extends DiscordClientService {
             message.guildId,
             message.content,
           );
-          if (trigger) {
-            this.sendMessage(
-              {
-                guildId: message.guildId,
-                channelId: message.channelId,
-                isEveryone: trigger.isEveryone,
-                message: trigger.message,
-              },
-              false,
-            );
-          }
+          this.sendTriggerMessage(message, trigger);
         } catch (e) {
           this.logger.error('onMessage', e.message);
         }
@@ -105,6 +96,34 @@ export class DiscordMessageService extends DiscordClientService {
     }
   }
 
+  // 트리거 메시지 보내기
+  async sendTriggerMessage(message: Message, trigger: Partial<TriggerMessage>) {
+    try {
+      // let desc = '등록되어 있지 않은 트리거 단어 입니다.';
+      // if (trigger) {
+      //   desc = trigger.message;
+      // }
+      // const embed = new EmbedBuilder()
+      //   .setColor(0x1f23f3)
+      //   .setTitle(message.content)
+      //   .setDescription(desc)
+      //   .setURL(message.url)
+      //   .setTimestamp();
+      // // .setFooter({ text: '트리거 메시지!' });
+
+      const channel = this.client.channels.cache.get(message.channelId);
+      if (channel instanceof TextChannel) {
+        // await channel.send({ embeds: [embed] });
+        await channel.send(
+          trigger.isEveryone
+            ? `@everyone\n${trigger.message}`
+            : trigger.message,
+        );
+      }
+    } catch (e) {
+      this.logger.error('sendTriggerMessage', e.message);
+    }
+  }
   // 예약 메시지 보내기
   async sendScheduleMessage(id: string, data: SendMessageType) {
     try {
