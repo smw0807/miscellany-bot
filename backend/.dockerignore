@@ -1,4 +1,6 @@
 node_modules/
-disk/
+dist/
 .output/
 .nuxt
+logs/
+.env*

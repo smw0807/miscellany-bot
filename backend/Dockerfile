@@ -1,12 +1,20 @@
 FROM node:21
 
 WORKDIR /app
-ADD . /app/
+COPY package*.json ./
 
-RUN npm install
+RUN npm i -g @nestjs/cli
+#RUN npm ci --omit=dev
+RUN npm ci
+
+COPY . .
+
+
+ARG NODE_ENV
+ENV NODE_ENV=production
+
+RUN npx prisma generate
+
 RUN npm run build
 
-ENV HOST 0.0.0.0
-EXPOSE 5001
-
-CMD ["npm", "start"]
+CMD ["npm", "run", "start:prod"]
