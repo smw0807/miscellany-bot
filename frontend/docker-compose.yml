@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: ${NODE_ENV}
+    image: miscellany-fe:0.0.1
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      HOST: 0.0.0.0
+    volumes:
+      - /app/node_modules
+      - .:/app
+    command: >
+      sh -c "if [ ${NODE_ENV} = 'development' ]; then npm run dev; else npm run start; fi"
