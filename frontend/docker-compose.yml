@@ -7,14 +7,13 @@ services:
       dockerfile: Dockerfile
       args:
         NODE_ENV: ${NODE_ENV}
-    image: miscellany-fe:0.0.1
+    image: miscellany-fe:0.0.2
     ports:
       - '3000:3000'
     env_file:
       - .env
     environment:
       NODE_ENV: ${NODE_ENV}
-      HOST: 0.0.0.0
     volumes:
       - /app/node_modules
       - .:/app
