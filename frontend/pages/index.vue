@@ -5,9 +5,6 @@ import { useDiscordStore, type DiscordGuildsType } from '~/store/discord';
 
 const router = useRouter();
 const { saveGuild, clearGuild, hasGuild } = useGuild();
-// const config = useRuntimeConfig();
-// 디스코드 봇 설치
-// const botInstallUrl = config.public.discordInstallUrl;
 
 const discordStore = useDiscordStore();
 const authStore = useAuthStore();
@@ -58,8 +55,6 @@ onMounted(() => {
               variant="flat"
               @click="requestInstallURL"
             >
-              <!-- :href="botInstallUrl"
-              target="_blank" -->
               봇 추가
             </v-btn>
             <v-btn
