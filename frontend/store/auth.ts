@@ -1,4 +1,7 @@
+import { ResultTypeEnum } from '~/types/enums';
+
 export const useAuthStore = defineStore('auth', () => {
+  const { useAlert } = useDialog();
   // ============= State =============
   const state = {};
 
@@ -6,6 +9,21 @@ export const useAuthStore = defineStore('auth', () => {
   const getters = {};
 
   // ============= Actions =============
+  // 디스코드 설치 URL 가져오기
+  const discordInstallUrl = async (): Promise<string> => {
+    try {
+      const result = await $fetch<string>('/api/auth/discord/install');
+      return result;
+    } catch (e) {
+      console.error(e);
+      useAlert({
+        type: ResultTypeEnum.ERROR,
+        title: '봇 추가 실패',
+        message: '봇 추가 URL을 가져오는데 실패했습니다.',
+      });
+      return '';
+    }
+  };
   // 디스코드 로그인 URL 가져오기
   const discordLogin = async (): Promise<string> => {
     try {
@@ -34,6 +52,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
   const actions = {
+    discordInstallUrl,
     discordLogin,
     discordToken,
   };

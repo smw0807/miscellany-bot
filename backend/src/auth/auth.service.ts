@@ -16,6 +16,16 @@ export class AuthService {
   ) {}
 
   /**
+   * [디스코드 설치 URL 전달]
+   * @returns
+   */
+  createInstallUrl() {
+    const { discordInstallUrl } = this.discordConfig;
+    this.logger.log('discordInstallUrl: ' + discordInstallUrl);
+    return discordInstallUrl;
+  }
+
+  /**
    * [디스코드 로그인 URL 생성]
    * @param session
    * @returns

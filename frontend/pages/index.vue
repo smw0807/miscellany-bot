@@ -1,15 +1,22 @@
 <script setup lang="ts">
 import useGuild from '~/composables/useGuild';
+import { useAuthStore } from '~/store/auth';
 import { useDiscordStore, type DiscordGuildsType } from '~/store/discord';
 
 const router = useRouter();
 const { saveGuild, clearGuild, hasGuild } = useGuild();
-const config = useRuntimeConfig();
-// 디스코드 봇 설치 URL
-const botInstallUrl = config.public.discordInstallUrl;
+// const config = useRuntimeConfig();
+// 디스코드 봇 설치
+// const botInstallUrl = config.public.discordInstallUrl;
 
 const discordStore = useDiscordStore();
+const authStore = useAuthStore();
 
+// 디스코드 봇 설치 URL 요청
+const requestInstallURL = async () => {
+  const installUrl = await authStore.discordInstallUrl();
+  if (installUrl) window.open(installUrl, '_blank');
+};
 // 관리중인 서버 목록
 const cGuilds = computed<DiscordGuildsType[]>(() => discordStore.guilds);
 
@@ -49,9 +56,10 @@ onMounted(() => {
               color="blue-darken-4"
               prepend-icon="mdi-plus-thick"
               variant="flat"
-              :href="botInstallUrl"
-              target="_blank"
+              @click="requestInstallURL"
             >
+              <!-- :href="botInstallUrl"
+              target="_blank" -->
               봇 추가
             </v-btn>
             <v-btn
