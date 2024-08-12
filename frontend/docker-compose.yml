@@ -5,17 +5,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        NODE_ENV: ${NODE_ENV}
-    image: miscellany-fe:0.0.2
+    image: miscellany-fe:0.0.6
     ports:
       - '3000:3000'
     env_file:
       - .env
-    environment:
-      NODE_ENV: ${NODE_ENV}
     volumes:
       - /app/node_modules
       - .:/app
-    command: >
-      sh -c "if [ ${NODE_ENV} = 'development' ]; then npm run dev; else npm run start; fi"
+    command: npm run start
