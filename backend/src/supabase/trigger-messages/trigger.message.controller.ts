@@ -5,7 +5,6 @@ import {
   HttpException,
   HttpStatus,
   Logger,
-  Param,
   Patch,
   Post,
   Query,
@@ -15,6 +14,7 @@ import {
 import { Request, Response } from 'express';
 import { TriggerMessagesService } from './trigger.messages.service';
 import { DiscordDataListInput } from '../inputs/common.inputs';
+import { TriggerInput } from '../inputs/trigger.inputs';
 @Controller('trigger')
 export class TriggerMessageController {
   private readonly logger = new Logger(TriggerMessageController.name);
@@ -48,9 +48,8 @@ export class TriggerMessageController {
 
   // 트리거 메시지 등록
   @Post('message')
-  async addTriggerMessage(@Req() req: Request, @Res() res: Response) {
+  async addTriggerMessage(@Query() params: TriggerInput, @Res() res: Response) {
     try {
-      const params = req.body;
       const result = await this.triggerService.addTriggerMessage(params);
       if (result === HttpStatus.OK) {
         return res.status(HttpStatus.OK).send('트리거 메시지 등록 성공');

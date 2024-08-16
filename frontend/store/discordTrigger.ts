@@ -77,7 +77,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
       try {
         const res = await $fetch<string>('/api/trigger/message', {
           method: 'POST',
-          body: JSON.stringify(params),
+          params,
         });
         await useAlert({
           type: ResultTypeEnum.SUCCESS,

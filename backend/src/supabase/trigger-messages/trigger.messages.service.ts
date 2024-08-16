@@ -1,6 +1,6 @@
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { TriggerMessageType } from '../types/triggerMessages';
+import { TriggerInput, TriggerMessageType } from '../inputs/trigger.inputs';
 
 @Injectable()
 export class TriggerMessagesService {
@@ -69,7 +69,7 @@ export class TriggerMessagesService {
   }
 
   // 트리거 메시지 등록
-  async addTriggerMessage(data: TriggerMessageType) {
+  async addTriggerMessage(data: TriggerInput) {
     try {
       const isDuplicate = await this.checkDuplicateTriggerWord(
         data.guildId,
@@ -93,7 +93,18 @@ export class TriggerMessagesService {
           HttpStatus.BAD_REQUEST,
         );
       }
-      const result = await this.prisma.triggerMessage.create({ data });
+
+      const result = await this.prisma.triggerMessage.create({
+        data: {
+          ...data,
+          isEveryone:
+            typeof data.isEveryone === 'string'
+              ? data.isEveryone === 'true'
+              : data.isEveryone,
+          isUse:
+            typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse,
+        },
+      });
       this.logger.debug(result, '트리거 메시지 등록 성공');
       return HttpStatus.OK;
     } catch (e) {
