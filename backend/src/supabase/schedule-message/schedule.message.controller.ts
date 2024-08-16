@@ -64,8 +64,6 @@ export class ScheduleMessageController {
     @Res() res: Response,
   ) {
     try {
-      console.log('params', params);
-      // const params = req.body;
       const result = await this.scheduleService.addScheduleMessage(params);
       if (result === HttpStatus.OK) {
         return res.status(HttpStatus.OK).send('예약 메시지 등록 성공');
