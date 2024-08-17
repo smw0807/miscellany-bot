@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Logger,
   Post,
+  Query,
   Req,
   Res,
 } from '@nestjs/common';
@@ -40,10 +41,9 @@ export class DiscordController {
   }
 
   @Get('channels')
-  getGuildChannels(@Req() req: Request, @Res() res: Response) {
+  getGuildChannels(@Query('guildId') guildId: string, @Res() res: Response) {
     try {
-      const { guildId } = req.query;
-      const channels = this.channelService.getGuildChannels(guildId as string);
+      const channels = this.channelService.getGuildChannels(guildId);
       if (channels instanceof HttpException) {
         throw channels;
       }
