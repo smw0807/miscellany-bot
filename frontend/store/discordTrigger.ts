@@ -104,7 +104,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
       try {
         const res = await $fetch<string>(`/api/trigger/message/${id}`, {
           method: 'PATCH',
-          body: JSON.stringify(params),
+          params,
         });
         await useAlert({
           type: ResultTypeEnum.SUCCESS,
@@ -138,7 +138,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
         if (!confirm) return;
         const res = await $fetch('/api/trigger/message', {
           method: 'DELETE',
-          body: JSON.stringify({ guildId: guildId.value, id }),
+          params: { id },
         });
         await useAlert({
           type: ResultTypeEnum.SUCCESS,

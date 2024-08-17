@@ -1,6 +1,6 @@
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { TriggerInput, TriggerMessageType } from '../inputs/trigger.inputs';
+import { TriggerInput } from '../inputs/trigger.inputs';
 
 @Injectable()
 export class TriggerMessagesService {
@@ -117,11 +117,19 @@ export class TriggerMessagesService {
   }
 
   // 트리거 메시지 수정
-  async updateTriggerMessage(id: string, data: TriggerMessageType) {
+  async updateTriggerMessage(id: string, data: TriggerInput) {
     try {
       const result = await this.prisma.triggerMessage.update({
         where: { id },
-        data,
+        data: {
+          ...data,
+          isEveryone:
+            typeof data.isEveryone === 'string'
+              ? data.isEveryone === 'true'
+              : data.isEveryone,
+          isUse:
+            typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse,
+        },
       });
       this.logger.debug(result, '트리거 메시지 수정 성공');
       return HttpStatus.OK;
@@ -135,17 +143,17 @@ export class TriggerMessagesService {
   }
 
   // 트리거 메시지 삭제
-  async deleteTriggerMessage(data: { guildId: string; id: string[] }) {
+  async deleteTriggerMessage(id: string | string[]) {
     try {
-      const { id } = data;
-      if (id.length === 0) {
+      if (!id) {
         return new HttpException(
-          '선택된 트리거가 없습니다.',
+          'id가 누락되었습니다.',
           HttpStatus.BAD_REQUEST,
         );
       }
+      const where = typeof id === 'string' ? { id } : { id: { in: id } };
       const result = await this.prisma.triggerMessage.deleteMany({
-        where: { id: { in: id } },
+        where,
       });
       if (result.count === 0) {
         return new HttpException(

@@ -5,13 +5,13 @@ import {
   HttpException,
   HttpStatus,
   Logger,
+  Param,
   Patch,
   Post,
   Query,
-  Req,
   Res,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { TriggerMessagesService } from './trigger.messages.service';
 import { DiscordDataListInput } from '../inputs/common.inputs';
 import { TriggerInput } from '../inputs/trigger.inputs';
@@ -63,10 +63,12 @@ export class TriggerMessageController {
 
   // 트리거 메시지 수정
   @Patch('message/:id')
-  async updateTriggerMessage(@Req() req: Request, @Res() res: Response) {
+  async updateTriggerMessage(
+    @Param('id') id: string,
+    @Query() params: TriggerInput,
+    @Res() res: Response,
+  ) {
     try {
-      const id = req.params.id;
-      const params = req.body;
       const result = await this.triggerService.updateTriggerMessage(id, params);
       if (result === HttpStatus.OK) {
         return res.status(HttpStatus.OK).send('트리거 메시지 수정 성공');
@@ -80,10 +82,12 @@ export class TriggerMessageController {
 
   // 트리거 메시지 삭제
   @Delete('message')
-  async deleteTriggerMessage(@Req() req: Request, @Res() res: Response) {
+  async deleteTriggerMessage(
+    @Query('id') id: string | string[],
+    @Res() res: Response,
+  ) {
     try {
-      const params = req.body;
-      const result = await this.triggerService.deleteTriggerMessage(params);
+      const result = await this.triggerService.deleteTriggerMessage(id);
       if (result === HttpStatus.OK) {
         return res.status(HttpStatus.OK).send('트리거 메시지 삭제 성공');
       }
