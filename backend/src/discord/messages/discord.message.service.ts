@@ -61,11 +61,12 @@ export class DiscordMessageService extends DiscordClientService {
   async sendMessage(data: SendMessageType, saveHistory: boolean = true) {
     try {
       const { guildId, channelId, isEveryone, message } = data;
-      // const channel = this.channelService.getChannel(channelId);
+      const isEveryoneTransform =
+        typeof isEveryone === 'string' ? isEveryone === 'true' : isEveryone;
       const channel = this.client.channels.cache.get(channelId);
       await this.channelService.sendChannelMessage(
         channelId,
-        isEveryone ? `@everyone\n${message}` : message,
+        isEveryoneTransform ? `@everyone\n${message}` : message,
       );
       if (channel instanceof TextChannel) {
         const params: SendMessagesHistoryType = {
@@ -73,7 +74,7 @@ export class DiscordMessageService extends DiscordClientService {
           guildName: channel.guild.name,
           channelId: channelId,
           channelName: channel.name,
-          isEveryone: isEveryone,
+          isEveryone: isEveryoneTransform,
           message: message,
         };
         if (saveHistory) {

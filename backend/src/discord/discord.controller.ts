@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Get,
   HttpException,
@@ -56,16 +55,9 @@ export class DiscordController {
 
   // 디스코드 채널로 메시지 보내기
   @Post('send-message')
-  async sendMessage(@Body() body: any, @Res() res: Response) {
+  async sendMessage(@Query() params: SendMessageType, @Res() res: Response) {
     try {
-      const { guildId, channelId, message, isEveryone } = body;
-      const data: SendMessageType = {
-        guildId: guildId as string,
-        channelId: channelId as string,
-        message: message as string,
-        isEveryone: Boolean(isEveryone),
-      };
-      await this.messageService.sendMessage(data);
+      await this.messageService.sendMessage(params);
       return res
         .status(HttpStatus.CREATED)
         .send('메시지를 성공적으로 보냈습니다.');
@@ -77,13 +69,17 @@ export class DiscordController {
 
   // 채널에 메시지 전송 내역 조회
   @Get('send-message-history')
-  async findSendMessageHistory(@Req() req: Request, @Res() res: Response) {
+  async findSendMessageHistory(
+    @Query('guildId') guildId: string,
+    @Query('pageSize') pageSize: number,
+    @Query('pageIndex') pageIndex: number,
+    @Res() res: Response,
+  ) {
     try {
-      const { guildId, pageSize, pageIndex } = req.query;
       const result = await this.massageHistoryService.findSendMessageHistory(
-        guildId.toString(),
-        Number(pageSize),
-        Number(pageIndex),
+        guildId,
+        +pageSize,
+        +pageIndex,
       );
       res.send(result);
     } catch (e) {
