@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { winstonLogger } from './logger/winston.logger';
 import { ConfigService } from '@nestjs/config';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as session from 'express-session';
 import 'dayjs/locale/ko';
 
@@ -30,6 +31,16 @@ async function bootstrap() {
     }),
   );
   const port = configService.get('common.appPort');
+
+  const builder = new DocumentBuilder()
+    .setTitle('API Docs')
+    .setDescription('API Docs')
+    .setVersion('1.0')
+    .addTag('api')
+    .build();
+  const document = SwaggerModule.createDocument(app, builder);
+  SwaggerModule.setup('api', app, document);
+
   await app.listen(port);
 }
 bootstrap();
