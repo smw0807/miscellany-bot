@@ -57,6 +57,7 @@ export class DiscordController {
   @Post('send-message')
   async sendMessage(@Query() params: SendMessageType, @Res() res: Response) {
     try {
+      this.logger.log(params, 'sendMessage');
       await this.messageService.sendMessage(params);
       return res
         .status(HttpStatus.CREATED)
