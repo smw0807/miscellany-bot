@@ -110,7 +110,7 @@ const oneTimeDataForm = (): ScheduleMessageType => {
     scheduleType: scheduleType.value,
     scheduledAt: `${dayjs(sendDateForOnetime.value).format('YYYY-MM-DD')} ${
       sendTimeForOnetime.value
-    }:00`,
+    }:00+09:00`,
   };
 };
 // 반복 데이터
@@ -124,7 +124,7 @@ const repeatDataForm = (): ScheduleMessageType => {
     scheduleType: scheduleType.value,
     scheduledAt: `${dayjs(sendDateForRepeat.value).format('YYYY-MM-DD')} ${
       sendTimeForRepeat.value
-    }:00`,
+    }:00+09:00`,
     repeatType: repeatType.value,
     repeatInterval: repeatInterval.value,
   };

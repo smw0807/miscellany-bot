@@ -4,7 +4,6 @@ import { winstonLogger } from './logger/winston.logger';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as session from 'express-session';
-import 'dayjs/locale/ko';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
