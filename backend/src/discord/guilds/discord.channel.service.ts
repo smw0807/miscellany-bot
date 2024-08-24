@@ -76,7 +76,7 @@ export class DiscordChannelService extends DiscordClientService {
         );
       }
       await channel.send(content);
-      this.logger.log(`트리거 메시지 전송 : ${content}`);
+      this.logger.log(`채널 메시지 전송 : ${content}`);
     } catch (e) {
       this.logger.error('sendChannelMessage', e);
       throw new HttpException(
