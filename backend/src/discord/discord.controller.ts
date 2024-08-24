@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpException,
@@ -55,7 +56,7 @@ export class DiscordController {
 
   // 디스코드 채널로 메시지 보내기
   @Post('send-message')
-  async sendMessage(@Query() params: SendMessageType, @Res() res: Response) {
+  async sendMessage(@Body() params: SendMessageType, @Res() res: Response) {
     try {
       this.logger.log(params);
       await this.messageService.sendMessage(params);
