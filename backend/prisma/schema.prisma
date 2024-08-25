@@ -66,7 +66,7 @@ model ScheduledMessage {
   isEveryone    Boolean @default(false)     // @everyone 태그 여부
   title         String  // 예약 메시지 제목
   messageContent String // 예약 메시지 내용
-  scheduledAt   DateTime? // 메시지 발송 시간(1회성 또는 반복)
+  scheduledAt   String? // 메시지 발송 시간(1회성 또는 반복)
   repeatInterval Int?    // 반복 간격(일, 시, 분 (예: 1440은 하루))
   repeatType    RepeatType? // 반복 유형(일, 시, 분)
   createdAt     DateTime @default(now())
