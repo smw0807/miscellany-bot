@@ -69,7 +69,8 @@ export class ScheduleMessageService {
           isUse:
             typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse,
           repeatInterval: +data.repeatInterval || null,
-          scheduledAt: new Date(data.scheduledAt),
+          // scheduledAt: new Date(data.scheduledAt),
+          scheduledAt: data.scheduledAt,
         },
       });
 
@@ -77,7 +78,7 @@ export class ScheduleMessageService {
         // 스케줄 등록
         this.jobService.addCronJob(
           `${result.id}@@${result.channelId}`,
-          new Date(data.scheduledAt),
+          data.scheduledAt,
           result,
         );
       }
@@ -85,6 +86,7 @@ export class ScheduleMessageService {
       this.logger.debug(result, '예약 메시지 등록 성공');
       return HttpStatus.OK;
     } catch (e) {
+      console.error(e);
       this.logger.error('예약 메시지 등록 실패', e.message);
       throw new HttpException(
         '예약 메시지 등록에 실패했습니다.',
@@ -120,7 +122,7 @@ export class ScheduleMessageService {
             : data.isEveryone,
         isUse:
           typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse,
-        scheduledAt: new Date(data.scheduledAt),
+        scheduledAt: data.scheduledAt,
         repeatInterval: +data.repeatInterval || null,
         repeatType: data.repeatType || null,
         lastSentAt: data.lastSentAt ? new Date(data.lastSentAt) : null,
@@ -141,7 +143,7 @@ export class ScheduleMessageService {
         // 스케줄 등록
         this.jobService.addCronJob(
           `${result.id}@@${result.channelId}`,
-          new Date(result.scheduledAt),
+          result.scheduledAt,
           result,
         );
       }
@@ -149,6 +151,7 @@ export class ScheduleMessageService {
       this.logger.debug(result, '예약 메시지 수정 성공');
       return HttpStatus.OK;
     } catch (e) {
+      console.error(e);
       this.logger.error('예약 메시지 수정 실패', e.message);
       throw new HttpException(
         '예약 메시지 수정에 실패했습니다.',

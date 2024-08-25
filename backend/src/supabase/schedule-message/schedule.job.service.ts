@@ -71,7 +71,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
   // 크론잡 등록
   async addCronJob(
     jobName: string,
-    date: Date,
+    date: string,
     data: Partial<ScheduledMessage>,
   ) {
     try {
@@ -86,7 +86,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
           : this.makeCronTime(date, data.repeatInterval, data.repeatType);
 
       // 크론잡 등록
-      const job = new CronJob(cronTime, async () => {
+      const job = new CronJob(new Date(cronTime), async () => {
         // 디스코드 메시지 발송
         const sendMessage: SendMessageType = {
           guildId: data.guildId,
@@ -139,7 +139,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
       const oneTimeScheduleMessages =
         await this.prisma.scheduledMessage.findMany({
           where: {
-            scheduledAt: { gte: new Date() },
+            scheduledAt: { gte: dayjs().format('YYYY-MM-DD HH:mm:ss') },
             scheduleType: 'ONETIME',
             sendStatus: 'WAIT',
             isUse: true,
@@ -179,7 +179,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
           );
           await this.addCronJob(
             `${message.id}@@${message.channelId}`,
-            nextScheduledAt,
+            nextScheduledAt as string,
             message,
           );
         }
@@ -215,12 +215,12 @@ export class ScheduleMessageJobService implements OnModuleInit {
         );
       }
     }
-    return nextScheduledAt.locale('ko').toDate();
+    return nextScheduledAt.format('YYYY-MM-DD HH:mm:ss');
   }
 
   // 반복 메시지 크론잡 시간 설정
   private makeCronTime(
-    date: Date,
+    date: string,
     repeatInterval: number,
     repeatType: RepeatType,
   ) {
