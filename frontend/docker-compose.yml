@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: miscellany-fe:0.0.6
+    image: miscellany-fe:0.0.7
     ports:
       - '3000:3000'
     env_file:
