@@ -4,6 +4,7 @@ import { ScheduleType } from '@prisma/client';
 import { DiscordDataListInput } from '../inputs/common.inputs';
 import { ScheduleMessageInput } from '../inputs/schedule.inputs';
 import { ScheduleMessageJobService } from './schedule.job.service';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class ScheduleMessageService {
@@ -70,7 +71,9 @@ export class ScheduleMessageService {
             typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse,
           repeatInterval: +data.repeatInterval || null,
           // scheduledAt: new Date(data.scheduledAt),
-          scheduledAt: data.scheduledAt,
+          scheduledAt: dayjs(data.scheduledAt).format(
+            'YYYY-MM-DD HH:mm:00+09:00',
+          ),
         },
       });
 
@@ -122,7 +125,9 @@ export class ScheduleMessageService {
             : data.isEveryone,
         isUse:
           typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse,
-        scheduledAt: data.scheduledAt,
+        scheduledAt: dayjs(data.scheduledAt).format(
+          'YYYY-MM-DD HH:mm:00+09:00',
+        ),
         repeatInterval: +data.repeatInterval || null,
         repeatType: data.repeatType || null,
         lastSentAt: data.lastSentAt ? new Date(data.lastSentAt) : null,
