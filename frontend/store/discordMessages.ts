@@ -62,7 +62,7 @@ export const useDiscordMessagesStore = defineStore('discordMessages', () => {
 
       const res = await $fetch<string>('/api/discord/send-message', {
         method: 'POST',
-        params,
+        body: params,
       });
       await useAlert({
         type: ResultTypeEnum.SUCCESS,

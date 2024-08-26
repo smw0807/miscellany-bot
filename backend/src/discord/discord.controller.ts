@@ -59,6 +59,12 @@ export class DiscordController {
   async sendMessage(@Body() params: SendMessageType, @Res() res: Response) {
     try {
       this.logger.log(params);
+      if (!params || (typeof params === 'string' && params === 'undefined')) {
+        throw new HttpException(
+          '메시지 전송에 필요한 정보가 없습니다.',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       await this.messageService.sendMessage(params);
       return res
         .status(HttpStatus.CREATED)
