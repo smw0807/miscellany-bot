@@ -226,7 +226,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
   ) {
     const d = dayjs(date);
     if (repeatType === 'DAY') {
-      return `0 ${d.minute()} ${d.hour()} * * *`;
+      return `0 ${d.minute()} ${d.hour()} */${repeatInterval} * *`;
     } else if (repeatType === 'HOUR') {
       return `0 ${d.minute()} * * * *`;
     } else if (repeatType === 'MINUTE') {
