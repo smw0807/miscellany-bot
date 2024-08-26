@@ -85,6 +85,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
           ? dayjs(date + '+09:00').toDate()
           : this.makeCronTime(date, data.repeatInterval, data.repeatType);
 
+      this.logger.log(cronTime, '크론잡 시간');
       // 크론잡 등록
       const job = new CronJob(cronTime, async () => {
         // 디스코드 메시지 발송
