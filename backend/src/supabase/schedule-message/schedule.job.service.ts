@@ -228,7 +228,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
     if (repeatType === 'DAY') {
       return `0 ${d.minute()} ${d.hour()} */${repeatInterval} * *`;
     } else if (repeatType === 'HOUR') {
-      return `0 ${d.minute()} * * * *`;
+      return `0 ${d.minute()} */${repeatInterval} * * *`;
     } else if (repeatType === 'MINUTE') {
       return `${d.minute()}/${repeatInterval} ${d.hour()}-23 * * *`;
     }
