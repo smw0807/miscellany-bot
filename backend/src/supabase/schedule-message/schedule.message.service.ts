@@ -71,9 +71,7 @@ export class ScheduleMessageService {
             typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse,
           repeatInterval: +data.repeatInterval || null,
           // scheduledAt: new Date(data.scheduledAt),
-          scheduledAt: dayjs(data.scheduledAt).format(
-            'YYYY-MM-DD HH:mm:00+09:00',
-          ),
+          scheduledAt: dayjs(data.scheduledAt).format('YYYY-MM-DD HH:mm:00'),
         },
       });
 
@@ -125,9 +123,7 @@ export class ScheduleMessageService {
             : data.isEveryone,
         isUse:
           typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse,
-        scheduledAt: dayjs(data.scheduledAt).format(
-          'YYYY-MM-DD HH:mm:00+09:00',
-        ),
+        scheduledAt: dayjs(data.scheduledAt).format('YYYY-MM-DD HH:mm:00'),
         repeatInterval: +data.repeatInterval || null,
         repeatType: data.repeatType || null,
         lastSentAt: data.lastSentAt ? new Date(data.lastSentAt) : null,
