@@ -29,6 +29,7 @@ const time = ref(props.modelValue);
         v-model="time"
         color="green-lighten-1"
         full-width
+        format="24hr"
         @update:model-value="emit('update:modelValue', time)"
       >
       </v-time-picker>
