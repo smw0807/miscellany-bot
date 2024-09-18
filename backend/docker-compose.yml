@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      platform: linux/amd64
+      #platform: linux/amd64
       args:
         NODE_ENV: production
     image: miscellany-be:0.0.9
