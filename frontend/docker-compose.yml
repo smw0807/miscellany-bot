@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
       #platform: linux/amd64
-    image: miscellany-fe:0.0.9
+    image: miscellany-fe:0.0.10
     ports:
       - '3000:3000'
     env_file:
