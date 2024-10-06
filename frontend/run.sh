@@ -12,3 +12,6 @@ elif [ "$1" == "up" ]; then
 else
     echo "Invalid parameter"
 fi
+
+#docker build -t miscellay-fe:0.0.13 .
+#docker run -d --env-file ./.env --name miscellany-fe -p 3000:3000 miscellay-fe:0.0.13
