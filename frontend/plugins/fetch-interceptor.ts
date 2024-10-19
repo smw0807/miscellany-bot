@@ -6,6 +6,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   globalThis.$fetch = ofetch.create({
     onRequest({ _request, options }) {
       options.retry = 0;
+      options.baseURL = process.env.API_URL;
       options.headers = {
         ...options.headers,
         'Content-Type': 'application/json',
