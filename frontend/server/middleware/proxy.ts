@@ -3,6 +3,7 @@ export default defineEventHandler((event) => {
   if (!event.node.req.url?.startsWith('/api/')) return;
 
   const target = new URL(event.node.req.url, process.env.API_URL);
+  console.log('proxy', target.toString());
   return proxyRequest(event, target.toString(), {
     headers: {
       host: target.host,
