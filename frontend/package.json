@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "start": "dotenv -e .env nuxt start",
+    "start": "PORT=3001 dotenv -e .env nuxt start",
     "dev": "dotenv -e .env.dev nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
