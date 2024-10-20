@@ -7,7 +7,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     onRequest({ _request, options }) {
       console.log('onRequest', options);
       options.retry = 0;
-      options.baseURL = process.env.API_URL;
+      options.baseURL = import.meta.env.API_URL;
       options.headers = {
         ...options.headers,
         'Content-Type': 'application/json',

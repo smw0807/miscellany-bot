@@ -20,7 +20,7 @@ if (hasToken()) {
 const config = useRuntimeConfig();
 
 const projectName: Ref<string> = ref(config.public.projectName);
-
+console.log(config.public);
 const authStore = useAuthStore();
 const login = async () => {
   window.location.href = await authStore.discordLogin();

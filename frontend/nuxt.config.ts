@@ -23,6 +23,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       projectName: import.meta.env.PROJECT_NAME,
+      apiUrl: import.meta.env.API_URL,
       accessTokenName: import.meta.env.ACCESS_TOKEN_NAME,
       refreshTokenName: import.meta.env.REFRESH_TOKEN_NAME,
       accessTokenExpires: import.meta.env.ACCESS_TOKEN_EXPIRES,
