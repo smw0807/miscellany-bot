@@ -5,6 +5,9 @@ import { ResultTypeEnum } from '~/types/enums';
 export default defineNuxtPlugin((nuxtApp) => {
   globalThis.$fetch = ofetch.create({
     onRequest({ _request, options }) {
+      console.log('=========================');
+      console.log(nuxtApp.$config.public);
+      console.log(nuxtApp.$config.public.apiUrl);
       options.retry = 0;
       options.baseURL = nuxtApp.$config.public.apiUrl;
       options.headers = {
