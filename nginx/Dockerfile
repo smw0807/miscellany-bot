@@ -11,4 +11,4 @@ EXPOSE 8080
 # 1. Docker 이미지 빌드:
 #    docker build -t nginx .
 # 2. Docker 컨테이너 실행:
-#    docker run -d -p 80:80 --name nginx-container nginx
+#    docker run -d -p 8080:8080 --name nginx-container nginx
