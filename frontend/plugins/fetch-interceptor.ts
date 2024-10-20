@@ -5,12 +5,14 @@ import { ResultTypeEnum } from '~/types/enums';
 export default defineNuxtPlugin((nuxtApp) => {
   globalThis.$fetch = ofetch.create({
     onRequest({ _request, options }) {
+      console.log('onRequest', options);
       options.retry = 0;
       options.baseURL = process.env.API_URL;
       options.headers = {
         ...options.headers,
         'Content-Type': 'application/json',
       };
+      console.log('onRequest2', options);
     },
     onResponse({ response }) {
       // console.log('onResponse', response);
