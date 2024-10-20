@@ -5,7 +5,7 @@ FROM nginx:alpine
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # 기본 Nginx 이미지 포트 설정
-EXPOSE 80
+EXPOSE 8080
 
 # Docker 이미지 빌드 및 실행 방법
 # 1. Docker 이미지 빌드:
