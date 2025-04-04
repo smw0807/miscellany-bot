@@ -82,29 +82,35 @@ export class ScheduleMessageJobService implements OnModuleInit {
       // 크론잡 시간 설정
       const cronTime =
         data.scheduleType === 'ONETIME'
-          ? dayjs(date + '+09:00').toDate()
+          ? dayjs(date).toDate()
           : this.makeCronTime(date, data.repeatInterval, data.repeatType);
 
       this.logger.log(cronTime, '크론잡 시간');
       // 크론잡 등록
-      const job = new CronJob(cronTime, async () => {
-        // 디스코드 메시지 발송
-        const sendMessage: SendMessageType = {
-          guildId: data.guildId,
-          channelId: data.channelId,
-          isEveryone: data.isEveryone,
-          message: data.messageContent,
-        };
+      const job = new CronJob(
+        cronTime,
+        async () => {
+          // 디스코드 메시지 발송
+          const sendMessage: SendMessageType = {
+            guildId: data.guildId,
+            channelId: data.channelId,
+            isEveryone: data.isEveryone,
+            message: data.messageContent,
+          };
 
-        await this.discordMessageService.sendScheduleMessage(
-          data.id,
-          sendMessage,
-        );
-        if (data.scheduleType === 'ONETIME') {
-          // 전달 받은 시간에 디스코드 메시지 발 송 후 크론잡 삭제
-          this.schedulerRegistry.deleteCronJob(jobName);
-        }
-      });
+          await this.discordMessageService.sendScheduleMessage(
+            data.id,
+            sendMessage,
+          );
+          if (data.scheduleType === 'ONETIME') {
+            // 전달 받은 시간에 디스코드 메시지 발 송 후 크론잡 삭제
+            this.schedulerRegistry.deleteCronJob(jobName);
+          }
+        },
+        null,
+        false,
+        'Asia/Seoul',
+      );
       this.schedulerRegistry.addCronJob(jobName, job);
       job.start();
       this.logger.log('크론잡 등록');
@@ -161,8 +167,8 @@ export class ScheduleMessageJobService implements OnModuleInit {
       ];
 
       for (const message of scheduleMessages) {
-        const now = dayjs().locale('ko').format();
-        const scheduledAt = dayjs(message.scheduledAt).locale('ko').format();
+        const now = dayjs().format();
+        const scheduledAt = dayjs(message.scheduledAt).format();
         // 현재 시간보다 낮은 경우
         if (new Date(now) < new Date(scheduledAt)) {
           await this.addCronJob(
