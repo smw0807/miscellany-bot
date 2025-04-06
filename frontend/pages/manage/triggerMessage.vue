@@ -120,10 +120,10 @@ onMounted(() => {
     <v-card-text>
       <alerts-trigger-message />
       <div class="text-right mt-3">
-        <v-btn color="warning" @click="openDialog"> 트리거 추가 </v-btn>
+        <v-btn color="primary" @click="openDialog"> 트리거 추가 </v-btn>
         <v-btn
           :disabled="selectedTrigger.length === 0"
-          color="red"
+          color="error"
           class="ml-1"
           @click="deleteTrigger"
         >
