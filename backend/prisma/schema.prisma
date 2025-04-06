@@ -89,7 +89,9 @@ enum RepeatType {
 }
 
 enum SendStatus {
-  SUCCESS
-  WAIT
-  FAIL
+  SUCCESS // 성공
+  WAIT // 대기
+  FAIL // 실패
+  IN_PROGRESS // 진행중
+  STOP // 중단
 }
