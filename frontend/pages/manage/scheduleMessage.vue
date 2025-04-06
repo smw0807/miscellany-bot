@@ -227,6 +227,22 @@ onMounted(async () => {
           >
             전송 실패
           </v-chip>
+          <v-chip
+            v-else-if="item.sendStatus === SendStatus.IN_PROGRESS"
+            color="yellow"
+            text-color="white"
+            variant="flat"
+          >
+            진행중
+          </v-chip>
+          <v-chip
+            v-else-if="item.sendStatus === SendStatus.STOP"
+            color="red"
+            text-color="white"
+            variant="flat"
+          >
+            중단
+          </v-chip>
           <v-chip v-else color="green" text-color="white" variant="flat">
             전송 대기
           </v-chip>

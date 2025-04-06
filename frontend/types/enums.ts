@@ -26,4 +26,6 @@ export enum SendStatus {
   SUCCESS = 'SUCCESS',
   FAIL = 'FAIL',
   WAIT = 'WAIT',
+  IN_PROGRESS = 'IN_PROGRESS',
+  STOP = 'STOP',
 }
