@@ -115,10 +115,18 @@ export class DiscordMessageService extends DiscordClientService {
         channelId,
         isEveryone ? `@everyone\n${message}` : message,
       );
-      await this.prisma.scheduledMessage.update({
-        where: { id },
-        data: { sendStatus: 'SUCCESS', lastSentAt: dayjs().toDate() },
-      });
+      // 반복 메시지일 경우엔 진행중 상태로 고정
+      if (data.scheduleType === 'RECURRING') {
+        await this.prisma.scheduledMessage.update({
+          where: { id },
+          data: { sendStatus: 'IN_PROGRESS', lastSentAt: dayjs().toDate() },
+        });
+      } else {
+        await this.prisma.scheduledMessage.update({
+          where: { id },
+          data: { sendStatus: 'SUCCESS', lastSentAt: dayjs().toDate() },
+        });
+      }
     } catch (e) {
       await this.prisma.scheduledMessage.update({
         where: { id },

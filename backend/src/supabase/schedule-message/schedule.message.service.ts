@@ -115,23 +115,28 @@ export class ScheduleMessageService {
           HttpStatus.BAD_REQUEST,
         );
       }
+      const isUse =
+        typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse;
       const dataFormat = {
         ...data,
         isEveryone:
           typeof data.isEveryone === 'string'
             ? data.isEveryone === 'true'
             : data.isEveryone,
-        isUse:
-          typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse,
+        isUse: isUse,
         scheduledAt: dayjs(data.scheduledAt).format('YYYY-MM-DD HH:mm:00'),
         repeatInterval: +data.repeatInterval || null,
         repeatType: data.repeatType || null,
         lastSentAt: data.lastSentAt ? new Date(data.lastSentAt) : null,
         updatedAt: new Date(),
       };
-      if (data.isUse) {
+      if (isUse) {
         dataFormat.lastSentAt = null;
         dataFormat.sendStatus = 'WAIT';
+      }
+
+      if (isUse === false && data.scheduleType === 'RECURRING') {
+        dataFormat.sendStatus = 'STOP';
       }
 
       const result = await this.prisma.scheduledMessage.update({

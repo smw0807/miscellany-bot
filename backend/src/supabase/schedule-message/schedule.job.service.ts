@@ -96,6 +96,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
             channelId: data.channelId,
             isEveryone: data.isEveryone,
             message: data.messageContent,
+            scheduleType: data.scheduleType,
           };
 
           await this.discordMessageService.sendScheduleMessage(
