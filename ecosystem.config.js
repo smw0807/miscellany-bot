@@ -7,7 +7,7 @@ module.exports = {
       exec_mode: 'cluster',
       watch: true,
       max_memory_restart: '1G',
-      PORT: 3000,
+      PORT: 5001,
       env: {
         NODE_ENV: 'prod',
         env_file: './backend/.env',
@@ -20,10 +20,11 @@ module.exports = {
     {
       name: 'miscellany-frontend',
       script: './frontend/.output/server/index.mjs',
-      PM2_SERVE_PATH: './frontend/build',
-      PM2_SERVE_PORT: 3001,
-      PM2_SERVE_SPA: 'true',
-      PM2_SERVE_HOMEPAGE: '/index.html',
+      instances: '1',
+      exec_mode: 'cluster',
+      watch: true,
+      max_memory_restart: '1G',
+      PORT: 3001,
       env: {
         NODE_ENV: 'prod',
         env_file: './frontend/.env',
