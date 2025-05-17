@@ -36,3 +36,15 @@ module.exports = {
     },
   ],
 };
+
+// # 전체 애플리케이션 실행 (프로덕션)
+// pm2 start ecosystem.config.js
+
+// # 전체 애플리케이션 실행 (개발)
+// pm2 start ecosystem.config.js --env development
+
+// # 프론트엔드만 실행
+// pm2 start ecosystem.config.js --only miscellany-frontend
+
+// # 백엔드만 실행
+// pm2 start ecosystem.config.js --only miscellany-backend
