@@ -34,14 +34,13 @@ export class DiscordChannelService extends DiscordClientService {
     try {
       const guild = this.client.guilds.cache.get(guildId);
       if (!guild) {
-        return new HttpException(
+        throw new HttpException(
           '서버 정보를 찾을 수 없습니다.',
           HttpStatus.NOT_FOUND,
         );
       }
 
       const channels = guild.channels.cache
-        .filter((channel) => channel.type !== ChannelType.GuildCategory)
         .filter((channel) => channel.type === ChannelType.GuildText)
         .map((channel) => ({
           id: channel.id,
@@ -51,6 +50,7 @@ export class DiscordChannelService extends DiscordClientService {
 
       return channels;
     } catch (e) {
+      if (e instanceof HttpException) throw e;
       this.logger.error('getGuildChannels', e);
       throw new HttpException(
         '서버 채널 정보를 가져오는데 실패했습니다.',
@@ -64,13 +64,13 @@ export class DiscordChannelService extends DiscordClientService {
     try {
       const channel = this.getChannel(channelId);
       if (!channel) {
-        return new HttpException(
+        throw new HttpException(
           '채널을 찾을 수 없습니다.',
           HttpStatus.NOT_FOUND,
         );
       }
       if (!(channel instanceof TextChannel)) {
-        return new HttpException(
+        throw new HttpException(
           '텍스트 채널이 아닙니다.',
           HttpStatus.BAD_REQUEST,
         );
@@ -78,6 +78,7 @@ export class DiscordChannelService extends DiscordClientService {
       await channel.send(content);
       this.logger.log(`채널 메시지 전송 : ${content}`);
     } catch (e) {
+      if (e instanceof HttpException) throw e;
       this.logger.error('sendChannelMessage', e);
       throw new HttpException(
         '메시지 전송에 실패했습니다.',

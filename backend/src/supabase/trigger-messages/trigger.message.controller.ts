@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -48,13 +49,10 @@ export class TriggerMessageController {
 
   // 트리거 메시지 등록
   @Post('message')
-  async addTriggerMessage(@Query() params: TriggerInput, @Res() res: Response) {
+  async addTriggerMessage(@Body() params: TriggerInput, @Res() res: Response) {
     try {
-      const result = await this.triggerService.addTriggerMessage(params);
-      if (result === HttpStatus.OK) {
-        return res.status(HttpStatus.OK).send('트리거 메시지 등록 성공');
-      }
-      return res.status(result.getStatus()).send(result.getResponse());
+      await this.triggerService.addTriggerMessage(params);
+      return res.status(HttpStatus.OK).send('트리거 메시지 등록 성공');
     } catch (e) {
       this.logger.error('트리거 메시지 등록에 실패했습니다.', e.message);
       res.status(e.getStatus()).send(e.getResponse());
@@ -65,15 +63,12 @@ export class TriggerMessageController {
   @Patch('message/:id')
   async updateTriggerMessage(
     @Param('id') id: string,
-    @Query() params: TriggerInput,
+    @Body() params: TriggerInput,
     @Res() res: Response,
   ) {
     try {
-      const result = await this.triggerService.updateTriggerMessage(id, params);
-      if (result === HttpStatus.OK) {
-        return res.status(HttpStatus.OK).send('트리거 메시지 수정 성공');
-      }
-      res.status(HttpStatus.NOT_MODIFIED).send('트리거 메시지 수정 실패');
+      await this.triggerService.updateTriggerMessage(id, params);
+      return res.status(HttpStatus.OK).send('트리거 메시지 수정 성공');
     } catch (e) {
       this.logger.error('트리거 메시지 수정에 실패했습니다.', e.message);
       res.status(e.getStatus()).send(e.getResponse());
@@ -87,11 +82,8 @@ export class TriggerMessageController {
     @Res() res: Response,
   ) {
     try {
-      const result = await this.triggerService.deleteTriggerMessage(id);
-      if (result === HttpStatus.OK) {
-        return res.status(HttpStatus.OK).send('트리거 메시지 삭제 성공');
-      }
-      return res.status(result.getStatus()).send(result.getResponse());
+      await this.triggerService.deleteTriggerMessage(id);
+      return res.status(HttpStatus.OK).send('트리거 메시지 삭제 성공');
     } catch (e) {
       this.logger.error('트리거 메시지 삭제에 실패했습니다.', e.message);
       res.status(e.getStatus()).send(e.getResponse());

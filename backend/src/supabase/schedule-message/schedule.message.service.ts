@@ -4,6 +4,7 @@ import { ScheduleType } from '@prisma/client';
 import { DiscordDataListInput } from '../inputs/common.inputs';
 import { ScheduleMessageInput } from '../inputs/schedule.inputs';
 import { ScheduleMessageJobService } from './schedule.job.service';
+import { toBooleanValue } from 'src/utils/crypto-utils';
 import * as dayjs from 'dayjs';
 
 @Injectable()
@@ -30,7 +31,7 @@ export class ScheduleMessageService {
       const total = await this.prisma.scheduledMessage.count({
         where: { guildId },
       });
-      if (total === 0) result;
+      if (total === 0) return result;
       result.total = total;
       result.data = await this.prisma.scheduledMessage.findMany({
         where: { guildId },
@@ -53,24 +54,19 @@ export class ScheduleMessageService {
    * @returns
    */
   async addScheduleMessage(data: ScheduleMessageInput) {
+    if (!ScheduleType[data.scheduleType as keyof typeof ScheduleType]) {
+      throw new HttpException(
+        '예약 타입이 잘못되었습니다.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     try {
-      if (!ScheduleType[data.scheduleType as keyof typeof ScheduleType]) {
-        throw new HttpException(
-          '예약 타입이 잘못되었습니다.',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
       const result = await this.prisma.scheduledMessage.create({
         data: {
           ...data,
-          isEveryone:
-            typeof data.isEveryone === 'string'
-              ? data.isEveryone === 'true'
-              : data.isEveryone,
-          isUse:
-            typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse,
+          isEveryone: toBooleanValue(data.isEveryone),
+          isUse: toBooleanValue(data.isUse),
           repeatInterval: +data.repeatInterval || null,
-          // scheduledAt: new Date(data.scheduledAt),
           scheduledAt: dayjs(data.scheduledAt).format('YYYY-MM-DD HH:mm:00'),
         },
       });
@@ -87,7 +83,7 @@ export class ScheduleMessageService {
       this.logger.debug(result, '예약 메시지 등록 성공');
       return HttpStatus.OK;
     } catch (e) {
-      console.error(e);
+      if (e instanceof HttpException) throw e;
       this.logger.error('예약 메시지 등록 실패', e.message);
       throw new HttpException(
         '예약 메시지 등록에 실패했습니다.',
@@ -102,27 +98,20 @@ export class ScheduleMessageService {
    * @returns
    */
   async updateScheduleMessage(id: string, data: ScheduleMessageInput) {
+    if (!id) {
+      throw new HttpException('id가 누락되었습니다.', HttpStatus.BAD_REQUEST);
+    }
+    if (!ScheduleType[data.scheduleType as keyof typeof ScheduleType]) {
+      throw new HttpException(
+        '예약 타입이 잘못되었습니다.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     try {
-      if (!id) {
-        return new HttpException(
-          'id가 누락되었습니다.',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      if (!ScheduleType[data.scheduleType as keyof typeof ScheduleType]) {
-        throw new HttpException(
-          '예약 타입이 잘못되었습니다.',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      const isUse =
-        typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse;
+      const isUse = toBooleanValue(data.isUse);
       const dataFormat = {
         ...data,
-        isEveryone:
-          typeof data.isEveryone === 'string'
-            ? data.isEveryone === 'true'
-            : data.isEveryone,
+        isEveryone: toBooleanValue(data.isEveryone),
         isUse: isUse,
         scheduledAt: dayjs(data.scheduledAt).format('YYYY-MM-DD HH:mm:00'),
         repeatInterval: +data.repeatInterval || null,
@@ -157,7 +146,7 @@ export class ScheduleMessageService {
       this.logger.debug(result, '예약 메시지 수정 성공');
       return HttpStatus.OK;
     } catch (e) {
-      console.error(e);
+      if (e instanceof HttpException) throw e;
       this.logger.error('예약 메시지 수정 실패', e.message);
       throw new HttpException(
         '예약 메시지 수정에 실패했습니다.',
@@ -171,13 +160,10 @@ export class ScheduleMessageService {
    * @returns
    */
   async deleteScheduleMessage(id: string | string[]) {
+    if (!id) {
+      throw new HttpException('id가 누락되었습니다.', HttpStatus.BAD_REQUEST);
+    }
     try {
-      if (!id) {
-        return new HttpException(
-          'id가 누락되었습니다.',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
       const where = typeof id === 'string' ? { id } : { id: { in: id } };
       const lists = await this.prisma.scheduledMessage.findMany({
         where,
@@ -194,6 +180,7 @@ export class ScheduleMessageService {
       this.logger.debug(result, '예약 메시지 삭제 성공');
       return HttpStatus.OK;
     } catch (e) {
+      if (e instanceof HttpException) throw e;
       this.logger.error('예약 메시지 삭제 실패', e.message);
       throw new HttpException(
         '예약 메시지 삭제에 실패했습니다.',

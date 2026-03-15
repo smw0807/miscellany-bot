@@ -83,6 +83,7 @@ export class DiscordMessageService extends DiscordClientService {
       }
       return HttpStatus.OK;
     } catch (e) {
+      if (e instanceof HttpException) throw e;
       this.logger.error('sendMessage', e);
       throw new HttpException(
         '메시지를 보내는데 실패했습니다.',

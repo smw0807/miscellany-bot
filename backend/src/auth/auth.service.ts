@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
+import { lastValueFrom } from 'rxjs';
 import { map } from 'rxjs';
 import DiscordConfig from 'src/config/conf/discord.config';
 import { DISCORD_API_URL, DISCORD_GRANT_TYPE } from 'src/constants/discord-api';
@@ -31,7 +32,7 @@ export class AuthService {
    * @returns
    */
   createLoginUrl(session: Record<string, any>) {
-    const { dicordClientID } = this.discordConfig;
+    const { discordClientID } = this.discordConfig;
     /**
      * 디스코드 API에 요청할 권한
      * https://discord.com/developers/docs/topics/oauth2#shared-resources-oauth2-scopes
@@ -50,7 +51,7 @@ export class AuthService {
     const redirectUrl = this.discordConfig.discordRedirectUrl;
 
     // 디스코드 로그인 URL 전달
-    return `${DISCORD_API_URL.OAUTH2_AUTHORIZE}?client_id=${dicordClientID}&redirect_uri=${redirectUrl}&response_type=code&scope=${scope}&state=${state}`;
+    return `${DISCORD_API_URL.OAUTH2_AUTHORIZE}?client_id=${discordClientID}&redirect_uri=${redirectUrl}&response_type=code&scope=${scope}&state=${state}`;
   }
 
   /**
@@ -73,24 +74,25 @@ export class AuthService {
     }
     try {
       const params = {
-        client_id: this.discordConfig.dicordClientID,
+        client_id: this.discordConfig.discordClientID,
         client_secret: this.discordConfig.discordClientSecret,
         grant_type: DISCORD_GRANT_TYPE.AUTHORIZATION_CODE,
         code: code,
         redirect_uri: this.discordConfig.discordRedirectUrl,
       };
-      const response = await this.httpService
-        .post(
-          DISCORD_API_URL.OAUTH2_TOKEN,
-          new URLSearchParams(params).toString(),
-          {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
+      const response = await lastValueFrom(
+        this.httpService
+          .post(
+            DISCORD_API_URL.OAUTH2_TOKEN,
+            new URLSearchParams(params).toString(),
+            {
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
             },
-          },
-        )
-        .pipe(map((response) => response.data))
-        .toPromise();
+          )
+          .pipe(map((response) => response.data)),
+      );
       return response;
     } catch (e) {
       throw new Error('Failed to get token');
@@ -104,23 +106,24 @@ export class AuthService {
   async refreshToken(refreshToken: string) {
     try {
       const params = {
-        client_id: this.discordConfig.dicordClientID,
+        client_id: this.discordConfig.discordClientID,
         client_secret: this.discordConfig.discordClientSecret,
         grant_type: DISCORD_GRANT_TYPE.REFRESH_TOKEN,
         refresh_token: refreshToken,
       };
-      const response = await this.httpService
-        .post(
-          DISCORD_API_URL.OAUTH2_TOKEN,
-          new URLSearchParams(params).toString(),
-          {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
+      const response = await lastValueFrom(
+        this.httpService
+          .post(
+            DISCORD_API_URL.OAUTH2_TOKEN,
+            new URLSearchParams(params).toString(),
+            {
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
             },
-          },
-        )
-        .pipe(map((response) => response.data))
-        .toPromise();
+          )
+          .pipe(map((response) => response.data)),
+      );
       return response;
     } catch (e) {
       this.logger.error(e.message);

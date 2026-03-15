@@ -1,6 +1,7 @@
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TriggerInput } from '../inputs/trigger.inputs';
+import { toBooleanValue } from 'src/utils/crypto-utils';
 
 @Injectable()
 export class TriggerMessagesService {
@@ -70,26 +71,23 @@ export class TriggerMessagesService {
 
   // 트리거 메시지 등록
   async addTriggerMessage(data: TriggerInput) {
+    if (data.triggerWord.length === 0) {
+      throw new HttpException(
+        '트리거 단어를 입력해주세요.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (data.message.length === 0) {
+      throw new HttpException('메시지를 입력해주세요.', HttpStatus.BAD_REQUEST);
+    }
     try {
       const isDuplicate = await this.checkDuplicateTriggerWord(
         data.guildId,
         data.triggerWord,
       );
       if (isDuplicate) {
-        return new HttpException(
+        throw new HttpException(
           '이미 등록된 트리거 단어입니다.',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      if (data.message.length === 0) {
-        return new HttpException(
-          '메시지를 입력해주세요.',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      if (data.triggerWord.length === 0) {
-        return new HttpException(
-          '트리거 단어를 입력해주세요.',
           HttpStatus.BAD_REQUEST,
         );
       }
@@ -97,17 +95,14 @@ export class TriggerMessagesService {
       const result = await this.prisma.triggerMessage.create({
         data: {
           ...data,
-          isEveryone:
-            typeof data.isEveryone === 'string'
-              ? data.isEveryone === 'true'
-              : data.isEveryone,
-          isUse:
-            typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse,
+          isEveryone: toBooleanValue(data.isEveryone),
+          isUse: toBooleanValue(data.isUse),
         },
       });
       this.logger.debug(result, '트리거 메시지 등록 성공');
       return HttpStatus.OK;
     } catch (e) {
+      if (e instanceof HttpException) throw e;
       this.logger.error('addTriggerMessage', e.message);
       throw new HttpException(
         '트리거 메시지 등록에 실패했습니다.',
@@ -123,12 +118,8 @@ export class TriggerMessagesService {
         where: { id },
         data: {
           ...data,
-          isEveryone:
-            typeof data.isEveryone === 'string'
-              ? data.isEveryone === 'true'
-              : data.isEveryone,
-          isUse:
-            typeof data.isUse === 'string' ? data.isUse === 'true' : data.isUse,
+          isEveryone: toBooleanValue(data.isEveryone),
+          isUse: toBooleanValue(data.isUse),
         },
       });
       this.logger.debug(result, '트리거 메시지 수정 성공');
@@ -144,24 +135,23 @@ export class TriggerMessagesService {
 
   // 트리거 메시지 삭제
   async deleteTriggerMessage(id: string | string[]) {
+    if (!id) {
+      throw new HttpException('id가 누락되었습니다.', HttpStatus.BAD_REQUEST);
+    }
     try {
-      if (!id) {
-        return new HttpException(
-          'id가 누락되었습니다.',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
       const where = typeof id === 'string' ? { id } : { id: { in: id } };
       const result = await this.prisma.triggerMessage.deleteMany({
         where,
       });
       if (result.count === 0) {
-        return new HttpException(
+        throw new HttpException(
           '삭제할 트리거가 없습니다.',
           HttpStatus.BAD_REQUEST,
         );
-      } else if (result.count !== id.length) {
-        return new HttpException(
+      }
+      const expectedCount = Array.isArray(id) ? id.length : 1;
+      if (result.count !== expectedCount) {
+        throw new HttpException(
           '몇몇 트리거 삭제에 실패했습니다.<br/>확인바랍니다.',
           HttpStatus.BAD_REQUEST,
         );
@@ -169,6 +159,7 @@ export class TriggerMessagesService {
       this.logger.debug(result, '트리거 메시지 삭제 성공');
       return HttpStatus.OK;
     } catch (e) {
+      if (e instanceof HttpException) throw e;
       this.logger.error('deleteTriggerMessage', e.message);
       throw new HttpException(
         '트리거 메시지 삭제에 실패했습니다.',

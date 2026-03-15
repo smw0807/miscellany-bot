@@ -15,7 +15,6 @@ export class SendMessagesHistoryService {
       const result = await this.prisma.channelMessage.create({ data: data });
       this.logger.debug(result, '메시지 전송 내역 저장 성공');
     } catch (e) {
-      console.error(e);
       this.logger.error('saveSendMessageHistory', e);
       throw new HttpException(
         '메시지 전송 내역 저장에 실패했습니다.',

@@ -9,6 +9,7 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigType } from '@nestjs/config';
 import discordConfig from 'src/config/conf/discord.config';
 import { DISCORD_API_URL } from 'src/constants/discord-api';
+import { lastValueFrom } from 'rxjs';
 import { map } from 'rxjs';
 import { DiscordClientService } from '../client/discord.client.service';
 import { DiscordGuildsType } from '../types/guilds';
@@ -35,15 +36,16 @@ export class DiscordGuildsService extends DiscordClientService {
    */
   async getOwnerGuilds(accessToken: string) {
     try {
-      const response = await this.httpService
-        .get(DISCORD_API_URL.GUILDS, {
-          headers: {
-            Authorization: accessToken,
-            'Content-Type': 'application/json',
-          },
-        })
-        .pipe(map((response) => response.data))
-        .toPromise();
+      const response = await lastValueFrom(
+        this.httpService
+          .get(DISCORD_API_URL.GUILDS, {
+            headers: {
+              Authorization: accessToken,
+              'Content-Type': 'application/json',
+            },
+          })
+          .pipe(map((response) => response.data)),
+      );
 
       // 내가 관리중인 것만
       const guilds: DiscordGuildsType[] = response
@@ -58,8 +60,8 @@ export class DiscordGuildsService extends DiscordClientService {
       return guilds;
     } catch (e) {
       this.logger.error('getOwnerGuilds', e);
-      const error = e.response.data;
-      if (error.code === 0) {
+      const error = e.response?.data;
+      if (error?.code === 0) {
         throw new HttpException(
           {
             status: HttpStatus.UNAUTHORIZED,

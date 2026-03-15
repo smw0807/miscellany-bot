@@ -1,5 +1,4 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { SupabaseService } from './supabase.service';
 import { SendMessagesHistoryService } from './send-messages-history/msg.history.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { TriggerMessagesService } from './trigger-messages/trigger.messages.service';
@@ -13,7 +12,6 @@ import { DiscordModule } from 'src/discord/discord.module';
 @Module({
   controllers: [TriggerMessageController, ScheduleMessageController],
   providers: [
-    SupabaseService,
     SendMessagesHistoryService,
     TriggerMessagesService,
     ScheduleMessageService,
