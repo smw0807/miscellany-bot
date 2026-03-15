@@ -35,12 +35,23 @@ export class ScheduleMessageJobService implements OnModuleInit {
 
   //============= List ============= S
   // 등록되어 있는 목록
-  listCronJobs() {
+  async listCronJobs(guildId?: string) {
     // 등록되어 있는 크론잡 목록
     let result = '등록된 크론잡 목록\n';
     const jobs = this.schedulerRegistry.getCronJobs();
+    let allowedJobNames: Set<string> | null = null;
+    if (guildId) {
+      const schedules = await this.prisma.scheduledMessage.findMany({
+        where: { guildId },
+        select: { id: true },
+      });
+      allowedJobNames = new Set(schedules.map((schedule) => schedule.id));
+    }
     this.logger.log('============ [ CronJob List ] ============');
     jobs.forEach((value, key) => {
+      if (allowedJobNames && !allowedJobNames.has(key)) {
+        return;
+      }
       const nextDate = value.nextDates();
       const msg = `CronJob: ${key} -> Next Date: ${nextDate}`;
       this.logger.log(msg);
@@ -158,7 +169,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
         await this.prisma.scheduledMessage.findMany({
           where: {
             scheduleType: 'RECURRING',
-            sendStatus: { in: ['WAIT', 'SUCCESS'] },
+            sendStatus: { in: ['WAIT', 'SUCCESS', 'IN_PROGRESS'] },
             isUse: true,
           },
         });
@@ -173,7 +184,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
         // 현재 시간보다 낮은 경우
         if (new Date(now) < new Date(scheduledAt)) {
           await this.addCronJob(
-            `${message.id}@@${message.channelId}`,
+            message.id,
             message.scheduledAt,
             message,
           );
@@ -186,7 +197,7 @@ export class ScheduleMessageJobService implements OnModuleInit {
             message.repeatType,
           );
           await this.addCronJob(
-            `${message.id}@@${message.channelId}`,
+            message.id,
             nextScheduledAt as string,
             message,
           );

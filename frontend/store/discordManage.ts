@@ -19,8 +19,10 @@ export const useDiscordManageStore = defineStore('discordManage', () => {
   // 채널 목록 가져오기
   const requestChannels = async (guildId: string): Promise<void> => {
     try {
+      const auth = useAuth();
       const res = await $fetch<ChannelType[]>('/api/discord/channels', {
         method: 'GET',
+        headers: auth.getAuthorizationHeader(),
         query: {
           guildId,
         },

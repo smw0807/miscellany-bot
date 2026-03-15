@@ -8,14 +8,15 @@ export type DiscordTokenType = {
   token_type: string;
 };
 export default function () {
+  const config = useRuntimeConfig();
+  const accessToken = useCookie(config.public.accessTokenName);
+  const refreshToken = useCookie(config.public.refreshTokenName);
+
   /**
    * 토큰 존재 여부 확인
    * @returns boolean
    */
   const hasToken = (): boolean => {
-    const config = useRuntimeConfig();
-    const accessToken = useCookie(config.public.accessTokenName);
-    const refreshToken = useCookie(config.public.refreshTokenName);
     if (!accessToken.value || !refreshToken.value) {
       return false;
     }
@@ -27,25 +28,29 @@ export default function () {
    * @param data
    */
   const saveToken = (data: DiscordTokenType): void => {
-    const config = useRuntimeConfig();
-    const accessToken = useCookie(config.public.accessTokenName);
-    const refreshToken = useCookie(config.public.refreshTokenName);
     accessToken.value = data.access_token;
     refreshToken.value = data.refresh_token;
   };
 
   // 토큰 삭제
   const clearToken = (): void => {
-    const config = useRuntimeConfig();
-    const accessToken = useCookie(config.public.accessTokenName);
-    const refreshToken = useCookie(config.public.refreshTokenName);
     accessToken.value = '';
     refreshToken.value = '';
+  };
+
+  const getAuthorizationHeader = (): Record<string, string> => {
+    if (!accessToken.value) {
+      return {};
+    }
+    return {
+      Authorization: `Bearer ${accessToken.value}`,
+    };
   };
 
   return {
     hasToken,
     saveToken,
     clearToken,
+    getAuthorizationHeader,
   };
 }

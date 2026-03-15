@@ -11,12 +11,15 @@ import {
   Post,
   Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { TriggerMessagesService } from './trigger.messages.service';
 import { DiscordDataListInput } from '../inputs/common.inputs';
 import { TriggerInput } from '../inputs/trigger.inputs';
+import { DiscordOwnerGuard } from 'src/auth/discord-owner.guard';
 @Controller('trigger')
+@UseGuards(DiscordOwnerGuard)
 export class TriggerMessageController {
   private readonly logger = new Logger(TriggerMessageController.name);
   constructor(private readonly triggerService: TriggerMessagesService) {}
@@ -29,7 +32,7 @@ export class TriggerMessageController {
   ) {
     try {
       const { guildId, pageSize, pageIndex } = params;
-      if (!guildId || !pageSize || !pageIndex) {
+      if (!guildId || pageSize === undefined || pageIndex === undefined) {
         throw new HttpException(
           '필수 파라미터가 누락되었습니다.',
           HttpStatus.BAD_REQUEST,

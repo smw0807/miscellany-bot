@@ -1,14 +1,18 @@
 import {
+  Body,
   Controller,
   Get,
   Logger,
   Post,
-  Query,
   Res,
   Session,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
+import {
+  DiscordRefreshTokenInput,
+  DiscordTokenInput,
+} from './dto/discord-token.input';
 
 @Controller('auth')
 export class AuthController {
@@ -47,14 +51,13 @@ export class AuthController {
   async requestDisocorToken(
     @Res() res: Response,
     @Session() session: Record<string, any>,
-    @Query('code') code: string,
-    @Query('state') state: string,
+    @Body() body: DiscordTokenInput,
   ) {
     try {
       const accessToken = await this.discordAuthService.requestToken(
         session,
-        code,
-        state,
+        body.code,
+        body.state,
       );
       res.send(accessToken);
     } catch (e) {
@@ -66,10 +69,12 @@ export class AuthController {
   @Post('discord/refresh-token')
   async refreshDiscordToken(
     @Res() res: Response,
-    @Query('refresh_token') refreshToken: string,
+    @Body() body: DiscordRefreshTokenInput,
   ) {
     try {
-      const token = await this.discordAuthService.refreshToken(refreshToken);
+      const token = await this.discordAuthService.refreshToken(
+        body.refresh_token,
+      );
       res.send(token);
     } catch (e) {
       this.logger.error('refreshDiscordToken Error', e.message);

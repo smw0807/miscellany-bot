@@ -53,10 +53,12 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
   // 예약 메시지 목록 조회
   const getScheduleMessages = async () => {
     try {
+      const auth = useAuth();
       const res = await $fetch<ScheduleMessagesListResponseType>(
         '/api/schedule/messages',
         {
           method: 'GET',
+          headers: auth.getAuthorizationHeader(),
           params: {
             guildId: guildId.value,
             pageSize: pageSize.value,
@@ -84,9 +86,11 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
   // 예약 메시지 저장
   const saveScheduleMessage = async (params: ScheduleMessageType) => {
     try {
+      const auth = useAuth();
       const res = await $fetch<string>('/api/schedule/message', {
         method: 'POST',
-        params,
+        headers: auth.getAuthorizationHeader(),
+        body: params,
       });
       await useAlert({
         type: ResultTypeEnum.SUCCESS,
@@ -110,9 +114,11 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
     params: ScheduleMessageType
   ) => {
     try {
+      const auth = useAuth();
       const res = await $fetch<string>(`/api/schedule/message/${id}`, {
         method: 'PATCH',
-        params,
+        headers: auth.getAuthorizationHeader(),
+        body: params,
       });
       await useAlert({
         type: ResultTypeEnum.SUCCESS,
@@ -133,6 +139,7 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
   // 예약 메시지 삭제
   const deleteScheduleMessage = async (id: string[]) => {
     try {
+      const auth = useAuth();
       const confirm = await useConfirm({
         type: ResultTypeEnum.WARNING,
         title: ALERT_TITLE,
@@ -144,7 +151,8 @@ export const useDiscordScheduleStore = defineStore('discordSchedule', () => {
       if (!confirm) return;
       const res = await $fetch<string>('/api/schedule/message', {
         method: 'DELETE',
-        params: { id },
+        headers: auth.getAuthorizationHeader(),
+        params: { id, guildId: guildId.value },
       });
       await useAlert({
         type: ResultTypeEnum.SUCCESS,

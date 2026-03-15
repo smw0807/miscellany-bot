@@ -73,11 +73,7 @@ export class ScheduleMessageService {
 
       if (result.isUse) {
         // 스케줄 등록
-        this.jobService.addCronJob(
-          `${result.id}@@${result.channelId}`,
-          data.scheduledAt,
-          result,
-        );
+        this.jobService.addCronJob(result.id, data.scheduledAt, result);
       }
 
       this.logger.debug(result, '예약 메시지 등록 성공');
@@ -108,6 +104,17 @@ export class ScheduleMessageService {
       );
     }
     try {
+      const prev = await this.prisma.scheduledMessage.findUnique({
+        where: { id },
+        select: { id: true },
+      });
+      if (!prev) {
+        throw new HttpException(
+          '예약 메시지를 찾을 수 없습니다.',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
       const isUse = toBooleanValue(data.isUse);
       const dataFormat = {
         ...data,
@@ -133,14 +140,10 @@ export class ScheduleMessageService {
         data: dataFormat,
       });
       // 기존 스케줄 삭제
-      await this.jobService.deleteCronJob(`${id}@@${result.channelId}`);
+      await this.jobService.deleteCronJob(id);
       if (result.isUse) {
         // 스케줄 등록
-        this.jobService.addCronJob(
-          `${result.id}@@${result.channelId}`,
-          result.scheduledAt,
-          result,
-        );
+        this.jobService.addCronJob(result.id, result.scheduledAt, result);
       }
 
       this.logger.debug(result, '예약 메시지 수정 성공');
@@ -174,7 +177,7 @@ export class ScheduleMessageService {
 
       // 크론잡 삭제
       for (const list of lists) {
-        await this.jobService.deleteCronJob(`${list.id}@@${list.channelId}`);
+        await this.jobService.deleteCronJob(list.id);
       }
 
       this.logger.debug(result, '예약 메시지 삭제 성공');

@@ -10,6 +10,7 @@ import { DiscordGuildsService } from './guilds/discord.guilds.service';
 import { DiscordChannelService } from './guilds/discord.channel.service';
 import { SupabaseModule } from 'src/supabase/supabase.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { DiscordOwnerGuard } from 'src/auth/discord-owner.guard';
 
 @Module({
   providers: [
@@ -19,6 +20,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
     DiscordMessageService,
     DiscordGuildsService,
     DiscordChannelService,
+    DiscordOwnerGuard,
   ],
   imports: [
     GoogleTranslateModule,
@@ -26,7 +28,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
     forwardRef(() => SupabaseModule),
     PrismaModule,
   ],
-  exports: [DiscordMessageService],
+  exports: [DiscordMessageService, DiscordGuildsService, DiscordOwnerGuard],
   controllers: [DiscordController],
 })
 export class DiscordModule {}

@@ -9,6 +9,7 @@ import {
   Query,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { DiscordMessageService } from './messages/discord.message.service';
@@ -16,6 +17,7 @@ import { DiscordGuildsService } from './guilds/discord.guilds.service';
 import { SendMessageType } from './types/messages';
 import { DiscordChannelService } from './guilds/discord.channel.service';
 import { SendMessagesHistoryService } from 'src/supabase/send-messages-history/msg.history.service';
+import { DiscordOwnerGuard } from 'src/auth/discord-owner.guard';
 
 @Controller('discord')
 export class DiscordController {
@@ -40,6 +42,7 @@ export class DiscordController {
     }
   }
 
+  @UseGuards(DiscordOwnerGuard)
   @Get('channels')
   getGuildChannels(@Query('guildId') guildId: string, @Res() res: Response) {
     try {
@@ -55,6 +58,7 @@ export class DiscordController {
   }
 
   // 디스코드 채널로 메시지 보내기
+  @UseGuards(DiscordOwnerGuard)
   @Post('send-message')
   async sendMessage(@Body() params: SendMessageType, @Res() res: Response) {
     try {
@@ -76,6 +80,7 @@ export class DiscordController {
   }
 
   // 채널에 메시지 전송 내역 조회
+  @UseGuards(DiscordOwnerGuard)
   @Get('send-message-history')
   async findSendMessageHistory(
     @Query('guildId') guildId: string,

@@ -43,10 +43,12 @@ export const useDiscordMessagesTriggerStore = defineStore(
     // 트리거 메시지 목록 조회
     const getTriggerMessages = async (): Promise<void> => {
       try {
+        const auth = useAuth();
         const res = await $fetch<TriggerMessagesListResponseType>(
           '/api/trigger/messages',
           {
             method: 'GET',
+            headers: auth.getAuthorizationHeader(),
             params: {
               guildId: guildId.value,
               pageSize: pageSize.value,
@@ -75,9 +77,11 @@ export const useDiscordMessagesTriggerStore = defineStore(
       params: TriggerMessageType
     ): Promise<boolean> => {
       try {
+        const auth = useAuth();
         const res = await $fetch<string>('/api/trigger/message', {
           method: 'POST',
-          params,
+          headers: auth.getAuthorizationHeader(),
+          body: params,
         });
         await useAlert({
           type: ResultTypeEnum.SUCCESS,
@@ -102,9 +106,11 @@ export const useDiscordMessagesTriggerStore = defineStore(
       params: TriggerMessageType
     ): Promise<boolean> => {
       try {
+        const auth = useAuth();
         const res = await $fetch<string>(`/api/trigger/message/${id}`, {
           method: 'PATCH',
-          params,
+          headers: auth.getAuthorizationHeader(),
+          body: params,
         });
         await useAlert({
           type: ResultTypeEnum.SUCCESS,
@@ -127,6 +133,7 @@ export const useDiscordMessagesTriggerStore = defineStore(
     // 트리거 메시지 삭제
     const deleteTriggerMessage = async (id: string[]): Promise<void> => {
       try {
+        const auth = useAuth();
         const confirm = await useConfirm({
           type: ResultTypeEnum.WARNING,
           title: ALERT_TITLE,
@@ -138,7 +145,8 @@ export const useDiscordMessagesTriggerStore = defineStore(
         if (!confirm) return;
         const res = await $fetch('/api/trigger/message', {
           method: 'DELETE',
-          params: { id },
+          headers: auth.getAuthorizationHeader(),
+          params: { id, guildId: guildId.value },
         });
         await useAlert({
           type: ResultTypeEnum.SUCCESS,

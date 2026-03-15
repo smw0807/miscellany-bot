@@ -79,6 +79,11 @@ export class DiscordGuildsService extends DiscordClientService {
       );
     }
   }
+
+  async isOwnerGuild(accessToken: string, guildId: string): Promise<boolean> {
+    const guilds = await this.getOwnerGuilds(accessToken);
+    return guilds.some((guild) => guild.id === guildId);
+  }
   /**
    * 봇이 길드에 추가되었는지 확인
    * @param guildId 길드 아이디

@@ -51,6 +51,7 @@ export const useDiscordMessagesStore = defineStore('discordMessages', () => {
   // 채널로 메시지 보내기
   const sendMessage = async (params: SendMessageType): Promise<boolean> => {
     try {
+      const auth = useAuth();
       const confirm = await useConfirm({
         type: ResultTypeEnum.INFO,
         title: ALERT_SEND_TITLE,
@@ -62,6 +63,7 @@ export const useDiscordMessagesStore = defineStore('discordMessages', () => {
 
       const res = await $fetch<string>('/api/discord/send-message', {
         method: 'POST',
+        headers: auth.getAuthorizationHeader(),
         body: params,
       });
       await useAlert({
@@ -86,10 +88,12 @@ export const useDiscordMessagesStore = defineStore('discordMessages', () => {
   // 채널 메시지 전송 내역 조회
   const findSendMessageHistory = async (): Promise<void> => {
     try {
+      const auth = useAuth();
       const res = await $fetch<SendMessagesHistoryResponseType>(
         '/api/discord/send-message-history',
         {
           method: 'GET',
+          headers: auth.getAuthorizationHeader(),
           query: {
             guildId: guildId.value,
             pageSize: pageSize.value,

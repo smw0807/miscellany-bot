@@ -11,14 +11,17 @@ import {
   Post,
   Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ScheduleMessageService } from './schedule.message.service';
 import { DiscordDataListInput } from '../inputs/common.inputs';
 import { ScheduleMessageInput } from '../inputs/schedule.inputs';
 import { ScheduleMessageJobService } from './schedule.job.service';
+import { DiscordOwnerGuard } from 'src/auth/discord-owner.guard';
 
 @Controller('schedule')
+@UseGuards(DiscordOwnerGuard)
 export class ScheduleMessageController {
   private readonly logger = new Logger(ScheduleMessageController.name);
   constructor(
@@ -27,9 +30,12 @@ export class ScheduleMessageController {
   ) {}
 
   @Get('list')
-  async getScheduleList(@Res() res: Response) {
+  async getScheduleList(
+    @Query('guildId') guildId: string,
+    @Res() res: Response,
+  ) {
     try {
-      const result = await this.jobService.listCronJobs();
+      const result = await this.jobService.listCronJobs(guildId);
       res.send(result);
     } catch (e) {
       this.logger.error('예약 목록 조회에 실패했습니다.', e.message);
@@ -44,7 +50,7 @@ export class ScheduleMessageController {
   ) {
     try {
       const { guildId, pageSize, pageIndex } = params;
-      if (!guildId || !pageSize || !pageIndex) {
+      if (!guildId || pageSize === undefined || pageIndex === undefined) {
         throw new HttpException(
           '필수 파라미터가 누락되었습니다.',
           HttpStatus.BAD_REQUEST,
